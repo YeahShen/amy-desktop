@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "allowJs": true,
+    "moduleResolution": "bundler",
+    "types": ["node"]
+  },
+  "include": ["types/**/*.d.ts", "app/**/*.ts"],
+  "exclude": []
+}

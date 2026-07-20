@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json", // 继承根目录的基础设置
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ESNext",
+    "lib": ["DOM", "ESNext"], // 启用 DOM 库支持 window/document
+    "types": [
+      "node", // 支持 require, process 等
+      "electron" // 支持 contextBridge, ipcRenderer 等
+    ],
+    "strict": true
+  },
+  "include": [".", "../../types/**/*.d.ts"] // 仅作用于当前 preload 文件夹
+}
