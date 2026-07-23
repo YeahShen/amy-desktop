@@ -4,12 +4,16 @@
   "private": true,
   "description": "AMY Desktop - pnpm monorepo",
   "scripts": {
-    "dev": "pnpm --parallel -r run dev",
-    "build": "pnpm -r run build",
-    "test": "pnpm -r run test",
-    "clean": "pnpm -r run clean",
-    "typecheck": "pnpm -r run typecheck",
-    "lint": "eslint ."
+    "dev": "pnpm --parallel --filter=./packages/* run dev",
+    "package": "run-s build:renderer build:main:package",
+    "make": "run-s build:renderer build:main:make",
+    "publish": "run-s build:publisher build:renderer build:main:publish",
+    "build:renderer": "pnpm --filter=./packages/process-renderer run build",
+    "build:main:package": "pnpm --filter=./packages/process-main run package",
+    "build:main:stage": "pnpm --filter=./packages/process-main run stage",
+    "build:main:make": "pnpm --filter=./packages/process-main run make",
+    "build:main:publish": "pnpm --filter=./packages/process-main run publish",
+    "build:publisher": "pnpm --filter=./packages/publisher run build"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +29,7 @@
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",
+    "npm-run-all2": "^9.0.2",
     "prettier": "3.9.5",
     "typescript-eslint": "^8.64.0"
   }

@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nuxt dev --dotenv ../../.env.development",
     "build": "nuxt generate --dotenv ../../.env.production",
     "stage": "nuxt generate --dotenv ../../.env.stage",
+    "dev": "nuxt dev --dotenv ../../.env.development",
+    "lint:fix": "eslint . --fix",
     "postinstall": "nuxt prepare"
   },
   "keywords": [],

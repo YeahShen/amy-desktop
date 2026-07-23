@@ -2,9 +2,8 @@
   "name": "@amy/publisher",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "module": "dist/shared.esm-bundler.js",
-  "types": "dist/shared.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
