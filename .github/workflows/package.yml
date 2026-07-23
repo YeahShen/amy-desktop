@@ -30,12 +30,12 @@ jobs:
         run: pnpm install
 
       - name: package
-        run: pnpm build:main:package
+        run: pnpm make
 
       # 5. 上传生成的安装包/产物到 GitHub Artifacts
-      # - name: Upload Artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: windows-build
-      #     # Electron Forge 默认生成产物的路径
-      #     path: out/make/**/*
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          # Electron Forge 默认生成产物的路径
+          path: packages/main-process/out/make/**/*
