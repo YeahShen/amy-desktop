@@ -1,0 +1,19 @@
+{
+  "name": "@amy/publisher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "module": "dist/shared.esm-bundler.js",
+  "types": "dist/shared.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/publisher-base": "^7.11.2",
+    "@electron-forge/shared-types": "^7.11.2",
+    "@tsconfig/node22": "^22.0.5"
+  }
+}
