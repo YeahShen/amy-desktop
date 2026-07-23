@@ -1,5 +1,5 @@
 {
-  "name": "@amy/main-process",
+  "name": "amy-main-process",
   "version": "1.0.0",
   "description": "amy station desktop",
   "main": ".vite/build/main.js",
