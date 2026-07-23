@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 26
+          node-version: 24
           cache: 'npm' # 开启 npm 缓存，加快后续构建速度（如果用 yarn/pnpm 请修改）
 
       # 3. 安装依赖
