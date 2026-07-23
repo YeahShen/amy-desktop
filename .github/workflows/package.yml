@@ -30,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: package
-        run: pnpm package
+        run: pnpm build:main:package
 
       # 5. 上传生成的安装包/产物到 GitHub Artifacts
       # - name: Upload Artifacts
