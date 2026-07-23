@@ -22,12 +22,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       # 3. 安装依赖
-      - name: Install dependencies
-        run: npm ci
+      - name: Install pnpm
+        run: npm i -g pnpm
 
       # 4. 执行 Electron Forge 打包
-      - name: Make Electron Forge App
-        run: npm run package
+      - name: Install depan
+        run: pnpm install
+
+      - name: package
+        run: pnpm package
 
       # 5. 上传生成的安装包/产物到 GitHub Artifacts
       # - name: Upload Artifacts
