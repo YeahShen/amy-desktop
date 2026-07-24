@@ -49,12 +49,13 @@ export default (async function () {
     },
 
     {
-      files: ['packages/main-process/app/**/*.ts', 'packages/zpublisher/src/**/*.ts'], 
+      files: ['packages/main-process/app/**/*.ts', 'packages/zpublisher/src/**/*.ts'],
       languageOptions: { globals: { ...globals.node } },
       extends: [tseslint.configs.recommended],
-      rules:{
-        "@typescript-eslint/ban-ts-comment": "off"
-      }
+      rules: {
+        '@typescript-eslint/ban-ts-comment': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
     },
 
     ...rendererProcessConfig,

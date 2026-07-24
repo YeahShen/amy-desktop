@@ -113,12 +113,38 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
 
       let finishCount = 0;
 
-      do {
-        finishCount = uploadArr.filter((t) => t.getStatus() !== 'pending').length;
-        setStatusLine(`上传进度：${Number((finishCount / totalChunks).toFixed(2)) * 100} %`);
-      } while (finishCount < totalChunks);
+      await new Promise((resolve) => {
+        const timer = setInterval(() => {
+          finishCount = uploadArr.filter((t) => t.getStatus() !== 'pending').length;
+          setStatusLine(`上传进度：${Math.round((finishCount / totalChunks) * 100)} %`);
+
+          if (finishCount >= totalChunks) {
+            clearInterval(timer);
+            resolve(true);
+          }
+        }, 500);
+      });
 
       setStatusLine('上传完成');
+
+      const { promise } = createTrackedPromise((resolve, reject) => {
+        this.checkChunksIntegrity(id, zipFile).then(resolve).catch(reject);
+      });
+
+      try {
+        await promise;
+      } catch (e: any) {
+        throw new Error(e.message);
+      }
+
+      await axios.get(config.baseUrl + '/api/archive/finish', {
+        params: {
+          id,
+        },
+        headers: {
+          ...this.authHeaders,
+        },
+      });
     }
   }
 
@@ -150,5 +176,69 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
           .then(resolve)
           .catch(reject);
       });
+  }
+
+  async checkChunksIntegrity(
+    id: string,
+    filePath: string,
+    maxRetries: number = 5,
+  ): Promise<boolean> {
+    try {
+      const { data } = await axios.get<{ intact: boolean; loseChunks: number[] }>(
+        this.config.baseUrl + '/api/archive/checkout-chunks',
+        {
+          params: { id },
+          headers: { ...this.authHeaders },
+        },
+      );
+
+      const { intact, loseChunks } = data;
+
+      if (intact) {
+        return true;
+      }
+
+      if (maxRetries <= 0) {
+        throw new Error(
+          `分片完整性检查失败：已达到最大重试次数，仍缺失 ${loseChunks.length} 个分片`,
+        );
+      }
+
+      // 上传缺失的分片，并检查每个上传结果
+      const results = await Promise.allSettled(
+        loseChunks.map((index) => this.createUploadChunkFn(filePath, index, id)().promise),
+      );
+
+      // 收集上传失败的分片索引，准备重试
+      const failedIndices: number[] = [];
+      results.forEach((result, i) => {
+        if (result.status === 'rejected') {
+          failedIndices.push(loseChunks[i]);
+        }
+      });
+
+      if (failedIndices.length > 0) {
+        console.warn(`${failedIndices.length} 个分片上传失败，重试中...`, failedIndices);
+
+        // 逐个重试失败的分片
+        const retryResults = await Promise.allSettled(
+          failedIndices.map((index) => this.createUploadChunkFn(filePath, index, id)().promise),
+        );
+
+        // 检查重试是否全部成功
+        const stillFailing = retryResults.filter((r) => r.status === 'rejected').length;
+        if (stillFailing > 0) {
+          console.error(`仍有 ${stillFailing} 个分片重试失败`);
+        }
+      }
+
+      // 递归检查完整性
+      await new Promise((r) => setTimeout(r, 1000)); // 退避延迟，避免密集轮询
+      return this.checkChunksIntegrity(id, filePath, maxRetries - 1);
+    } catch (error) {
+      throw new Error(
+        `分片完整性检查异常: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 }
