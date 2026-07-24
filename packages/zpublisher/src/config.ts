@@ -1,3 +1,11 @@
-export type BucketRepository = {};
+export type PublisherBitbucketConfig = {
+  appName: string;
+  baseUrl: string;
+  replaceExist?: boolean;
+  packageName: string;
 
-export type PublisherBitbucketConfig = {};
+  auth?: {
+    username?: string;
+    password?: string;
+  };
+};

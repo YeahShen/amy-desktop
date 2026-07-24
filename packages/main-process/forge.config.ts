@@ -50,7 +50,17 @@ const config: ForgeConfig = {
     ],
   },
   rebuildConfig: {},
-  publishers: [new PublisherBitbucket({})],
+  publishers: [
+    new PublisherBitbucket({
+      appName: appName as string,
+      packageName: 'site.ashenstation.amy',
+      baseUrl: 'http://localhost:8080',
+      auth: {
+        username: 'test',
+        password: 'test',
+      },
+    }),
+  ],
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
   // publishers: [new PublisherBitbucket({})],
   plugins: [
