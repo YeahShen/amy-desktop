@@ -28,3 +28,6 @@ jobs:
 
       - name: publish
         run: pnpm run publish
+        env:
+          AMY_PUBLISH_USERNAME: ${{ secrets.AMY_PUBLISH_USERNAME }}
+          AMY_PUBLISH_PASSWORD: ${{ secrets.AMY_PUBLISH_PASSWORD }}
