@@ -50,6 +50,7 @@ const config: ForgeConfig = {
     ],
   },
   rebuildConfig: {},
+  publishers: [new PublisherBitbucket({})],
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
   // publishers: [new PublisherBitbucket({})],
   plugins: [
