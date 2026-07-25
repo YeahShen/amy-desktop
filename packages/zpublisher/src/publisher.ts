@@ -5,12 +5,18 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { ZipArchive } from 'archiver';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, {
+  retries: 3, // 重试次数
+  retryCondition: axiosRetry.isRetryableError, // 默认重试网络错误和5xx错误
+});
 
 import { createTrackedPromise } from '@amy/shared';
 
 import FormData from 'form-data';
 
-const chunkSize = 524288;
+const chunkSize = 1048576;
 
 export default class PublisherBitbucket extends PublisherBase<PublisherBitbucketConfig> {
   name: string = 'amybucket';
@@ -167,7 +173,7 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
         form.append('index', chunkIndx);
 
         axios
-          .post(this.config.baseUrl + '/api/archive/upload-chunk', form, {
+          .post(this.config.baseUrl + '/api/archive/upload-chunk?index=' + chunkIndx, form, {
             headers: {
               ...form.getHeaders(),
               ...this.authHeaders,
