@@ -10,7 +10,7 @@ import { createTrackedPromise } from '@amy/shared';
 
 import FormData from 'form-data';
 
-const chunkSize = 1048576;
+const chunkSize = 524288;
 
 export default class PublisherBitbucket extends PublisherBase<PublisherBitbucketConfig> {
   name: string = 'amybucket';
