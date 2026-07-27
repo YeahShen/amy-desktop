@@ -8,6 +8,10 @@ export function getFileSize(filePath: string) {
   return fileStat(filePath).size;
 }
 
+export function getFileTotalChunks(filePath: string, chunkSize: number) {
+  return Math.ceil(getFileSize(filePath) / chunkSize);
+}
+
 export function fileChunk(filePath: string, chunkSize: number) {
   if (!Number.isInteger(chunkSize) || chunkSize <= 0) {
     throw new Error('chunkSize must be a positive integer');

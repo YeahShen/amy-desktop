@@ -1,10 +1,20 @@
-export function createTrackedPromise<T>(
-  executor: (
-    resolve: (value: T | PromiseLike<T>) => void,
-    reject: (reason?: any) => void,
-  ) => void,
-) {
-  let status: 'pending' | 'fulfilled' | 'rejected' = 'pending';
+export type PromiseStatus = 'pending' | 'fulfilled' | 'rejected';
+
+export type Executor<T> = (
+  resolve: (value: T | PromiseLike<T>) => void,
+  reject: (reason?: any) => void,
+) => void;
+
+export type TrackedPromise<T> = {
+  promise: Promise<T>;
+  getStatus: () => PromiseStatus;
+  getValue: () => T | null;
+  getReason: () => any;
+  getExecutor: () => Executor<T>;
+};
+
+export function createTrackedPromise<T>(executor: Executor<T>): TrackedPromise<T> {
+  let status: PromiseStatus = 'pending';
   let value: T | null = null;
   let reason: any = null;
 
@@ -33,5 +43,6 @@ export function createTrackedPromise<T>(
     getStatus: () => status, // 同步获取：'pending' | 'fulfilled' | 'rejected'
     getValue: () => value,
     getReason: () => reason,
+    getExecutor: () => executor,
   };
 }
