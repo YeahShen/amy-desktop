@@ -89,4 +89,14 @@ describe('createTrackedPromise', () => {
     const result = await promise;
     expect(result).toBe(7);
   });
+
+  it('should return the same promise instance with same executor', async () => {
+    const { promise, getExecutor } = createTrackedPromise<number>((resolve) => resolve(7));
+
+    const { promise: p2 } = createTrackedPromise(getExecutor());
+    const r1 = await promise;
+    const r2 = await p2;
+
+    expect(r1).eq(r2);
+  });
 });

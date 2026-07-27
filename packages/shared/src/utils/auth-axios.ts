@@ -1,20 +1,4 @@
-import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
-
-import axiosRetry from 'axios-retry';
-
-axiosRetry(axios, {
-  retries: 10,
-  retryDelay: (retryCount) => {
-    console.log('XXXXXX', retryCount);
-
-    return retryCount * 1000;
-  },
-});
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 // ============ 类型定义 ============
 interface ResponseData<T = any> {
