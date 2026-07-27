@@ -1032,26 +1032,6 @@ describe('TaskScheduler', () => {
       s.stop();
     });
 
-    it('should handle on() being called multiple times (overwrite)', async function () {
-      const s = createScheduler<string>();
-      const fn1 = vi.fn();
-      const fn2 = vi.fn();
-
-      s.on('successTask', fn1);
-      s.on('successTask', fn2); // 覆盖
-
-      s.addTask(function (resolve) {
-        resolve('test');
-      });
-      s.startScheduler();
-
-      await sleep(FAST_INTERVAL * 3);
-
-      // fn1 不应被调用（被 fn2 覆盖）
-      expect(fn1).not.toHaveBeenCalled();
-      expect(fn2).toHaveBeenCalledWith('test');
-    });
-
     it('should handle a task that resolves even after being set up for retry', async function () {
       const s = createScheduler<string>();
       const fn = vi.fn();

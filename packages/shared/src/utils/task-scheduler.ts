@@ -29,6 +29,8 @@ class TaskScheduler<T> {
   private single = true;
   private counter = new Map<string, number>();
 
+  private totalTaskNum = 0;
+
   private event: ScheduleEvent<T> = {};
 
   private _status: SchedulerStatus = 'idle';
@@ -82,6 +84,7 @@ class TaskScheduler<T> {
   }
 
   addTask(task: TrackedPromiseExecutor<T>) {
+    this.totalTaskNum = this.totalTaskNum + 1;
     this.tasks.push(() => createTrackedPromise(task));
   }
 
@@ -118,6 +121,11 @@ class TaskScheduler<T> {
           }
         }
       }
+
+      const rate =
+        this.totalTaskNum > 0 ? (this.totalTaskNum - this.tasks.length) / this.totalTaskNum : 0;
+
+      this.event['progressRate']?.(rate);
     }, this.loopInterval);
   }
 

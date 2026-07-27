@@ -28,12 +28,18 @@ export function fileChunk(filePath: string, chunkSize: number) {
     }
 
     const start = (index - 1) * chunkSize;
-    const end = start + chunkSize - 1;
+    let end;
+
+    if (index === totalChunk) {
+      end = getFileSize(filePath) - 1;
+    } else {
+      end = start + chunkSize - 1;
+    }
 
     return fs.createReadStream(filePath, {
       start,
       end,
-      highWaterMark: end - start + 2,
+      highWaterMark: chunkSize,
     });
   }
 

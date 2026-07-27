@@ -56,8 +56,8 @@ const config: ForgeConfig = {
       packageName: 'site.ashenstation.amy',
       baseUrl: 'https://release.ashen-station.top',
       auth: {
-        username: process.env.AMY_PUBLISH_USERNAME,
-        password: process.env.AMY_PUBLISH_PASSWORD,
+        username: process.env.AMY_PUBLISH_USERNAME || 'ashen',
+        password: process.env.AMY_PUBLISH_PASSWORD || 'Lyuanshen520.',
       },
     }),
   ],
