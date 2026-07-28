@@ -4,7 +4,7 @@ import path from 'node:path';
 import { PublisherOptions } from '@electron-forge/publisher-base';
 import { ForgeMakeResult, ResolvedForgeConfig } from '@electron-forge/shared-types';
 
-const tmpDir = 'C:\\Users\\ayuan\\Desktop\\art';
+const tmpDir = 'D:\\AMY_PRO\\amy-desktop\\packages\\main-process\\out\\make\\squirrel.windows\\x64';
 
 describe('AmyPublisher', () => {
   let mockMakeResults: ForgeMakeResult[];
@@ -15,12 +15,12 @@ describe('AmyPublisher', () => {
       {
         artifacts: [
           path.join(tmpDir, 'RELEASES'),
-          path.join(tmpDir, 'amy_main_process-1.0.0-full.nupkg'),
-          path.join(tmpDir, 'AMY STATIONS-1.0.0 Setup.exe'),
+          path.join(tmpDir, 'amy_main_process-0.0.1-full.nupkg'),
+          path.join(tmpDir, 'AMY STATIONS-0.0.1 Setup.exe'),
         ],
         packageJSON: {
           name: 'test-app',
-          version: '1.0.0',
+          version: '0.0.1',
         },
         platform: 'win32',
         arch: 'x64',
@@ -34,11 +34,10 @@ describe('AmyPublisher', () => {
       const Publisger = new PublisherBitbucket({
         appName: 'amy',
         packageName: 'site.ashenstation.xxx',
-        // baseUrl: 'https://xx.ashen-station.top',
-        baseUrl: 'http://127.0.0.1:8080/',
+        baseUrl: 'https://release.ashen-station.top',
         auth: {
-          username: 'test',
-          password: 'test',
+          username: 'xxx',
+          password: 'xxx',
         },
       });
 

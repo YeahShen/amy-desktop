@@ -1,9 +1,7 @@
-name: Publish Package
+name: Publish Application
 
 on:
   push:
-    branches:
-      - master # 当推送到 main 分支时触发
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
@@ -15,20 +13,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
+          cache: 'pnpm'
 
-      # 3. 安装依赖
-      - name: Install pnpm
-        run: npm i -g pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      # 4. 执行 Electron Forge 打包
-      - name: Install depan
-        run: pnpm install
-
-      - name: publish
+      - name: Publish
         run: pnpm run publish
         env:
           AMY_PUBLISH_USERNAME: ${{ secrets.AMY_PUBLISH_USERNAME }}
