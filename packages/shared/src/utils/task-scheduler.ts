@@ -123,7 +123,9 @@ class TaskScheduler<T> {
       }
 
       const rate =
-        this.totalTaskNum > 0 ? (this.totalTaskNum - this.tasks.length) / this.totalTaskNum : 0;
+        this.totalTaskNum > 0
+          ? (this.totalTaskNum - (this.tasks.length + this.executing.length)) / this.totalTaskNum
+          : 0;
 
       this.event['progressRate']?.(rate);
     }, this.loopInterval);

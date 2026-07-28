@@ -3,11 +3,11 @@ import type { ForgeListrTaskDefinition } from '@electron-forge/shared-types';
 import type { PublisherBitbucketConfig } from './config.js';
 import path from 'node:path';
 import fs from 'node:fs';
-import { makeZip } from './helper';
 
 import FormData from 'form-data';
 
-import { createAuthAxios, fileChunk, TaskScheduler } from '@amy/shared';
+import { createAuthAxios, fileChunk, TaskScheduler, makeZip } from '@amy/shared';
+import { AxiosInstance } from 'axios';
 
 const chunkSize = 1048576;
 
@@ -78,13 +78,59 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
 
       const { data: id } = await authAxios.post<string>('/api/archive/pre-publish', prePublishData);
 
+      await this.uploadScheduler(getChunk, totalChunk, id, authAxios, setStatusLine);
+
+      await new Promise(async (resolve) => {
+        const { data } = await authAxios<{ intact: boolean; loseChunks: number[] }>(
+          '/api/archive/checkout-chunks',
+          {
+            method: 'get',
+            params: {
+              id,
+            },
+          },
+        );
+
+        if (data.intact) resolve(true);
+        else {
+          this.uploadScheduler(getChunk, totalChunk, id, authAxios, setStatusLine).then(resolve);
+        }
+      });
+
+      fs.unlinkSync(artifactZip);
+
+      try {
+        await authAxios.get('/api/archive/finish', {
+          params: {
+            id,
+          },
+        });
+
+        setStatusLine('发布完成');
+      } catch (e: any) {
+        console.log({ ...e });
+
+        throw new Error('发布失败，cause：' + e.message);
+      }
+    }
+  }
+
+  uploadScheduler(
+    getChunk: (index: number) => fs.ReadStream,
+    totalChunk: number,
+    id: string,
+    authAxios: AxiosInstance,
+    setStatusLine: (msg: string) => void,
+  ) {
+    return new Promise((resolve) => {
       const scheduler = new TaskScheduler<UploadChunkResult>({
         sameTimeTask: 10,
         loopInterval: 100,
+        retries: 5,
       });
 
       for (let i = 1; i <= totalChunk; i++) {
-        scheduler.addTask(function (resolve, reject) {
+        scheduler.addTask(function (r1, r2) {
           const chunk = getChunk(i);
 
           const form = new FormData();
@@ -98,28 +144,20 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
                 ...form.getHeaders(),
               },
             })
-            .then(({ data }) => resolve(data))
-            .catch((err) => reject({ err: err }));
+            .then(({ data }) => r1(data))
+            .catch((err) => r2({ err: err }));
         });
       }
 
-      await new Promise((resolve) => {
-        scheduler.on('over', () => {
-          resolve(true);
-        });
-
-        scheduler.on('progressRate', (rate) => {
-          setStatusLine('文件上传进度: ' + Math.floor(Number(rate.toFixed(4)) * 100) + '%');
-        });
-
-        scheduler.on('failTask', (res) => {
-          console.log(res);
-        });
-
-        scheduler.startScheduler();
+      scheduler.on('over', () => {
+        resolve(true);
       });
 
-      fs.unlinkSync(artifactZip);
-    }
+      scheduler.on('progressRate', (rate) => {
+        setStatusLine('文件上传进度: ' + Math.floor(Number(rate.toFixed(4)) * 100) + '%');
+      });
+
+      scheduler.startScheduler();
+    });
   }
 }

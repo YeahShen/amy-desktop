@@ -16,6 +16,7 @@
     "vitest": "^2.1.9"
   },
   "dependencies": {
+    "archiver": "^8.0.0",
     "axios": "^1.18.1",
     "uuid": "^14.0.1"
   }
