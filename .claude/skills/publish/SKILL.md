@@ -47,14 +47,31 @@ parameters:
 
 ### 4. 创建标签
 
-- 若 `message` 不为空，创建附注标签：
-  ```bash
-  git tag -a {{tag_name}} -m "{{message}}"
-  ```
-- 若 `message` 为空，创建附注标签（以 tag_name 作为默认注释）：
-  ```bash
-  git tag -a {{tag_name}} -m "{{tag_name}}"
-  ```
+1. 先检查标签是否已存在：
+
+   ```bash
+   git tag -l {{tag_name}}
+   git ls-remote --tags origin {{tag_name}}
+   ```
+
+2. 若标签已存在，先删除本地和远程标签：
+
+   ```bash
+   git tag -d {{tag_name}}
+   git push origin --delete {{tag_name}}
+   ```
+
+   删除成功后输出提示：`⚠ 已删除已存在的标签 {{tag_name}}（本地 + 远程）`
+
+3. 创建新标签：
+   - 若 `message` 不为空，创建附注标签：
+     ```bash
+     git tag -a {{tag_name}} -m "{{message}}"
+     ```
+   - 若 `message` 为空，创建附注标签（以 tag_name 作为默认注释）：
+     ```bash
+     git tag -a {{tag_name}} -m "{{tag_name}}"
+     ```
 
 ### 5. 推送标签
 
@@ -89,7 +106,6 @@ git push origin {{tag_name}}
 - 未连接到远程仓库
 - 远程仓库拒绝推送（权限问题或冲突）
 - 网络连接失败
-- 标签已存在
 ```
 
 ## 注意事项
