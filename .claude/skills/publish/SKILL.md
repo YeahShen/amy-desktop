@@ -25,19 +25,25 @@ parameters:
 - 检查工作区状态：`git status --porcelain`
 - 确认远程仓库 origin 存在：`git remote get-url origin`
 
-### 2. 处理未提交变更
+### 2. 同步版本号
 
-如果工作区有未提交的变更：
+发布前需要同步以下两个文件的 `version` 字段，确保它们与 `tag_name`（去掉 `v` 前缀）一致：
 
-1. 先检查 `package.json` 中的 `version` 字段是否与 `tag_name`（去掉 `v` 前缀）一致
-2. 如果不一致，自动更新 `package.json` 的 `version` 字段
-3. 执行提交和推送：
+- `package.json` — 根包版本号
+- `packages/main-process/package.json` — Electron 主进程包版本号（Electron Forge publish 实际使用此版本）
+
+执行逻辑：
+
+1. 逐个检查两个文件的 `version` 字段是否为 `{{version}}`
+2. 将不一致的文件更新为 `{{version}}`
+3. 无论之前是否有未提交变更，版本号更新后统一提交：
    ```bash
    git add -A
    git commit -m "chore: bump version to {{version}}"
    git push
    ```
-4. 如果版本号已经一致，但有其他未提交变更，提示用户先处理（手动提交或暂存）
+4. 如果两个文件的版本号都已一致，但有其他未提交变更，提示用户先处理（手动提交或暂存）
+5. 如果版本号已一致且工作区干净，跳过此步骤
 
 ### 3. 切换到 master 并同步
 
@@ -90,7 +96,7 @@ git push origin {{tag_name}}
 
 - 分支: master
 - 标签: v0.0.2
-- 版本号: 0.0.2 (已同步 package.json)
+- 版本号: 0.0.2 (已同步 package.json + packages/main-process/package.json)
 - 提交: chore: bump version to 0.0.2
 - 推送: 已完成
 ```
@@ -110,7 +116,8 @@ git push origin {{tag_name}}
 
 ## 注意事项
 
-1. 发布前会自动同步 `package.json` 中的 `version` 字段与标签版本号
-2. 标签名称必须符合 `v*` 格式（如 v1.0.0），才能触发 GitHub Actions 发布工作流
-3. 标签推送后，CI 会自动执行 `pnpm run publish`，需要 `AMY_PUBLISH_USERNAME` 和 `AMY_PUBLISH_PASSWORD` secrets 已配置
-4. 不要在非 master 分支上执行此操作
+1. 发布前会自动同步 `package.json` 和 `packages/main-process/package.json` 中的 `version` 字段与标签版本号
+2. `packages/main-process/package.json` 的版本是 Electron Forge 实际使用的发布版本号，必须同步
+3. 标签名称必须符合 `v*` 格式（如 v1.0.0），才能触发 GitHub Actions 发布工作流
+4. 标签推送后，CI 会自动执行 `pnpm run publish`，需要 `AMY_PUBLISH_USERNAME` 和 `AMY_PUBLISH_PASSWORD` secrets 已配置
+5. 不要在非 master 分支上执行此操作
