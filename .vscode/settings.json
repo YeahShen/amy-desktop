@@ -35,5 +35,17 @@
   },
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/out": true,
+    "**/.vite": true,
+    "**/.nuxt": true,
+    "**/.output": true,
+    "**/dist": true
   }
 }

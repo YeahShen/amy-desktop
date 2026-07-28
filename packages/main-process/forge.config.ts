@@ -8,7 +8,6 @@ import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { serialHooks } from '@electron/packager';
 import { PublisherBitbucket } from '@amy/publisher';
-
 import dotenv from 'dotenv';
 import fs from 'node:fs';
 import fse from 'fs-extra';
@@ -21,11 +20,15 @@ dotenv.config({ path: path.resolve(process.cwd(), '..', '..', `.env.${model}`) }
 
 const appName = process.env.APP_NAME;
 
+const assetsPath = (_path: string) => {
+  return path.resolve(process.cwd(), '../shared/src/assets', _path);
+};
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     name: appName,
-    icon: '../assets/icon/favicon',
+    icon: path.resolve(process.cwd(), assetsPath('icon/favicon.ico')),
     afterCopy: [
       serialHooks([
         async (buildPath: string) => {
@@ -56,12 +59,21 @@ const config: ForgeConfig = {
       packageName: 'site.ashenstation.amy',
       baseUrl: 'https://release.ashen-station.top',
       auth: {
-        username: process.env.AMY_PUBLISH_USERNAME || 'ashen',
-        password: process.env.AMY_PUBLISH_PASSWORD || 'Lyuanshen520.',
+        username: process.env.AMY_PUBLISH_USERNAME,
+        password: process.env.AMY_PUBLISH_PASSWORD,
       },
     }),
   ],
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({
+      setupIcon: path.resolve(process.cwd(), assetsPath('icon/favicon.ico')),
+      iconUrl: 'https://cdn.jsdelivr.net/gh/YeahShen/static-assets@v1.0.0/icons/favicon.ico',
+      copyright: `Copyright © ${new Date().getFullYear()} AMY`,
+    }),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({}),
+  ],
   plugins: [
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.

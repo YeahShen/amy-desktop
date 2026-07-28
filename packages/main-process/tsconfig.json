@@ -7,6 +7,6 @@
     "moduleResolution": "bundler",
     "types": ["node"]
   },
-  "include": ["types/**/*.d.ts", "app/**/*.ts"],
+  "include": ["types/*.d.ts", "src/**/*.ts"],
   "exclude": []
 }

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 // ============ 类型定义 ============
 interface ResponseData<T = any> {
@@ -13,9 +13,6 @@ export function createAuthAxios(baseUrl: string, getAuthTokenFn: getAuthTokenFn)
   const service: AxiosInstance = axios.create({
     baseURL: baseUrl,
     timeout: 60000,
-    headers: {
-      // 'Content-Type': 'application/json',
-    },
   });
 
   service.interceptors.request.use(

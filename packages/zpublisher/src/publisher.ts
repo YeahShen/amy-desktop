@@ -76,15 +76,7 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
         totalChunks: String(totalChunk),
       };
 
-      let id: string = '';
-
-      try {
-        const { data } = await authAxios.post<string>('/api/archive/pre-publish', prePublishData);
-
-        id = data;
-      } catch (e: any) {
-        console.log(e);
-      }
+      const { data: id } = await authAxios.post<string>('/api/archive/pre-publish', prePublishData);
 
       await this.uploadScheduler(getChunk, totalChunk, id, authAxios, setStatusLine);
 

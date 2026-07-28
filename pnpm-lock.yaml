@@ -45,6 +45,9 @@ importers:
       '@amy/publisher':
         specifier: workspace:*
         version: link:../zpublisher
+      '@amy/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@electron-forge/cli':
         specifier: ^7.11.2
         version: 7.11.2(encoding@0.1.13)(esbuild@0.28.1)
