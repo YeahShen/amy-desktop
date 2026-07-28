@@ -18,7 +18,7 @@ const model = process.env.NODE_ENV;
 dotenv.config({ path: path.resolve(process.cwd(), '..', '..', '.env') });
 dotenv.config({ path: path.resolve(process.cwd(), '..', '..', `.env.${model}`) });
 
-const appName = process.env.APP_NAME;
+const appName = process.env.AMY_APP_NAME;
 
 const assetsPath = (_path: string) => {
   return path.resolve(process.cwd(), '../shared/src/assets', _path);
