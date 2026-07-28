@@ -17,7 +17,7 @@ const createWindow = () => {
     },
   });
 
-  mainWindow.loadURL('https://www.baidu.com/');
+  mainWindow.loadURL('https://zhuanlan.zhihu.com/');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
