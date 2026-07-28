@@ -11,10 +11,6 @@ parameters:
     type: string
     description: 要创建的标签名称，例如 v1.0.0
     required: true
-  message:
-    type: string
-    description: 标签的注释信息（可选，不填则创建轻量标签）
-    required: false
 ---
 
 ## 执行流程
@@ -69,12 +65,44 @@ parameters:
 
    删除成功后输出提示：`⚠ 已删除已存在的标签 {{tag_name}}（本地 + 远程）`
 
-3. 创建新标签：
-   - 若 `message` 不为空，创建附注标签：
+3. 自动生成 tag message — 收集上一 tag 到 HEAD 之间的提交记录：
+
+   a. 获取上一个 tag：
+
+   ```bash
+   # 尝试从本地获取最新的 v* 标签
+   git describe --tags --abbrev=0 --match "v*" 2>/dev/null
+   # 如果本地没有，从远程拉取
+   git fetch --tags origin 2>/dev/null
+   # 再次尝试获取
+   git describe --tags --abbrev=0 --match "v*" 2>/dev/null
+   ```
+
+   b. 获取两个版本之间的提交记录：
+
+   ```bash
+   git log {{上一个tag}}..HEAD --oneline --no-merges
+   ```
+
+   c. 提取关键信息，去掉 emoji 和 conventional commit 前缀（`feat:` `fix:` `chore:` `docs:` `refactor:` `style:` `test:` `perf:` `revert:` `ci:` `build:`），保留核心描述。
+
+   d. 按序号格式化 tag message：
+
+   ```
+   1. 提交描述1
+   2. 提交描述2
+   3. ...
+   ```
+
+   排除版本号更新类提交（如 `chore: bump version to x.x.x`）。
+
+4. 用生成的 message 创建附注标签：
+
+   - 如果过滤后有有效的提交描述：
      ```bash
-     git tag -a {{tag_name}} -m "{{message}}"
+     git tag -a {{tag_name}} -m "{{生成的message}}"
      ```
-   - 若 `message` 为空，创建附注标签（以 tag_name 作为默认注释）：
+   - 如果过滤后无有效提交（只有版本号更新等被排除的提交），不添加 message：
      ```bash
      git tag -a {{tag_name}} -m "{{tag_name}}"
      ```
