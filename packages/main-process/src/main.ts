@@ -4,6 +4,8 @@ import started from 'electron-squirrel-startup';
 import { checkForUpdate } from './updater';
 import { checkFullScreen } from './utils/check-full-screen';
 
+import log from 'electron-log';
+
 app.commandLine.appendSwitch('--ignore-certificate-errors-spki-list');
 app.commandLine.appendSwitch('--no-proxy-server');
 app.commandLine.appendSwitch('enable-experimental-web-platform-features');
@@ -15,8 +17,6 @@ app.commandLine.appendSwitch('ignore-certificate-errors');
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 checkForUpdate();
-
-checkFullScreen();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -43,11 +43,12 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 
-app.on('ready', () => {
+app.on('ready', async () => {
+  const { isAnyAppFullScreen } = await checkFullScreen();
   createWindow();
 
   setInterval(() => {
-    // console.log('fff', isAnyAppFullScreen());
+    log.info('fff', isAnyAppFullScreen());
   }, 1000);
 });
 
