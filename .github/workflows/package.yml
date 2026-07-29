@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
+      - name: Publish
+        run: pnpm run package
+
       # 5. 上传生成的安装包/产物到 GitHub Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
