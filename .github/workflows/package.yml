@@ -11,26 +11,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. 检出仓库代码
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. 配置 Node.js 环境
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '22.x'
+          cache: 'pnpm'
 
-      # 3. 安装依赖
-      - name: Install pnpm
-        run: npm i -g pnpm
+      - name: Configure Git to use HTTPS
+        run: |
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+        shell: bash # 或 pwsh，Windows 也支持 git config
 
-      # 4. 执行 Electron Forge 打包
-      - name: Install depan
-        run: pnpm install
-
-      - name: package
-        run: pnpm make
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
       # 5. 上传生成的安装包/产物到 GitHub Artifacts
       - name: Upload Artifacts
