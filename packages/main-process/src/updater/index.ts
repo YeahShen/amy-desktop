@@ -1,16 +1,7 @@
-// import { app, autoUpdater, dialog, Event } from 'electron';
-
-// class Updater {
-//   constructor() {}
-// }
-
-// export { Updater };
-
-import process from 'node:process';
+import { updateElectronApp, UpdateSourceType } from './updater';
 import log from 'electron-log';
-import { updateElectronApp, UpdateSourceType } from 'update-electron-app';
 
-const upgradeUrl = `https://release.ashen-station.top/app/AMY STATIONS/`;
+const upgradeUrl = `http://47.112.7.167:8090/app/AMY STATIONS/`;
 
 export function checkForUpdate() {
   updateElectronApp({
