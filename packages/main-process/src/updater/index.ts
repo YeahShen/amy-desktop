@@ -1,7 +1,7 @@
 import { updateElectronApp, UpdateSourceType } from './updater';
 import log from 'electron-log';
 
-const upgradeUrl = `http://47.112.7.167:8090/app/AMY STATIONS/`;
+const upgradeUrl = `https://release.ashen-station.top/app/AMY STATIONS/`;
 
 export function checkForUpdate() {
   updateElectronApp({
