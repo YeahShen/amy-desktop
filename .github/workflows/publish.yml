@@ -22,6 +22,12 @@ jobs:
           node-version: '22.x'
           cache: 'pnpm'
 
+      - name: Configure Git to use HTTPS
+        run: |
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+        shell: bash # 或 pwsh，Windows 也支持 git config
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
