@@ -33,7 +33,7 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Publish
-        run: pnpm run package
+        run: pnpm run make
 
       # 5. 上传生成的安装包/产物到 GitHub Artifacts
       - name: Upload Artifacts
