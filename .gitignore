@@ -8,6 +8,9 @@ build/
 out/
 *.tsbuildinfo
 .nuxt/
+.output/
+dist/
+out/
 
 .idea/
 *.swp

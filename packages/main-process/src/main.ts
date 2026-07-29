@@ -20,7 +20,7 @@ const createWindow = () => {
     },
   });
 
-  mainWindow.loadURL('https://zhuanlan.zhihu.com/');
+  mainWindow.loadURL('https://www.baidu.com/');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
