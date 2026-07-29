@@ -6,5 +6,13 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-
+  const HANDLE_EVENT: typeof import('../src/ipc-event/channels').HANDLE_EVENT
+  const ON_EVENT: typeof import('../src/ipc-event/channels').ON_EVENT
+  const SEND_EVENT: typeof import('../src/ipc-event/channels').SEND_EVENT
+}
+// for type re-export
+declare global {
+  // @ts-ignore
+  export type { ON_EVENT, HANDLE_EVENT, SEND_EVENT, OnEventChannels, HandleEventChannels, SendEventChannels } from '../src/ipc-event/channels'
+  import('../src/ipc-event/channels')
 }

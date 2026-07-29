@@ -1,3 +1,10 @@
 {
-  "globals": {}
+  "globals": {
+    "HANDLE_EVENT": "readonly",
+    "HandleEventChannels": "readonly",
+    "ON_EVENT": "readonly",
+    "OnEventChannels": "readonly",
+    "SEND_EVENT": "readonly",
+    "SendEventChannels": "readonly"
+  }
 }

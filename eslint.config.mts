@@ -58,6 +58,11 @@ export default (async function () {
       },
     },
 
+    {
+      files: ['packages/main-process/app/**/*.ts'],
+      extends: ['./packages/main-process/.eslintrc-auto-import.json'],
+    },
+
     ...rendererProcessConfig,
     eslintConfigPrettier,
   ]);
