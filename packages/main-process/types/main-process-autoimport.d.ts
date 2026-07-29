@@ -9,6 +9,8 @@ declare global {
   const HANDLE_EVENT: typeof import('../src/ipc-event/channels').HANDLE_EVENT
   const ON_EVENT: typeof import('../src/ipc-event/channels').ON_EVENT
   const SEND_EVENT: typeof import('../src/ipc-event/channels').SEND_EVENT
+  const checkFullScreen: typeof import('../src/utils/check-full-screen').checkFullScreen
+  const isAnyAppFullScreen: typeof import('../src/utils/check-full-screen').isAnyAppFullScreen
 }
 // for type re-export
 declare global {

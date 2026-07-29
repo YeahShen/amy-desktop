@@ -5,6 +5,7 @@
     "ON_EVENT": "readonly",
     "OnEventChannels": "readonly",
     "SEND_EVENT": "readonly",
-    "SendEventChannels": "readonly"
+    "SendEventChannels": "readonly",
+    "checkFullScreen": "readonly"
   }
 }

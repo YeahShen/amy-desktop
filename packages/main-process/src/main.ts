@@ -1,9 +1,22 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { checkForUpdate } from './updater';
+import { checkFullScreen } from './utils/check-full-screen';
+
+app.commandLine.appendSwitch('--ignore-certificate-errors-spki-list');
+app.commandLine.appendSwitch('--no-proxy-server');
+app.commandLine.appendSwitch('enable-experimental-web-platform-features');
+app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+
+app.commandLine.appendSwitch('ignore-certificate-errors');
+
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 checkForUpdate();
+
+checkFullScreen();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -29,7 +42,14 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+
+app.on('ready', () => {
+  createWindow();
+
+  setInterval(() => {
+    // console.log('fff', isAnyAppFullScreen());
+  }, 1000);
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

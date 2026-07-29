@@ -36,6 +36,13 @@ const config: ForgeConfig = {
           const dest = path.resolve(buildPath, '.vite/renderer');
           await fse.copy(renderer, dest);
 
+          const koffiScript = assetsPath('scripts/koffi.cjs');
+
+          const scriptDest = path.resolve(buildPath, '.vite/scripts');
+          fs.mkdirSync(scriptDest);
+
+          await fse.copyFile(koffiScript, path.resolve(scriptDest, 'koffi.cjs'));
+
           const appJSON = JSON.parse(
             fs.readFileSync(path.resolve(buildPath, 'package.json'), { encoding: 'utf-8' }),
           );
