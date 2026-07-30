@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import json from '@eslint/json';
@@ -27,6 +30,13 @@ export default (async function () {
       files,
     };
   });
+
+  async function getMainProcessAutoImportConfig() {
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const configPath = resolve(__dirname, 'packages/main-process/.eslintrc-auto-import.json');
+    const content = await readFile(configPath, 'utf-8');
+    return JSON.parse(content);
+  }
 
   return defineConfig([
     // 全局忽略：根目录及所有子项目的 node_modules
@@ -60,7 +70,9 @@ export default (async function () {
 
     {
       files: ['packages/main-process/app/**/*.ts'],
-      extends: ['./packages/main-process/.eslintrc-auto-import.json'],
+      languageOptions: {
+        globals: (await getMainProcessAutoImportConfig()).globals,
+      },
     },
 
     ...rendererProcessConfig,
