@@ -1,11 +1,29 @@
 {
   "globals": {
+    "AMY_COLOR_KEY": "readonly",
     "HANDLE_EVENT": "readonly",
+    "HTML_URL": "readonly",
     "HandleEventChannels": "readonly",
+    "MAIN_WINDOW_BOUNDS": "readonly",
     "ON_EVENT": "readonly",
     "OnEventChannels": "readonly",
     "SEND_EVENT": "readonly",
+    "SYSTEM_COLOR_KEY": "readonly",
     "SendEventChannels": "readonly",
-    "checkFullScreen": "readonly"
+    "buildWindowUrl": "readonly",
+    "checkFullScreen": "readonly",
+    "createFrameWindow": "readonly",
+    "createHomeWindow": "readonly",
+    "createLoginWindow": "readonly",
+    "getFileType": "readonly",
+    "getHomeWindow": "readonly",
+    "getLoginWindow": "readonly",
+    "handleSquirrelEvent": "readonly",
+    "initColorMode": "readonly",
+    "isDark": "readonly",
+    "isPathExists": "readonly",
+    "isPathHidden": "readonly",
+    "loggedIn": "readonly",
+    "windowArgs": "readonly"
   }
 }

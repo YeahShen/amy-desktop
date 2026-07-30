@@ -6,11 +6,30 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const AMY_COLOR_KEY: typeof import('../src/utils/constants').AMY_COLOR_KEY
   const HANDLE_EVENT: typeof import('../src/ipc-event/channels').HANDLE_EVENT
+  const HTML_URL: typeof import('../src/utils/constants').HTML_URL
+  const MAIN_WINDOW_BOUNDS: typeof import('../src/utils/constants').MAIN_WINDOW_BOUNDS
   const ON_EVENT: typeof import('../src/ipc-event/channels').ON_EVENT
   const SEND_EVENT: typeof import('../src/ipc-event/channels').SEND_EVENT
+  const SYSTEM_COLOR_KEY: typeof import('../src/utils/constants').SYSTEM_COLOR_KEY
+  const buildWindowUrl: typeof import('../src/utils/window').buildWindowUrl
   const checkFullScreen: typeof import('../src/utils/check-full-screen').checkFullScreen
+  const createFrameWindow: typeof import('../src/utils/window').createFrameWindow
+  const createHomeWindow: typeof import('../src/windows/home').createHomeWindow
+  const createLoginWindow: typeof import('../src/windows/login').createLoginWindow
+  const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
+  const getFileType: typeof import('../src/utils/send.utils').getFileType
+  const getHomeWindow: typeof import('../src/windows/home').getHomeWindow
+  const getLoginWindow: typeof import('../src/windows/login').getLoginWindow
+  const handleSquirrelEvent: typeof import('../src/utils/squirrel').handleSquirrelEvent
+  const initColorMode: typeof import('../src/utils/color-mode').initColorMode
   const isAnyAppFullScreen: typeof import('../src/utils/check-full-screen').isAnyAppFullScreen
+  const isDark: typeof import('../src/utils/color-mode').isDark
+  const isPathExists: typeof import('../src/utils/send.utils').isPathExists
+  const isPathHidden: typeof import('../src/utils/send.utils').isPathHidden
+  const loggedIn: typeof import('../src/utils/window').loggedIn
+  const windowArgs: typeof import('../src/utils/window').windowArgs
 }
 // for type re-export
 declare global {

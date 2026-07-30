@@ -1,9 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <div>login</div>
 </template>
 
 <style lang="scss"></style>

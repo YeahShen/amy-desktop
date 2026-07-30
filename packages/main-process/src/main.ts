@@ -1,10 +1,7 @@
-import { app, BrowserWindow, screen } from 'electron';
-import path from 'node:path';
-import started from 'electron-squirrel-startup';
+import process from 'node:process';
+import { app } from 'electron';
 import { checkForUpdate } from './updater';
-import { checkFullScreen } from './utils/check-full-screen';
-
-import log from 'electron-log';
+import { createServer } from './server';
 
 app.commandLine.appendSwitch('--ignore-certificate-errors-spki-list');
 app.commandLine.appendSwitch('--no-proxy-server');
@@ -16,68 +13,44 @@ app.commandLine.appendSwitch('ignore-certificate-errors');
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
-checkForUpdate();
+const gotTheLock = app.requestSingleInstanceLock();
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (started) {
+const actionArgs = process.argv;
+
+if (!gotTheLock) {
   app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (actionArgs.length === 1) {
+      const loginWindow = getLoginWindow();
+      const home = getHomeWindow();
+      if (home) {
+        home?.show();
+      } else if (loginWindow) {
+        if (loginWindow.isMinimized()) {
+          loginWindow.restore();
+        }
+        loginWindow.focus();
+      }
+    }
+  });
 }
 
-const createWindow = () => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-    },
-  });
+app.whenReady().then(async () => {
+  const squirreling = await handleSquirrelEvent();
 
-  mainWindow.loadURL('https://www.baidu.com/');
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-};
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-
-app.on('ready', async () => {
-  // const { isAnyAppFullScreen } = await checkFullScreen();
-  createWindow();
-
-  checkFullScreen()
-    .then(({ isAnyAppFullScreen }) => {
-      log.info('fff', isAnyAppFullScreen());
-      console.log(isAnyAppFullScreen());
-    })
-    .catch((err) => {
-      console.log(err);
-      log.info('ee', err);
-    });
-
-  // setInterval(() => {
-  //   log.info('fff', isAnyAppFullScreen());
-  // }, 1000);
-});
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
+  if (squirreling) {
+    return;
   }
-});
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+  if (!gotTheLock) {
+    return;
   }
-});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+  if (app.isPackaged) {
+    checkForUpdate();
+    createServer();
+  }
+
+  createLoginWindow();
+});
