@@ -1,13 +1,10 @@
 import { app } from 'electron';
 import path from 'node:path';
 
-import log from 'electron-log';
-
 export async function checkFullScreen() {
   const koffi = await new Promise<typeof import('koffi')>((resolve) => {
     if (app.isPackaged) {
-      log.info(require(path.resolve(app.getAppPath(), '.vite/scripts/koffi.cjs')));
-      resolve(require(path.resolve(app.getAppPath(), '.vite/scripts/koffi.cjs')));
+      resolve(require(path.resolve(app.getAppPath(), '..', 'koffi/index.cjs')));
     } else {
       import('koffi').then((res) => {
         resolve(res);

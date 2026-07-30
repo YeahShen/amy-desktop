@@ -44,12 +44,22 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 
 app.on('ready', async () => {
-  const { isAnyAppFullScreen } = await checkFullScreen();
+  // const { isAnyAppFullScreen } = await checkFullScreen();
   createWindow();
 
-  setInterval(() => {
-    log.info('fff', isAnyAppFullScreen());
-  }, 1000);
+  checkFullScreen()
+    .then(({ isAnyAppFullScreen }) => {
+      log.info('fff', isAnyAppFullScreen());
+      console.log(isAnyAppFullScreen());
+    })
+    .catch((err) => {
+      console.log(err);
+      log.info('ee', err);
+    });
+
+  // setInterval(() => {
+  //   log.info('fff', isAnyAppFullScreen());
+  // }, 1000);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
