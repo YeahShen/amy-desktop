@@ -15,7 +15,7 @@ export function createServer() {
   server.use(router.routes()).use(router.allowedMethods());
 
   server.use(
-    serve(path.resolve(app.getAppPath(), '..', 'renderer'), {
+    serve(path.resolve(app.getAppPath(), '..', 'public'), {
       brotli: true,
     }),
   );

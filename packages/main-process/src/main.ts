@@ -2,6 +2,7 @@ import process from 'node:process';
 import { app } from 'electron';
 import { checkForUpdate } from './updater';
 import { createServer } from './server';
+import { isLogin } from './stores/auth';
 
 app.commandLine.appendSwitch('--ignore-certificate-errors-spki-list');
 app.commandLine.appendSwitch('--no-proxy-server');
@@ -50,6 +51,8 @@ app.whenReady().then(async () => {
   if (app.isPackaged) {
     checkForUpdate();
     createServer();
+
+    (await isLogin()) ? createHomeWindow() : createLoginWindow();
   }
 
   createLoginWindow();

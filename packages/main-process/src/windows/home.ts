@@ -6,10 +6,10 @@ export async function createHomeWindow() {
   const dark = await isDark();
 
   const win = (homeWindow = createFrameWindow({
-    width: 1080,
-    height: 658,
-    minWidth: 1080,
-    minHeight: 658,
+    width: getRuntimeConfigItem('homeSize.width'),
+    height: getRuntimeConfigItem('homeSize.width'),
+    minWidth: HOME_WINDOW_BASE_SIZE.width,
+    minHeight: HOME_WINDOW_BASE_SIZE.heiht,
     resizable: true,
     fullscreenable: true,
     maximizable: true,

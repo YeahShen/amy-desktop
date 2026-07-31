@@ -8,6 +8,7 @@ export {}
 declare global {
   const AMY_COLOR_KEY: typeof import('../src/utils/constants').AMY_COLOR_KEY
   const HANDLE_EVENT: typeof import('../src/ipc-event/channels').HANDLE_EVENT
+  const HOME_WINDOW_BASE_SIZE: typeof import('../src/utils/constants').HOME_WINDOW_BASE_SIZE
   const HTML_URL: typeof import('../src/utils/constants').HTML_URL
   const MAIN_WINDOW_BOUNDS: typeof import('../src/utils/constants').MAIN_WINDOW_BOUNDS
   const ON_EVENT: typeof import('../src/ipc-event/channels').ON_EVENT
@@ -15,24 +16,36 @@ declare global {
   const SYSTEM_COLOR_KEY: typeof import('../src/utils/constants').SYSTEM_COLOR_KEY
   const buildWindowUrl: typeof import('../src/utils/window').buildWindowUrl
   const checkFullScreen: typeof import('../src/utils/check-full-screen').checkFullScreen
+  const checkIPv6HTTP: typeof import('../src/utils/check-ipv6').checkIPv6HTTP
   const createFrameWindow: typeof import('../src/utils/window').createFrameWindow
   const createHomeWindow: typeof import('../src/windows/home').createHomeWindow
   const createLoginWindow: typeof import('../src/windows/login').createLoginWindow
   const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
   const getFileType: typeof import('../src/utils/send.utils').getFileType
   const getHomeWindow: typeof import('../src/windows/home').getHomeWindow
+  const getInfo: typeof import('../src/stores/auth').getInfo
   const getLoginWindow: typeof import('../src/windows/login').getLoginWindow
+  const getRuntimeConfigItem: typeof import('../src/stores/runtime-config').getRuntimeConfigItem
+  const getSetting: typeof import('../src/stores/app-settings').getSetting
+  const getToken: typeof import('../src/stores/auth').getToken
   const handleSquirrelEvent: typeof import('../src/utils/squirrel').handleSquirrelEvent
   const initColorMode: typeof import('../src/utils/color-mode').initColorMode
   const isAnyAppFullScreen: typeof import('../src/utils/check-full-screen').isAnyAppFullScreen
   const isDark: typeof import('../src/utils/color-mode').isDark
+  const isLogin: typeof import('../src/stores/auth').isLogin
   const isPathExists: typeof import('../src/utils/send.utils').isPathExists
   const isPathHidden: typeof import('../src/utils/send.utils').isPathHidden
   const loggedIn: typeof import('../src/utils/window').loggedIn
+  const removeAuth: typeof import('../src/stores/auth').removeAuth
+  const setRuntimeConfigItem: typeof import('../src/stores/runtime-config').setRuntimeConfigItem
+  const setSetting: typeof import('../src/stores/app-settings').setSetting
   const windowArgs: typeof import('../src/utils/window').windowArgs
 }
 // for type re-export
 declare global {
+  // @ts-ignore
+  export type { HomeWindowSize, RuntimeConfig } from '../src/stores/runtime-config'
+  import('../src/stores/runtime-config')
   // @ts-ignore
   export type { ON_EVENT, HANDLE_EVENT, SEND_EVENT, OnEventChannels, HandleEventChannels, SendEventChannels } from '../src/ipc-event/channels'
   import('../src/ipc-event/channels')

@@ -1,9 +1,9 @@
 import { updateElectronApp, UpdateSourceType } from './updater';
 import log from 'electron-log';
 
-const upgradeUrl = `https://release.ashen-station.top/app/AMY STATIONS/`;
+export async function checkForUpdate() {
+  const upgradeUrl = (await checkIPv6HTTP()) ? UPGRADE_IPV6_URL : UPGRADE_URL;
 
-export function checkForUpdate() {
   updateElectronApp({
     updateSource: {
       type: UpdateSourceType.StaticStorage,

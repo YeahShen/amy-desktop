@@ -1,5 +1,8 @@
 export {}
 declare global {
   const APP_NAME: string
+  const BASE_URL: string
   const PORT: string
+  const UPGRADE_URL: string
+  const UPGRADE_IPV6_URL: string
 }
