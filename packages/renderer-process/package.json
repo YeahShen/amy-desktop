@@ -15,6 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@nuxt/schema": "4.4.6",
+    "@amy/shared": "workspace:*",
     "@nuxtjs/color-mode": "^4.0.1",
     "@pinia/nuxt": "^1.0.1",
     "@vueuse/nuxt": "^14.4.0",
