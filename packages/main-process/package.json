@@ -1,6 +1,6 @@
 {
   "name": "amy-main-process",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "amy station desktop",
   "main": ".vite/build/main.js",
   "scripts": {
