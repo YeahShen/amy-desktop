@@ -32,10 +32,6 @@ const config: ForgeConfig = {
     afterCopy: [
       serialHooks([
         async (buildPath: string) => {
-          const renderer = path.resolve(process.cwd(), '..', 'renderer-process/.output/public');
-          const dest = path.resolve(buildPath, '.vite/renderer');
-          await fse.copy(renderer, dest);
-
           const appJSON = JSON.parse(
             fs.readFileSync(path.resolve(buildPath, 'package.json'), { encoding: 'utf-8' }),
           );
@@ -51,7 +47,11 @@ const config: ForgeConfig = {
         },
       ]),
     ],
-    extraResource: [assetsPath('scripts/koffi'), assetsPath('scripts/@koromix')],
+    extraResource: [
+      assetsPath('scripts/koffi'),
+      assetsPath('scripts/@koromix'),
+      path.resolve(process.cwd(), '..', 'renderer-process/.output/public'),
+    ],
   },
   rebuildConfig: {},
   publishers: [
