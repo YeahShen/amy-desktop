@@ -47,5 +47,7 @@
     "**/.nuxt": true,
     "**/.output": true,
     "**/dist": true
-  }
+  },
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore"
 }

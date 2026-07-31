@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="text-red-400">login</div>
+  <div class=""></div>
 </template>
 
 <style lang="scss"></style>

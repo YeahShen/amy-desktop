@@ -15,12 +15,17 @@
   "license": "ISC",
   "devDependencies": {
     "@nuxt/schema": "4.4.6",
+    "@nuxtjs/color-mode": "^4.0.1",
+    "@pinia/nuxt": "^1.0.1",
+    "@vueuse/nuxt": "^14.4.0",
     "axios-retry": "^4.5.0",
     "nuxt": "4.3.1",
     "typescript": "^6.0.2",
     "vue-tsc": "^3.2.6"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.16.0"
+    "@nuxt/eslint": "^1.16.0",
+    "@nuxt/ui": "^4.10.0",
+    "tailwindcss": "^4.3.3"
   }
 }

@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+@theme {
+  --background-color-card: var(--ui-bg-card);
+  --background-color-container: var(--ui-bg);
+  --border-color-default: var(--ui-border-default);
+  --border-color-muted: var(--ui-border-muted);
+  --border-color-accented: var(--ui-border-accented);
+  --border-color-inverted: var(--ui-border-inverted);
+}
+
+@theme static {
+  --font-sans: 'Public Sans', sans-serif;
+
+  --color-primary-50: #fef4f2;
+  --color-primary-100: #fde8e3;
+  --color-primary-200: #fdd5cb;
+  --color-primary-300: #f47e60;
+  --color-primary-400: #f47e60;
+  --color-primary-500: #ec6847;
+  --color-primary-600: #d84d2a;
+  --color-primary-700: #b63e1f;
+  --color-primary-800: #97361d;
+  --color-primary-900: #7d321f;
+  --color-primary-950: #44170b;
+}
+
+@utility drag {
+  -webkit-app-region: drag;
+}
+
+@utility no-drag {
+  -webkit-app-region: no-drag;
+}

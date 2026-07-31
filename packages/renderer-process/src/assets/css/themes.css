@@ -1,0 +1,50 @@
+:root {
+  --sidebar-width: 74px;
+  --navbar-height: 70px;
+
+  --ui-primary: var(--color-primary-500);
+  --ui-secondary: var(--ui-color-secondary-500);
+  --ui-success: var(--ui-color-success-500);
+  --ui-info: var(--ui-color-info-500);
+  --ui-warning: var(--ui-color-warning-500);
+  --ui-error: var(--ui-color-error-500);
+
+  --ui-text-dimmed: rgba(0, 0, 0, 0.25);
+  --ui-text-muted: rgba(0, 0, 0, 0.45);
+  --ui-text-toned: rgba(0, 0, 0, 0.65);
+  --ui-text: rgba(0, 0, 0, 0.88);
+  --ui-text-highlighted: var(--ui-color-neutral-900);
+  --ui-text-inverted: white;
+
+  --ui-bg: white;
+  --ui-bg-card: #fff;
+
+  --ui-border-default: #e4e4e7;
+  --ui-border-muted: #d4d4d8;
+  --ui-border-accented: #d4d4d8;
+  --ui-border-inverted: var(--ui-color-neutral-900);
+}
+
+.dark {
+  --ui-primary: var(--color-primary-400);
+  --ui-secondary: var(--ui-color-secondary-400);
+  --ui-success: var(--ui-color-success-400);
+  --ui-info: var(--ui-color-info-400);
+  --ui-warning: var(--ui-color-warning-400);
+  --ui-error: var(--ui-color-error-400);
+
+  --ui-text-dimmed: rgba(255, 255, 255, 0.25);
+  --ui-text-muted: rgba(255, 255, 255, 0.45);
+  --ui-text-toned: rgba(255, 255, 255, 0.65);
+  --ui-text: rgba(255, 255, 255, 0.85);
+  --ui-text-highlighted: white;
+  --ui-text-inverted: var(--ui-color-neutral-900);
+
+  --ui-bg: #17181a;
+  --ui-bg-card: #18181b;
+
+  --ui-border-default: #27272a;
+  --ui-border-muted: #3f3f46;
+  --ui-border-accented: #52525b;
+  --ui-border-inverted: white;
+}
