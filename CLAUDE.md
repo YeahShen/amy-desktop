@@ -8,7 +8,7 @@ This is an Electron desktop app monorepo using pnpm workspaces.
 amy-desktop/
 ├── packages/
 │   ├── main-process/        # Electron 主进程 (Node.js + Electron Forge + Vite)
-│   ├── renderer-process/    # 渲染进程 (Nuxt 4 + Vue)
+│   ├── renderer-process/    # 渲染进程 (Nuxt 4 + Vue + Nuxt UI + Tailwind CSS)
 │   ├── shared/              # 共享库 (@amy/shared, TypeScript + Vitest)
 │   └── zpublisher/          # 自定义发布器 (@amy/publisher, Electron Forge Publisher)
 ├── .github/workflows/       # CI/CD (package.yml + publish.yml)
@@ -18,8 +18,8 @@ amy-desktop/
 ├── .prettierrc.json         # Prettier 配置
 ├── .npmrc                   # pnpm registry mirror 配置
 ├── tsconfig.base.json       # 根 TS 基础配置
-├── .env.development         # 开发环境变量 (APP_NAME=AMY_DEV)
-├── .env.production          # 生产环境变量 (APP_NAME='AMY STATIONS')
+├── .env.development         # 开发环境变量
+├── .env.production          # 生产环境变量
 └── .vscode/settings.json    # VS Code 项目设置
 ```
 
@@ -28,18 +28,52 @@ amy-desktop/
 ```
 main-process/
 ├── src/
-│   ├── main.ts              # Electron 入口，创建 BrowserWindow
+│   ├── main.ts              # Electron 入口，创建 BrowserWindow，处理 Squirrel 事件
 │   ├── preload/
-│   │   ├── preload.ts       # Preload 脚本（空模板）
+│   │   ├── preload.ts       # Preload 脚本（electronAPI 尚未实现，当前为空模板）
 │   │   └── tsconfig.json    # Preload 专用 TS 配置（CommonJS, DOM+ESNext）
+│   ├── ipc-event/
+│   │   ├── channels.ts      # IPC 通道类型定义（OnEventChannels / HandleEventChannels / SendEventChannels）
+│   │   ├── on.ts            # ipcMain.on 事件处理注册
+│   │   ├── send.ts          # BrowserWindow.webContents.send 封装
+│   │   └── handle.ts        # ipcMain.handle 事件处理注册
+│   ├── server/
+│   │   ├── index.ts         # 内置 HTTP 服务器入口（Koa + @koa/router）
+│   │   └── send/
+│   │       ├── index.ts     # koa-send 实现（brotli 压缩 + cheerio HTML color-mode 注入）
+│   │       ├── serve.ts     # koa-static 风格中间件
+│   │       └── type.ts      # SendOptions 类型定义
+│   ├── stores/
+│   │   ├── auth.ts          # 认证状态管理（electron-store 'amy-auth'，token + 用户信息）
+│   │   ├── app-settings.ts  # 应用设置管理（electron-store 'amy-setting' + @amy/shared 构建器）
+│   │   └── runtime-config.ts # 运行时配置（electron-store 'runtime-config'，窗口尺寸等）
+│   ├── windows/
+│   │   ├── login.ts         # 登录窗口创建与管理
+│   │   ├── home.ts          # 主窗口创建与管理
+│   │   ├── dialog.ts        # 弹窗窗口创建与管理
+│   │   └── float.ts         # 浮动窗口创建与管理
+│   ├── utils/
+│   │   ├── constants.ts     # 常量定义（窗口尺寸、路径等）
+│   │   ├── window.ts        # 窗口工具函数
+│   │   ├── send.utils.ts    # 发送请求工具
+│   │   ├── color-mode.ts    # 颜色模式工具（主题切换）
+│   │   ├── check-full-screen.ts # 全屏检测
+│   │   ├── check-ipv6.ts    # IPv6 检测工具
+│   │   └── squirrel.ts      # Squirrel 安装事件处理
 │   └── updater/
-│       └── index.ts         # 应用更新模块（空模板）
+│       ├── index.ts         # 更新检查入口（IPv6 感知 + StaticStorage update source）
+│       └── updater.ts       # 自动更新逻辑（vendored update-electron-app 实现）
 ├── types/
-│   ├── define.d.ts          # 全局类型声明
-│   └── forge.env.d.ts       # Electron Forge 环境类型
-├── vite.main.config.ts      # Vite 主进程构建配置
+│   ├── define.d.ts          # 自动生成：AMY_ 环境变量全局类型（由 vite.main.config.ts 生成）
+│   ├── forge.env.d.ts       # Electron Forge 环境类型
+│   ├── main-process-autoimport.d.ts # 自动生成：unplugin-auto-import 类型声明
+│   ├── koa2-connect.d.ts    # koa2-connect 模块类型声明
+│   └── *.d.ts               # 其他类型补丁
+├── vite.main.config.ts      # Vite 构建配置 + unplugin-auto-import + define.d.ts 自动生成
 ├── vite.preload.config.ts   # Vite preload 构建配置
-├── forge.config.ts          # Electron Forge 配置（打包/发布/签名）
+├── vitest.config.ts         # Vitest 测试配置
+├── forge.config.ts          # Electron Forge 配置（打包/发布/签名/afterCopy/extraResource）
+├── .eslintrc-auto-import.json # 自动生成：ESLint auto-import globals 声明
 └── tsconfig.json            # 扩展 @tsconfig/node22
 ```
 
@@ -48,8 +82,30 @@ main-process/
 ```
 renderer-process/
 ├── src/
-│   └── app.vue              # Nuxt 根组件
-├── nuxt.config.ts           # Nuxt 配置（srcDir: 'src', @nuxt/eslint）
+│   ├── app.vue              # Nuxt 根组件
+│   ├── pages/
+│   │   └── login.vue        # 登录页面
+│   ├── layouts/
+│   │   ├── default.vue      # 默认布局
+│   │   └── empty.vue        # 空白布局（用于弹窗窗口）
+│   └── assets/
+│       ├── css/
+│       │   ├── main.css     # 主样式入口
+│       │   ├── tailwind.css # Tailwind CSS v4 导入层
+│       │   └── themes.css   # 主题系统（明/暗色模式变量）
+│       └── icons/           # 自定义图标目录（Nuxt Icon 自定义集合）
+├── shared/
+│   ├── electron-types.d.ts  # Window.electronAPI 全局类型声明（IPC、设置、文件操作）
+│   └── page.d.ts            # 页面元数据类型扩展（页面级 colorMode、dialog 配置、侧边栏菜单）
+├── server/                  # Nuxt Nitro 服务端
+│   ├── middleware/
+│   │   ├── api-proxy.ts     # /api/* 请求代理到后端，自动附加 Bearer token
+│   │   └── static-resource-proxy.ts # /resource/* 静态资源代理
+│   ├── routes/
+│   │   └── set-token.ts     # Token 写入路由（接收 ?token=xxx 参数写入文件）
+│   └── plugins/
+│       └── html-transform.ts # HTML 渲染钩子，注入 color-mode class/style 属性
+├── nuxt.config.ts           # Nuxt 配置（srcDir, modules, css, colorMode, runtimeConfig, nitro）
 ├── .output/public/          # 构建产物（静态生成）
 └── .nuxt/                   # Nuxt 自动生成（勿手动编辑）
 ```
@@ -65,7 +121,10 @@ shared/src/
 │   ├── task-scheduler.ts    # TaskScheduler — 并发任务调度器（支持重试）
 │   ├── file.ts              # fileChunk / fileStat / getFileSize — 文件分块
 │   ├── upload-file.ts       # createUploadFileFn — 文件上传封装
-│   └── zip.ts               # makeZip — ZIP 压缩
+│   ├── zip.ts               # makeZip — ZIP 压缩
+│   ├── tools.ts             # Flatten / UnionToIntersection 类型工具
+│   ├── user.ts              # User 接口定义和用户工具
+│   └── app-settings.ts      # 应用设置类型定义与工具
 ├── __test__/                # Vitest 单元测试
 │   ├── auth-axios.test.ts
 │   ├── file.test.ts
@@ -73,7 +132,7 @@ shared/src/
 │   └── task-scheduler.test.ts
 └── assets/                  # 图标 & 脚本资源
     ├── icon/                # 应用图标（PNG/ICO/ICNS/SVG）
-    └── scripts/             # svg2png.py 等辅助脚本
+    └── scripts/             # svg2png.py、koffi 原生模块等辅助脚本
 ```
 
 ### Publisher (`packages/zpublisher`)
@@ -91,8 +150,8 @@ zpublisher/src/
 
 | Package | Key Dependencies |
 |---------|-----------------|
-| `packages/main-process` | Electron 43, Electron Forge 7, Vite 5, TypeScript 5.7, Node 22 |
-| `packages/renderer-process` | Nuxt 4.3, Vue 3, TypeScript 6, @nuxt/eslint |
+| `packages/main-process` | Electron 43, Electron Forge 7, Vite 5, TypeScript 5.7, Node 22, Koa 3 (内置服务器), electron-store, electron-log, dotenv, unplugin-auto-import |
+| `packages/renderer-process` | Nuxt 4.3, Vue 3, TypeScript 6, Nuxt UI 4, Tailwind CSS 4, Pinia, VueUse, @nuxtjs/color-mode, axios-retry |
 | `packages/shared` | TypeScript 5.6, Vitest 2, axios, archiver, uuid, lodash-es |
 | `packages/zpublisher` | @electron-forge/publisher-base, axios, form-data, Vitest 2 |
 | Root | ESLint 10 (flat config), Prettier 3.9, TypeScript-ESLint 8 |
@@ -115,6 +174,7 @@ pnpm publish       # 构建发布器 + 渲染进程 + 发布到远程
 cd packages/main-process && pnpm dev     # 启动 Electron 开发模式
 cd packages/renderer-process && pnpm dev # 启动 Nuxt 开发服务器
 cd packages/shared && pnpm test          # 运行 Vitest 测试
+cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ 依赖 .env.stage，该文件当前不存在）
 ```
 
 ## Conventions
@@ -144,13 +204,32 @@ cd packages/shared && pnpm test          # 运行 Vitest 测试
 ### Imports
 - Internal workspace packages use `workspace:*` protocol
 - Avoid relative imports between packages — use the published package name (e.g. `@amy/shared`, `@amy/publisher`)
+- **`@amy/shared` exports raw TypeScript source** (`"exports": {".": "./src/index.ts"}`) — not compiled JS, consuming packages resolve it at build time
 
 ### Electron
 - Uses Electron Forge for packaging/building
 - Main process entry is `packages/main-process/src/main.ts`
 - Uses `@electron-forge/plugin-vite` with separate Vite configs for main and preload
-- `@electron/fuses` for security hardening (RunAsNode disabled, Asar integrity, cookie encryption)
+- `@electron/fuses` for security hardening (RunAsNode disabled, Asar integrity, cookie encryption, OnlyLoadAppFromAsar)
 - Custom publisher (`@amy/publisher`) uploads artifacts to a Bitbucket-like release server with chunked upload + integrity check
+- 多窗口架构：登录窗口（login）、主窗口（home）、弹窗窗口（dialog）、浮动窗口（float）
+- 内置 Koa 服务器（`server/index.ts`）托管 Nuxt 静态构建产物（生产模式/打包后），支持 brotli 压缩，通过 cheerio 注入 color-mode HTML 属性
+- `unplugin-auto-import` 自动导入 `src/utils`、`src/windows`、`src/stores`、`src/ipc-event` 中的导出函数，类型生成至 `types/main-process-autoimport.d.ts`
+- `vite.main.config.ts` 从 `AMY_` 前缀环境变量生成 `types/define.d.ts` 全局类型声明
+- IPC 通信框架已搭建（channel 类型、on/send/handle 文件），但 preload.ts 中 `electronAPI` 尚未实现
+- Token 持久化：主进程通过 `_auth_token` 文件读写认证 token，渲染进程 Nitro server 代理时读取该文件
+
+### Renderer (Nuxt)
+- **Nuxt UI 4 + Tailwind CSS 4** — UI 组件和样式系统
+- **@nuxtjs/color-mode** — 支持 system/light/dark 主题切换，通过 cookie 持久化
+- **Pinia** — 状态管理（通过 @pinia/nuxt 模块）
+- **VueUse** — 组合式工具集（通过 @vueuse/nuxt 模块）
+- **Nuxt Icon** — 自定义图标集合（`custom` 前缀，路径 `app/assets/icons`）
+- Nitro server 在开发模式下提供 API 代理（`/api/*` → `apiUrl`）和静态资源代理（`/resource/*`）
+- `html-transform` 插件注入服务端颜色模式属性到 HTML，避免 FOUC
+- `set-token` 路由允许主进程将认证 token 传递给 Nitro 服务端
+- 页面级元数据（`definePageMeta`）支持 `colorMode`、`dialog`、`sideBarMenu` 等自定义属性
+- 构建产物通过 `extraResource` 配置打包到 Electron 应用中
 
 ### Testing
 - `packages/shared` uses Vitest 2 — tests in `src/__test__/`
@@ -158,10 +237,12 @@ cd packages/shared && pnpm test          # 运行 Vitest 测试
 - Run with `pnpm test` inside respective package directories
 
 ### Environment Variables
-- `.env.development` — `APP_NAME=AMY_DEV`
-- `.env.production` — `APP_NAME='AMY STATIONS'`
-- Renderer dev/build uses `--dotenv ../../.env.{environment}` to load env
-- Publisher credentials via `AMY_PUBLISH_USERNAME` / `AMY_PUBLISH_PASSWORD` (set in CI secrets)
+- `.env.development` — 开发环境（`AMY_APP_NAME=AMY_DEV`, `AMY_MODE=development`, `AMY_PORT=5326`）
+- `.env.production` — 生产环境（`AMY_APP_NAME='AMY STATIONS'`, `AMY_MODE=production`, `AMY_PORT=32369`）
+- 公共变量：`AMY_BASE_URL`（后端 API 地址）、`AMY_UPGRADE_URL`、`AMY_UPGRADE_IPV6_URL`（更新服务器地址）、`AMY_RAS_KEY`
+- Renderer dev/build 通过 `--dotenv ../../.env.{environment}` 加载环境变量
+- Forge config 通过 dotenv 加载环境变量，`AMY_APP_NAME` 用于应用命名
+- Publisher 凭证通过 `AMY_PUBLISH_USERNAME` / `AMY_PUBLISH_PASSWORD`（set in CI secrets）
 
 ### CI/CD (GitHub Actions)
 - **package.yml** — triggered on push to `main`: builds Windows installer via `pnpm make`, uploads artifacts
@@ -174,3 +255,4 @@ cd packages/shared && pnpm test          # 运行 Vitest 测试
 - `*.mts` files are TypeScript modules (ESM) — used for ESLint config and similar
 - Type declaration files in `types/**/*.d.ts` per package
 - Assets (icons, scripts) live in `packages/shared/src/assets/` — accessed via `@amy/shared` exports
+- Renderer shared types (`packages/renderer-process/shared/`) — Nuxt 类型声明扩展，不参与构建产物

@@ -4,6 +4,10 @@ import { checkForUpdate } from './updater';
 import { createServer } from './server';
 import { isLogin } from './stores/auth';
 
+import { enableCompileCache } from 'node:module';
+
+enableCompileCache();
+
 app.commandLine.appendSwitch('--ignore-certificate-errors-spki-list');
 app.commandLine.appendSwitch('--no-proxy-server');
 app.commandLine.appendSwitch('enable-experimental-web-platform-features');
@@ -49,10 +53,12 @@ app.whenReady().then(async () => {
   }
 
   if (app.isPackaged) {
-    checkForUpdate();
     createServer();
 
     (await isLogin()) ? createHomeWindow() : createLoginWindow();
+
+    checkForUpdate();
+    return;
   }
 
   createLoginWindow();
