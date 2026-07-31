@@ -24,7 +24,9 @@ export type AppSettings = {
   hideHomeWindowOrExit: HideHomeWindowOrExit;
 };
 
-type AppSettingGetter = <T extends keyof Flatten<AppSettings>>(key: T) => Flatten<AppSettings>[T];
+type AppSettingGetter = <T extends keyof Flatten<AppSettings>>(
+  key: T,
+) => Promise<Flatten<AppSettings>[T]>;
 type AppSettingSetter = <T extends keyof Flatten<AppSettings>>(
   key: T,
   value: Flatten<AppSettings>[T],

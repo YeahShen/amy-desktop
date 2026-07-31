@@ -4,7 +4,10 @@ import { checkForUpdate } from './updater';
 import { createServer } from './server';
 import { isLogin } from './stores/auth';
 
+import './ipc-event';
+
 import { enableCompileCache } from 'node:module';
+import { createFloatWindow } from './windows/float';
 
 enableCompileCache();
 
@@ -52,6 +55,8 @@ app.whenReady().then(async () => {
     return;
   }
 
+  await initColorMode();
+
   if (app.isPackaged) {
     createServer();
 
@@ -61,5 +66,6 @@ app.whenReady().then(async () => {
     return;
   }
 
-  createLoginWindow();
+  // createLoginWindow();
+  createFloatWindow();
 });

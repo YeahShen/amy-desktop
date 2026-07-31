@@ -21,7 +21,7 @@ function getDefaultValue(key: string): unknown {
 }
 
 export const { getSetting, setSetting } = appSettingBuilder({
-  getter: (key) => {
+  getter: async (key) => {
     const value = store.get(key as any);
     return value !== undefined ? value : (getDefaultValue(key as string) as any);
   },

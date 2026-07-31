@@ -29,8 +29,8 @@ h3,
 h4,
 h5,
 label {
-  -webkit-user-select: none; /* 针对 Safari、Chrome 等 WebKit 内核浏览器 */
-  -moz-user-select: none; /* 针对 Firefox */
-  -ms-user-select: none; /* 针对 Internet Explorer、Edge */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }

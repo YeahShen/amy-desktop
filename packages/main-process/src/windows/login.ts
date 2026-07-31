@@ -6,7 +6,6 @@ export function createLoginWindow() {
   const win = (loginWindow = createFrameWindow({
     width: 340,
     height: 440,
-    backgroundColor: '#fff',
   }));
 
   win.loadURL(buildWindowUrl('login'));

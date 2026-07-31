@@ -1,4 +1,6 @@
-export enum ON_EVENT {}
+export enum ON_EVENT {
+  OPEN_DEV_TOOLS = 'open-dev-tools',
+}
 
 export enum HANDLE_EVENT {}
 

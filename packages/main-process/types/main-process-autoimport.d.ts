@@ -17,11 +17,13 @@ declare global {
   const buildWindowUrl: typeof import('../src/utils/window').buildWindowUrl
   const checkFullScreen: typeof import('../src/utils/check-full-screen').checkFullScreen
   const checkIPv6HTTP: typeof import('../src/utils/check-ipv6').checkIPv6HTTP
+  const createFloatWindow: typeof import('../src/windows/float').createFloatWindow
   const createFrameWindow: typeof import('../src/utils/window').createFrameWindow
   const createHomeWindow: typeof import('../src/windows/home').createHomeWindow
   const createLoginWindow: typeof import('../src/windows/login').createLoginWindow
   const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
   const getFileType: typeof import('../src/utils/send.utils').getFileType
+  const getFloatWindow: typeof import('../src/windows/float').getFloatWindow
   const getHomeWindow: typeof import('../src/windows/home').getHomeWindow
   const getInfo: typeof import('../src/stores/auth').getInfo
   const getLoginWindow: typeof import('../src/windows/login').getLoginWindow
