@@ -6,10 +6,12 @@ definePageMeta({
 useHead({
   bodyAttrs: {
     style: '--ui-bg: transparent',
+    class: 'float-window-body',
   },
 });
 
 const showMenu = ref(false);
+const drag = ref(false);
 
 const positionStyle = computed(() => {
   return {
@@ -20,19 +22,57 @@ const positionStyle = computed(() => {
     borderRadius: '100%',
   };
 });
+
+function handleMouseEnter() {
+  window.electronAPI.send('set-ignore-mouse-events', false);
+}
+
+function handleMouseLeave() {
+  window.electronAPI.send('set-ignore-mouse-events', true);
+}
+
+function handleMouseDown(event: MouseEvent) {
+  drag.value = true;
+
+  const { screenY, screenX } = event;
+
+  console.log(event);
+}
+
+function handleMouseUp() {
+  drag.value = false;
+}
+
+const startX = ref<number>();
+const startY = ref<number>();
+
+function handleMouseMove() {
+  console.log('handleMouseMove');
+}
 </script>
 
 <template>
   <div class="relative w-full h-full">
     <div
-      @click="showMenu = !showMenu"
-      class="float-window-wrap glass-floating-window w-17.5 h-17.5 absolute transition duration-150 ease-in-out"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
+      @mousedown="handleMouseDown"
+      @mousemove="handleMouseMove"
+      @mouseup="handleMouseUp"
+      class="float-window-wrap glass-floating-window w-17.5 h-17.5 absolute transition duration-150 ease-in-out cursor-pointer"
       :style="{ ...positionStyle }"
-    ></div>
+    >
+      {{ drag }}
+    </div>
   </div>
 </template>
 
 <style lang="scss">
+.float-window-body {
+  #nuxt-devtools-container {
+    display: none !important;
+  }
+}
 /* 毛玻璃悬浮窗类名 */
 .glass-floating-window {
   /* 背景与模糊 */

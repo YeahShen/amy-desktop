@@ -66,6 +66,16 @@ app.whenReady().then(async () => {
     return;
   }
 
+  checkFullScreen().then(({ isAnyAppFullScreen }) => {
+    setInterval(() => {
+      if (isAnyAppFullScreen()) {
+        getFloatWindow()?.hide();
+      } else {
+        getFloatWindow()?.show();
+      }
+    }, 16);
+  });
+
   // createLoginWindow();
   createFloatWindow();
 });

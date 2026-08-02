@@ -12,9 +12,9 @@ export function createFloatWindow() {
     // 透明背景
     transparent: true,
     // 窗口始终置顶
-    // alwaysOnTop: true,
+    alwaysOnTop: true,
     // 不显示在任务栏（根据需求可选）
-    // skipTaskbar: true,
+    skipTaskbar: true,
     // 失去焦点时自动隐藏（如不需要可忽略）
     // autoHideMenuBar: true,
     webPreferences: {
