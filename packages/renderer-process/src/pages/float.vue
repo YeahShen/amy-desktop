@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'empty',
+  colorMode: 'light',
 });
 
 useHead({
@@ -18,6 +19,7 @@ const points = {
 };
 
 const showMenu = ref(false);
+const showGlow = ref(true); // 呼吸光晕开关
 const wrapRef = useTemplateRef<HTMLDivElement>('wrapRef');
 
 // 菜单项定义
@@ -135,12 +137,10 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
         v-if="!showMenu"
         class="collapsed-content flex items-center justify-center w-full h-full"
       >
-        <div class="float-logo">
-          <span class="i-lucide-bot logo-icon"></span>
-        </div>
+        <div class="float-logo"></div>
         <!-- 呼吸光晕 -->
-        <div class="glow-ring glow-ring-1"></div>
-        <div class="glow-ring glow-ring-2"></div>
+        <div v-if="showGlow" class="glow-ring glow-ring-1"></div>
+        <div v-if="showGlow" class="glow-ring glow-ring-2"></div>
       </div>
 
       <!-- ========== 展开态：菜单面板 ========== -->
