@@ -1,9 +1,11 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import path from 'node:path';
 
 let floatWindow: BrowserWindow | null = null;
 
 export function createFloatWindow() {
+  const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
+
   const win = (floatWindow = new BrowserWindow({
     width: 500,
     height: 500,
@@ -15,6 +17,8 @@ export function createFloatWindow() {
     alwaysOnTop: true,
     // 不显示在任务栏（根据需求可选）
     skipTaskbar: true,
+    x: screenWidth * 0.8, // 设置窗口的初始位置
+    y: screenHeight * 0.1, // 设置窗口的初始位置
     // 失去焦点时自动隐藏（如不需要可忽略）
     // autoHideMenuBar: true,
     webPreferences: {

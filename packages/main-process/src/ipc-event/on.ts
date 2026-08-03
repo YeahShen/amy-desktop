@@ -15,3 +15,15 @@ ipcMain.on(ON_EVENT.GET_WINDOW_POSITIONS, (_e) => {
   const window = BrowserWindow.fromWebContents(_e.sender);
   return window?.getPosition();
 });
+
+ipcMain.on(ON_EVENT.SET_WINDOW_POSITIONS, (_e, position: { x: number; y: number }) => {
+  const window = BrowserWindow.fromWebContents(_e.sender);
+  if (window) {
+    window.setBounds({
+      x: position.x,
+      y: position.y,
+      width: window.getBounds().width,
+      height: window.getBounds().height,
+    });
+  }
+});

@@ -67,13 +67,13 @@ app.whenReady().then(async () => {
   }
 
   checkFullScreen().then(({ isAnyAppFullScreen }) => {
-    setInterval(() => {
-      if (isAnyAppFullScreen()) {
-        getFloatWindow()?.hide();
-      } else {
-        getFloatWindow()?.show();
-      }
-    }, 16);
+    // setInterval(() => {
+    //   if (isAnyAppFullScreen()) {
+    //     getFloatWindow()?.hide();
+    //   } else {
+    //     getFloatWindow()?.show();
+    //   }
+    // }, 16);
   });
 
   // createLoginWindow();
