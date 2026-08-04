@@ -102,6 +102,8 @@ watchEffect(() => {
     wrapRef.value?.addEventListener('mouseleave', handleMouseLeave);
     wrapRef.value?.addEventListener('mousedown', handleMouseDown);
     wrapRef.value?.addEventListener('drop', handleDrop);
+
+    handleMouseLeave();
   }
 });
 

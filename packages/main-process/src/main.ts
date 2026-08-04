@@ -60,10 +60,10 @@ app.whenReady().then(async () => {
   if (app.isPackaged) {
     createServer();
 
-    (await isLogin()) ? createHomeWindow() : createLoginWindow();
+    // (await isLogin()) ? createHomeWindow() : createLoginWindow();
 
-    checkForUpdate();
-    return;
+    // checkForUpdate();
+    // return;
   }
 
   checkFullScreen().then(({ isAnyAppFullScreen }) => {
