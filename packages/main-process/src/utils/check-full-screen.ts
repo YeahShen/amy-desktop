@@ -34,9 +34,19 @@ export async function checkFullScreen() {
   const GetForegroundWindow = user32.func('intptr GetForegroundWindow()');
   const GetWindowRect = user32.func('bool GetWindowRect(intptr hWnd, _Out_ RECT *lpRect)');
   const GetSystemMetrics = user32.func('int GetSystemMetrics(int nIndex)');
+  const IsIconic = user32.func('bool IsIconic(intptr hWnd)');
+  const GetClassNameW = user32.func('int GetClassNameW(intptr hWnd, _Out_ char16 *lpClassName, int nMaxCount)');
 
   const SM_CXSCREEN = 0; // 主屏幕宽度
   const SM_CYSCREEN = 1; // 主屏幕高度
+
+  // 桌面/系统窗口类名，这些窗口覆盖全屏但不属于全屏应用
+  const SYSTEM_WINDOW_CLASSES = new Set([
+    'Progman',
+    'WorkerW',
+    'Shell_TrayWnd',
+    'Shell_SecondaryTrayWnd',
+  ]);
 
   /**
    * 综合判断是否有应用（包括浏览器 F11、全屏视频、全屏游戏、PPT）处于全屏状态
@@ -55,6 +65,21 @@ export async function checkFullScreen() {
     // --- 方式 B：检测当前前台窗口（捕获 Chrome/Edge 等浏览器的 F11 全屏） ---
     const hWnd = GetForegroundWindow();
     if (hWnd) {
+      // 排除最小化的窗口
+      if (IsIconic(hWnd)) {
+        return false;
+      }
+
+      // 排除桌面/系统窗口（Progman、WorkerW、Shell_TrayWnd 等）
+      const className = Buffer.alloc(256 * 2); // UTF-16, 256 chars
+      GetClassNameW(hWnd, className as unknown as string, 256);
+      const clsName = className
+        .toString('utf16le')
+        .replace(/\0.*$/, '');
+      if (SYSTEM_WINDOW_CLASSES.has(clsName)) {
+        return false;
+      }
+
       const rect: Record<string, number> = {};
       if (GetWindowRect(hWnd, rect)) {
         const screenWidth = GetSystemMetrics(SM_CXSCREEN);

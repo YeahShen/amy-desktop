@@ -376,6 +376,10 @@ function getAnimationStyle(aniStyle: string) {
   stroke-linejoin: round;
 }
 
+.ldl-ani {
+  will-change: transform;
+}
+
 @keyframes animate {
   0.00% {
     transform: translate(0px, 0px) rotate(0deg) scale(0.91, 0.91);

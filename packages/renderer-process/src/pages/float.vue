@@ -19,7 +19,7 @@ const pointObj = Object.freeze({
 });
 
 const showMenu = ref(false);
-const showGlow = ref(false); // 呼吸光晕开关
+const showGlow = ref(true); // 呼吸光晕开关
 const wrapRef = useTemplateRef<HTMLDivElement>('wrapRef');
 
 const screenRect = ref<{ primary?: { width: number; height: number } }>({});
@@ -91,17 +91,15 @@ let mouseDownTime = 0;
 let windowInitialX = 0;
 let windowInitialY = 0;
 
-if (import.meta.client) {
-  document?.addEventListener('dragover', (e) => e.preventDefault());
-  document?.addEventListener('drop', (e) => e.preventDefault());
-}
-
 watchEffect(() => {
   if (wrapRef.value && import.meta.client) {
     wrapRef.value?.addEventListener('mouseenter', handleMouseEnter);
     wrapRef.value?.addEventListener('mouseleave', handleMouseLeave);
     wrapRef.value?.addEventListener('mousedown', handleMouseDown);
     wrapRef.value?.addEventListener('drop', handleDrop);
+
+    wrapRef.value?.addEventListener('dragover', (e) => e.preventDefault());
+    wrapRef.value?.addEventListener('dragover', (e) => e.preventDefault());
 
     handleMouseLeave();
   }

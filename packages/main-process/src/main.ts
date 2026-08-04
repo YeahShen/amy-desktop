@@ -7,7 +7,6 @@ import { isLogin } from './stores/auth';
 import './ipc-event';
 
 import { enableCompileCache } from 'node:module';
-import { createFloatWindow } from './windows/float';
 
 enableCompileCache();
 
@@ -57,25 +56,24 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
+  checkFullScreen().then(({ isAnyAppFullScreen }) => {
+    setInterval(() => {
+      if (isAnyAppFullScreen()) {
+        getFloatWindow()?.hide();
+      } else {
+        getFloatWindow()?.show();
+      }
+    }, 1000);
+  });
+
   if (app.isPackaged) {
     createServer();
 
-    // (await isLogin()) ? createHomeWindow() : createLoginWindow();
+    (await isLogin()) ? createHomeWindow() : createLoginWindow();
 
-    // checkForUpdate();
-    // return;
+    checkForUpdate();
+    return;
   }
 
-  checkFullScreen().then(({ isAnyAppFullScreen }) => {
-    // setInterval(() => {
-    //   if (isAnyAppFullScreen()) {
-    //     getFloatWindow()?.hide();
-    //   } else {
-    //     getFloatWindow()?.show();
-    //   }
-    // }, 16);
-  });
-
-  // createLoginWindow();
-  createFloatWindow();
+  createLoginWindow();
 });
