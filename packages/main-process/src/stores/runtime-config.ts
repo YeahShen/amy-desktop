@@ -6,8 +6,14 @@ export type HomeWindowSize = {
   height: number;
 };
 
+export type FloatWindowPosition = {
+  x: number;
+  y: number;
+};
+
 export type RuntimeConfig = {
   homeSize: HomeWindowSize;
+  floatWindowPosition: FloatWindowPosition;
 };
 
 const schema: Schema<RuntimeConfig> = {
@@ -16,6 +22,13 @@ const schema: Schema<RuntimeConfig> = {
     properties: {
       width: { type: 'number', default: HOME_WINDOW_BASE_SIZE.width },
       height: { type: 'number', default: HOME_WINDOW_BASE_SIZE.heiht },
+    },
+  },
+  floatWindowPosition: {
+    type: 'object',
+    properties: {
+      x: { type: 'number' },
+      y: { type: 'number' },
     },
   },
 };

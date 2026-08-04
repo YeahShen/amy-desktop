@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
+import { debouncedStorePositions } from '../windows/float';
 
 ipcMain.on(ON_EVENT.OPEN_DEV_TOOLS, (_e) =>
   BrowserWindow.fromWebContents(_e.sender)?.webContents.openDevTools({ mode: 'detach' }),
@@ -16,14 +17,21 @@ ipcMain.on(ON_EVENT.GET_WINDOW_POSITIONS, (_e) => {
   return window?.getPosition();
 });
 
-ipcMain.on(ON_EVENT.SET_WINDOW_POSITIONS, (_e, position: { x: number; y: number }) => {
-  const window = BrowserWindow.fromWebContents(_e.sender);
-  if (window) {
-    window.setBounds({
-      x: position.x,
-      y: position.y,
-      width: window.getBounds().width,
-      height: window.getBounds().height,
-    });
-  }
-});
+ipcMain.on(
+  ON_EVENT.SET_WINDOW_POSITIONS,
+  (_e, position: { x: number; y: number; window: string }) => {
+    const _window = BrowserWindow.fromWebContents(_e.sender);
+    if (_window) {
+      _window.setBounds({
+        x: position.x,
+        y: position.y,
+        width: _window.getBounds().width,
+        height: _window.getBounds().height,
+      });
+
+      if (position.window === 'float') {
+        debouncedStorePositions(position.x, position.y);
+      }
+    }
+  },
+);

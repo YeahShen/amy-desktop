@@ -21,6 +21,7 @@ declare global {
   const createFrameWindow: typeof import('../src/utils/window').createFrameWindow
   const createHomeWindow: typeof import('../src/windows/home').createHomeWindow
   const createLoginWindow: typeof import('../src/windows/login').createLoginWindow
+  const debouncedStorePositions: typeof import('../src/windows/float').debouncedStorePositions
   const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
   const getFileType: typeof import('../src/utils/send.utils').getFileType
   const getFloatWindow: typeof import('../src/windows/float').getFloatWindow
@@ -41,12 +42,13 @@ declare global {
   const removeAuth: typeof import('../src/stores/auth').removeAuth
   const setRuntimeConfigItem: typeof import('../src/stores/runtime-config').setRuntimeConfigItem
   const setSetting: typeof import('../src/stores/app-settings').setSetting
+  const storePositions: typeof import('../src/windows/float').storePositions
   const windowArgs: typeof import('../src/utils/window').windowArgs
 }
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { HomeWindowSize, RuntimeConfig } from '../src/stores/runtime-config'
+  export type { HomeWindowSize, FloatWindowPosition, RuntimeConfig } from '../src/stores/runtime-config'
   import('../src/stores/runtime-config')
   // @ts-ignore
   export type { ON_EVENT, HANDLE_EVENT, SEND_EVENT, OnEventChannels, HandleEventChannels, SendEventChannels } from '../src/ipc-event/channels'

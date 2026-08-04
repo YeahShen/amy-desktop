@@ -1,6 +1,7 @@
 {
   "globals": {
     "AMY_COLOR_KEY": "readonly",
+    "FloatWindowPosition": "readonly",
     "HANDLE_EVENT": "readonly",
     "HOME_WINDOW_BASE_SIZE": "readonly",
     "HTML_URL": "readonly",
@@ -19,6 +20,7 @@
     "createFrameWindow": "readonly",
     "createHomeWindow": "readonly",
     "createLoginWindow": "readonly",
+    "debouncedStorePositions": "readonly",
     "getFileType": "readonly",
     "getFloatWindow": "readonly",
     "getHomeWindow": "readonly",
@@ -37,6 +39,7 @@
     "removeAuth": "readonly",
     "setRuntimeConfigItem": "readonly",
     "setSetting": "readonly",
+    "storePositions": "readonly",
     "windowArgs": "readonly"
   }
 }

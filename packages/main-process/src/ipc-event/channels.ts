@@ -6,6 +6,7 @@ export enum ON_EVENT {
 }
 
 export enum HANDLE_EVENT {
+  GET_SCREEN_RECT = 'get-screen-rect',
   GET_WINDOW_POSITIONS = 'get-window-position',
 }
 

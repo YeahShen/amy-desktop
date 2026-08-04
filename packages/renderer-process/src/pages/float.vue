@@ -11,16 +11,26 @@ useHead({
   },
 });
 
-const points = {
-  p1: { top: '215px', left: '215px' },
-  p2: { top: '215px', left: '285px' },
-  p3: { top: '285px', left: '215px' },
-  p4: { top: '285px', left: '285px' },
-};
+const pointObj = Object.freeze({
+  tl: { x: 215, y: 215 },
+  tr: { x: 265, y: 215 },
+  bl: { x: 215, y: 265 },
+  br: { x: 265, y: 265 },
+});
 
 const showMenu = ref(false);
-const showGlow = ref(true); // 呼吸光晕开关
+const showGlow = ref(false); // 呼吸光晕开关
 const wrapRef = useTemplateRef<HTMLDivElement>('wrapRef');
+
+const screenRect = ref<{ primary?: { width: number; height: number } }>({});
+const windowPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
+
+onMounted(async () => {
+  screenRect.value = await window.electronAPI.invoke('get-screen-rect');
+  windowPosition.value = await window.electronAPI.invoke('get-window-position');
+});
+
+const colorMode = useColorMode();
 
 // 菜单项定义
 const menuItems = [
@@ -32,8 +42,33 @@ const menuItems = [
 
 const positionStyle = computed(() => {
   if (showMenu.value) {
+    const position = { top: pointObj.tl.y, left: pointObj.tl.x };
+
+    if (screenRect.value.primary) {
+      const { width, height } = screenRect.value.primary;
+
+      const uleft = windowPosition.value.x + 250 + 65 + 50;
+      const utop = windowPosition.value.y + 250 + 65 + 100;
+
+      if (uleft > width && utop > height) {
+        position.top = pointObj.br.y - 200;
+        position.left = pointObj.br.x - 130;
+      }
+
+      if (uleft > width && utop <= height) {
+        position.top = pointObj.tr.y;
+        position.left = pointObj.tr.x - 130;
+      }
+
+      if (uleft <= width && utop > height) {
+        position.top = pointObj.bl.y - 200;
+        position.left = pointObj.bl.x;
+      }
+    }
+
     return {
-      ...points.p1,
+      top: `${position.top}px`,
+      left: `${position.left}px`,
       width: '130px',
       height: '200px',
       borderRadius: '16px',
@@ -41,14 +76,14 @@ const positionStyle = computed(() => {
   }
 
   return {
-    ...points.p1,
+    top: `${pointObj.tl.y}px`,
+    left: `${pointObj.tl.x}px`,
     width: '50px',
     height: '50px',
     borderRadius: '100%',
   };
 });
 
-let isDragging = false;
 let initialMouseX = 0;
 let initialMouseY = 0;
 
@@ -104,7 +139,9 @@ function handleMouseMove(e: MouseEvent) {
   const newX = windowInitialX + deltaX;
   const newY = windowInitialY + deltaY;
 
-  window.electronAPI.send('set-window-position', { x: newX, y: newY });
+  windowPosition.value = { x: newX, y: newY };
+
+  window.electronAPI.send('set-window-position', { x: newX, y: newY, window: 'float' });
 }
 
 function handleDrop(e: DragEvent) {
@@ -138,7 +175,11 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
         class="collapsed-content flex items-center justify-center w-full h-full"
       >
         <div class="float-logo">
-          <NuxtIcon name="custom:logo-base" class="logo-icon" size="36" style="color: #fff" />
+          <ULogo
+            size="33"
+            :color="colorMode.value === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'"
+            :animation="showGlow"
+          />
         </div>
         <!-- 呼吸光晕 -->
         <div v-if="showGlow" class="glow-ring glow-ring-1"></div>

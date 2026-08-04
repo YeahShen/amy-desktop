@@ -1,10 +1,15 @@
 import { BrowserWindow, screen } from 'electron';
 import path from 'node:path';
 
+import { debounce } from 'lodash-es';
+
 let floatWindow: BrowserWindow | null = null;
 
 export function createFloatWindow() {
   const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
+
+  const x = getRuntimeConfigItem('floatWindowPosition.x') ?? screenWidth * 0.8;
+  const y = getRuntimeConfigItem('floatWindowPosition.y') ?? screenHeight * 0.1 - 100;
 
   const win = (floatWindow = new BrowserWindow({
     width: 500,
@@ -17,8 +22,8 @@ export function createFloatWindow() {
     alwaysOnTop: true,
     // 不显示在任务栏（根据需求可选）
     skipTaskbar: true,
-    x: screenWidth * 0.8, // 设置窗口的初始位置
-    y: screenHeight * 0.1, // 设置窗口的初始位置
+    x, // 设置窗口的初始位置
+    y, // 设置窗口的初始位置
     // 失去焦点时自动隐藏（如不需要可忽略）
     autoHideMenuBar: false,
     webPreferences: {
@@ -40,3 +45,12 @@ export function createFloatWindow() {
 export function getFloatWindow() {
   return floatWindow;
 }
+
+export function storePositions(x: number, y: number) {
+  setRuntimeConfigItem('floatWindowPosition.x', x);
+  setRuntimeConfigItem('floatWindowPosition.y', y);
+}
+
+export const debouncedStorePositions = debounce((x: number, y: number) => {
+  storePositions(x, y);
+}, 500);
