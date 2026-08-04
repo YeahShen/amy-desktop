@@ -20,7 +20,7 @@ export function createFloatWindow() {
     x: screenWidth * 0.8, // 设置窗口的初始位置
     y: screenHeight * 0.1, // 设置窗口的初始位置
     // 失去焦点时自动隐藏（如不需要可忽略）
-    // autoHideMenuBar: true,
+    autoHideMenuBar: false,
     webPreferences: {
       contextIsolation: true, // 必须关闭上下文隔离
       nodeIntegration: true, // 启用Node.js集成

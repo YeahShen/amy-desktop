@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'empty',
-  colorMode: 'light',
+  colorMode: 'dark',
 });
 
 useHead({
@@ -42,8 +42,8 @@ const positionStyle = computed(() => {
 
   return {
     ...points.p1,
-    width: '70px',
-    height: '70px',
+    width: '50px',
+    height: '50px',
     borderRadius: '100%',
   };
 });
@@ -137,7 +137,9 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
         v-if="!showMenu"
         class="collapsed-content flex items-center justify-center w-full h-full"
       >
-        <div class="float-logo"></div>
+        <div class="float-logo">
+          <NuxtIcon name="custom:logo-base" class="logo-icon" size="36" style="color: #fff" />
+        </div>
         <!-- 呼吸光晕 -->
         <div v-if="showGlow" class="glow-ring glow-ring-1"></div>
         <div v-if="showGlow" class="glow-ring glow-ring-2"></div>
@@ -249,8 +251,8 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.55);
     box-shadow:
@@ -275,14 +277,14 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
   pointer-events: none;
 
   &.glow-ring-1 {
-    width: 56px;
-    height: 56px;
+    width: 45px;
+    height: 45px;
     animation: float-breathe 2.5s ease-in-out infinite;
   }
 
   &.glow-ring-2 {
-    width: 62px;
-    height: 62px;
+    width: 48px;
+    height: 48px;
     animation: float-breathe 2.5s ease-in-out 0.6s infinite;
   }
 }

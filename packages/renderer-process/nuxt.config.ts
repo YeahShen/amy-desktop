@@ -45,10 +45,11 @@ export default defineNuxtConfig({
   },
 
   icon: {
+    componentName: 'NuxtIcon',
     customCollections: [
       {
         prefix: 'custom',
-        dir: 'app/assets/icons',
+        dir: 'src/assets/icons',
       },
     ],
   },
