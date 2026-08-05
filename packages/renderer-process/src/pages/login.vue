@@ -6,7 +6,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="w-full h-full flex flex-col login-wrap">
     <LoginHeader />
 
     <div class="flex w-full gap-x-2 justify-center text-2xl title mt-3">
@@ -17,7 +17,9 @@ definePageMeta({
 </template>
 
 <style lang="scss">
-.title {
-  font-family: Orbitron, sans-serif;
+.login-wrap {
+  .title {
+    font-family: Orbitron, sans-serif !important;
+  }
 }
 </style>

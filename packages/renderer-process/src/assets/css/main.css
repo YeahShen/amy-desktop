@@ -20,6 +20,10 @@ html {
   height: 100%;
 }
 
+body {
+  font-family: 'PingFangSC-Regular', Courier, monospace;
+}
+
 div,
 p,
 span,
@@ -30,7 +34,7 @@ h3,
 h4,
 h5,
 label {
-  font-family: 'PingFangSC-Regular', Courier, monospace;
+  /* font-family: 'PingFangSC-Regular', Courier, monospace; */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
