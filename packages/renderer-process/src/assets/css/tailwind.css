@@ -11,8 +11,6 @@
 }
 
 @theme static {
-  --font-sans: 'PingFangSC-Regular', sans-serif;
-
   --color-primary-50: #fef4f2;
   --color-primary-100: #fde8e3;
   --color-primary-200: #fdd5cb;
