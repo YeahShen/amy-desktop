@@ -14,6 +14,7 @@ onMounted(() => {
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <AmyMessage />
 </template>
 
 <style lang="scss"></style>
