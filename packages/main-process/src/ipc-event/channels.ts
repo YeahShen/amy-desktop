@@ -1,4 +1,6 @@
 export enum ON_EVENT {
+  LOGIN = 'login',
+
   OPEN_DEV_TOOLS = 'open-dev-tools',
   SET_IGNORE_MOUSE_EVENTS = 'set-ignore-mouse-events',
   GET_WINDOW_POSITIONS = 'get-window-position',

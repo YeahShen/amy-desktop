@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { User } from '@amy/shared';
+
 definePageMeta({
   layout: 'empty',
   colorMode: 'light',
@@ -12,6 +14,29 @@ useHead({
     },
   ],
 });
+
+const loading = ref(false);
+const config = useRuntimeConfig();
+
+const message = useMessage();
+
+async function usernamePasswordLogin(
+  username: string,
+  password: string,
+): Promise<{ user: User; token: string }> {
+  loading.value = true;
+
+  try {
+    message.success('操作成功');
+
+    return {
+      user: {},
+      token: '',
+    };
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -28,7 +53,7 @@ useHead({
     </div>
 
     <div class="mt-3 px-4">
-      <LoginUsernamepassword />
+      <LoginUsernamepassword :login-fn="usernamePasswordLogin" v-model:loading="loading" />
     </div>
 
     <div class="w-full flex items-center justify-center gap-x-2 absolute bottom-6">

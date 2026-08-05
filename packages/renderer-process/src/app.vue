@@ -11,10 +11,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
-  <AmyMessage />
+  <UApp>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+    <ClientOnly>
+      <AmyMessage />
+    </ClientOnly>
+  </UApp>
 </template>
 
 <style lang="scss"></style>

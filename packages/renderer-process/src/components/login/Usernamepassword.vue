@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { UserloggedCacheItem } from '@amy/shared';
+import type { UserloggedCacheItem, User } from '@amy/shared';
+
+const props = defineProps<{
+  loginFn: (username: string, password: string) => Promise<{ user: User; token: string }>;
+}>();
 
 const loginForm = ref({
   username: '',
@@ -7,14 +11,13 @@ const loginForm = ref({
 });
 
 const showPassword = ref(false);
+
 const loading = defineModel('loading', {
   default: false,
 });
 
 const autoLogin = useSettings('login.autoLogin');
 const rememberPassword = useSettings('login.remenberMe');
-
-const config = useRuntimeConfig();
 
 const userAccountCache = useLocalStorage<Record<string, UserloggedCacheItem>>(
   '__logged_account_cache',
@@ -26,6 +29,25 @@ const loggedUser = computed(() => {
     .map(([_key, value]) => value)
     .sort((a, b) => b.lastLoginDate - a.lastLoginDate);
 });
+
+async function login() {
+  const { user, token } = await props.loginFn(loginForm.value.username, loginForm.value.password);
+
+  userAccountCache.value[loginForm.value.username] = {
+    account: loginForm.value.username,
+    lastLoginDate: Date.now(),
+  };
+
+  if (rememberPassword.value) {
+    userAccountCache.value[loginForm.value.username] = {
+      lastLoginDate: Date.now(),
+      account: loginForm.value.username,
+      password: loginForm.value.password,
+    };
+  }
+
+  window.electronAPI.send('login', user, token);
+}
 </script>
 
 <template>
@@ -83,6 +105,7 @@ const loggedUser = computed(() => {
       :loading
       size="xl"
       :ui="{}"
+      @click="login"
       >登录</UButton
     >
   </div>
