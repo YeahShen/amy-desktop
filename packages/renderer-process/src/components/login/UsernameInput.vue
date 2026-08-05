@@ -33,7 +33,7 @@ watch(
     key-value="account"
   >
     <template #leading>
-      <UIcon name="i-ant-design:user-outlined" class="size-5" />
+      <UIcon name="amy:user-outlined" class="size-5" />
     </template>
 
     <template #item="{ item }">

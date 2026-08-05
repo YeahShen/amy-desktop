@@ -44,3 +44,7 @@ ipcMain.on(
     }
   },
 );
+
+ipcMain.on(ON_EVENT.SET_SETTING, (_e, key: any, value: any) => {
+  setSetting(key, value);
+});

@@ -11,6 +11,9 @@ const loading = defineModel('loading', {
   default: false,
 });
 
+const autoLogin = useSettings('login.autoLogin');
+const rememberPassword = useSettings('login.remenberMe');
+
 const config = useRuntimeConfig();
 
 const userAccountCache = useLocalStorage<Record<string, UserloggedCacheItem>>(
@@ -43,7 +46,7 @@ const loggedUser = computed(() => {
       :type="showPassword ? 'text' : 'password'"
     >
       <template #leading>
-        <UIcon name="i-ant-design:lock-outlined" class="size-5" />
+        <UIcon name="amy:lock-outlined" class="size-5" />
       </template>
 
       <template #trailing>
@@ -51,7 +54,7 @@ const loggedUser = computed(() => {
           color="neutral"
           variant="link"
           size="sm"
-          :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+          :icon="showPassword ? 'amy:eye-off' : 'amy:eye'"
           :aria-label="showPassword ? 'Hide password' : 'Show password'"
           :aria-pressed="showPassword"
           aria-controls="password"
@@ -61,13 +64,13 @@ const loggedUser = computed(() => {
     </UInput>
 
     <div class="w-full flex gap-x-4 mt-4">
-      <UCheckbox>
+      <UCheckbox v-model="autoLogin">
         <template #label>
           <span class="text-default">自动登录</span>
         </template>
       </UCheckbox>
 
-      <UCheckbox>
+      <UCheckbox v-model="rememberPassword">
         <template #label>
           <span class="text-default">记住密码</span>
         </template>
@@ -75,7 +78,7 @@ const loggedUser = computed(() => {
     </div>
 
     <UButton
-      class="mt-8 w-full flex justify-center"
+      class="mt-7 w-full flex justify-center"
       loading-icon="i-lucide-loader"
       :loading
       size="xl"

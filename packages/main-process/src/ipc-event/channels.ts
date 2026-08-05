@@ -6,11 +6,15 @@ export enum ON_EVENT {
 
   CLOSE_WINDOW = 'close-window',
   MIN_WINDOW = 'min-window',
+
+  SET_SETTING = 'set-setting',
 }
 
 export enum HANDLE_EVENT {
   GET_SCREEN_RECT = 'get-screen-rect',
   GET_WINDOW_POSITIONS = 'get-window-position',
+
+  GET_SETTING = 'get-setting',
 }
 
 export enum SEND_EVENT {}

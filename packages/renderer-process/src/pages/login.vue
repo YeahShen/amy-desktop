@@ -3,6 +3,15 @@ definePageMeta({
   layout: 'empty',
   colorMode: 'light',
 });
+
+useHead({
+  script: [
+    {
+      src: '/script/jsencrypt.min.js',
+      async: true,
+    },
+  ],
+});
 </script>
 
 <template>

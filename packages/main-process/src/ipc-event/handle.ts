@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
+import { HANDLE_EVENT } from './channels';
 
 ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
   const { screen } = require('electron');
@@ -12,4 +13,8 @@ ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
 ipcMain.handle(HANDLE_EVENT.GET_WINDOW_POSITIONS, (_e) => {
   const window = BrowserWindow.fromWebContents(_e.sender);
   return window?.getBounds();
+});
+
+ipcMain.handle(HANDLE_EVENT.GET_SETTING, (_e, key) => {
+  return getSetting(key);
 });
