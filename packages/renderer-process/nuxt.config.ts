@@ -53,7 +53,7 @@ export default defineNuxtConfig({
     componentName: 'NuxtIcon',
     customCollections: [
       {
-        prefix: 'custom',
+        prefix: 'amy',
         dir: 'src/assets/icons',
       },
     ],

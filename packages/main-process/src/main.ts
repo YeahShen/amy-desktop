@@ -56,9 +56,9 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
-  checkFullScreen().then(({ isAnyAppFullScreen }) => {
-    setInterval(() => {
-      if (isAnyAppFullScreen()) {
+  fullScreen().then(({ check }) => {
+    setInterval(async () => {
+      if (await check()) {
         getFloatWindow()?.hide();
       } else {
         getFloatWindow()?.show();

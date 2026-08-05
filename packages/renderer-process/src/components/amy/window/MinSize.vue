@@ -7,7 +7,7 @@ function click() {
 <template>
   <UButton
     class="no-drag"
-    icon="mdi:minus"
+    icon="amy:minus"
     size="md"
     color="neutral"
     variant="ghost"

@@ -22,6 +22,7 @@ declare global {
   const createHomeWindow: typeof import('../src/windows/home').createHomeWindow
   const createLoginWindow: typeof import('../src/windows/login').createLoginWindow
   const debouncedStorePositions: typeof import('../src/windows/float').debouncedStorePositions
+  const fullScreen: typeof import('../src/utils/full-screen').fullScreen
   const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
   const getFileType: typeof import('../src/utils/send.utils').getFileType
   const getFloatWindow: typeof import('../src/windows/float').getFloatWindow

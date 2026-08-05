@@ -21,6 +21,7 @@
     "createHomeWindow": "readonly",
     "createLoginWindow": "readonly",
     "debouncedStorePositions": "readonly",
+    "fullScreen": "readonly",
     "getFileType": "readonly",
     "getFloatWindow": "readonly",
     "getHomeWindow": "readonly",

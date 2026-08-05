@@ -6,7 +6,7 @@ const emits = defineEmits<{
 
 <template>
   <UButton
-    icon="mdi:window-close"
+    icon="amy:window-close"
     size="md"
     variant="ghost"
     color="neutral"

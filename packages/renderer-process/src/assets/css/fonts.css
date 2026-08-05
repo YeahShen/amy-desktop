@@ -22,3 +22,11 @@
   font-display: swap;
   src: url(../fonts/Orbitron.woff2) format('woff2');
 }
+
+@font-face {
+  font-family: 'PingFangSC-Regular';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/PingFangSC-Regular.woff2) format('woff2');
+}
