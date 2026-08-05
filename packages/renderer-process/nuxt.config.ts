@@ -6,7 +6,12 @@ export default defineNuxtConfig({
     port: Number(process.env.AMY_PORT),
   },
 
-  css: ['~/assets/css/main.css', '~/assets/css/tailwind.css', '~/assets/css/themes.css'],
+  css: [
+    '~/assets/css/main.css',
+    '~/assets/css/tailwind.css',
+    '~/assets/css/themes.css',
+    '~/assets/css/fonts.css',
+  ],
 
   ui: {
     fonts: false,

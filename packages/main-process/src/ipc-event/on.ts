@@ -1,5 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { debouncedStorePositions } from '../windows/float';
+import { ON_EVENT } from './channels';
 
 ipcMain.on(ON_EVENT.OPEN_DEV_TOOLS, (_e) =>
   BrowserWindow.fromWebContents(_e.sender)?.webContents.openDevTools({ mode: 'detach' }),
@@ -10,6 +11,14 @@ ipcMain.on(ON_EVENT.SET_IGNORE_MOUSE_EVENTS, (_e, ignore: boolean) => {
   if (window) {
     window.setIgnoreMouseEvents(ignore, { forward: true });
   }
+});
+
+ipcMain.on(ON_EVENT.CLOSE_WINDOW, (_e) => {
+  BrowserWindow.fromWebContents(_e.sender)?.close();
+});
+
+ipcMain.on(ON_EVENT.MIN_WINDOW, (_e) => {
+  BrowserWindow.fromWebContents(_e.sender)?.minimize();
 });
 
 ipcMain.on(ON_EVENT.GET_WINDOW_POSITIONS, (_e) => {

@@ -175,7 +175,7 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
         class="collapsed-content flex items-center justify-center w-full h-full"
       >
         <div class="float-logo">
-          <ULogo
+          <AmyLogo
             size="33"
             :color="colorMode.value === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'"
             :animation="showGlow"
