@@ -4,7 +4,7 @@ let loginWindow: BrowserWindow | null = null;
 
 export function createLoginWindow() {
   const win = (loginWindow = createFrameWindow({
-    width: 340,
+    width: 360,
     height: 440,
   }));
 
