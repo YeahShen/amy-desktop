@@ -3,7 +3,7 @@ import type { User } from '@amy/shared';
 
 definePageMeta({
   layout: 'empty',
-  colorMode: 'light',
+  colorMode: 'dark',
 });
 
 useHead({
@@ -27,6 +27,14 @@ async function usernamePasswordLogin(
   loading.value = true;
 
   try {
+    await $request('/auth/login-by-username-password', {
+      method: 'POST',
+      body: {
+        username,
+        password,
+      },
+    });
+
     message.success('操作成功');
 
     return {

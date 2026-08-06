@@ -5,6 +5,7 @@
   "description": "AMY Desktop - pnpm monorepo",
   "scripts": {
     "dev": "pnpm --parallel --filter=./packages/* run dev",
+    "dev:mock": "pnpm --parallel --filter=./packages/* run dev:mock",
     "package": "run-s build:renderer build:main:package",
     "make": "run-s build:renderer build:main:make",
     "publish": "run-s build:publisher build:renderer build:main:publish",
