@@ -6,6 +6,8 @@ export default defineEventHandler((event) => {
 
   const url = event.node.req.url;
 
+  console.log(url);
+
   if (url?.startsWith('/api')) {
     if (url.includes('_nuxt_icon')) return;
 
@@ -18,12 +20,14 @@ export default defineEventHandler((event) => {
     if (fs.existsSync(tokenPath)) {
       const token = fs.readFileSync(tokenPath, 'utf8');
 
-      if (token && !url.includes('/api/user/loginByUsernamePassword')) {
+      if (token && !url.includes('/api/auth/login-by-username-password')) {
         headers.Authorization = `Bearer ${token}`;
       }
     }
 
     headers.XPLATFORM = 'client';
+
+    console.log(target.toString());
 
     return proxyRequest(event, target.toString(), {
       headers,

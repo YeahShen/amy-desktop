@@ -6,6 +6,5 @@ declare global {
   const PORT: string
   const UPGRADE_URL: string
   const UPGRADE_IPV6_URL: string
-  const PUBLISH_PASSWORD: string
-  const PUBLISH_USERNAME: string
+  const RAS_KEY: string
 }

@@ -3,7 +3,6 @@ import type { User } from '@amy/shared';
 
 definePageMeta({
   layout: 'empty',
-  colorMode: 'dark',
 });
 
 useHead({
@@ -20,6 +19,14 @@ const config = useRuntimeConfig();
 
 const message = useMessage();
 
+function encryptPassword(pwd: string) {
+  // @ts-ignore
+  const encryptor = new JSEncrypt();
+  encryptor.setPublicKey(config.public.ras); // 设置公钥
+  // @ts-ignore
+  return encryptor.encrypt(pwd); // 对需要加密的数据进行加密
+}
+
 async function usernamePasswordLogin(
   username: string,
   password: string,
@@ -31,7 +38,7 @@ async function usernamePasswordLogin(
       method: 'POST',
       body: {
         username,
-        password,
+        password: encryptPassword(password),
       },
     });
 
