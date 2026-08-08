@@ -1,7 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'empty',
-  colorMode: 'dark',
 });
 
 useHead({
@@ -163,56 +162,63 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
 <template>
   <div class="relative w-full h-full">
     <!-- 悬浮窗主体 -->
-    <div
-      ref="wrapRef"
-      class="float-window-wrap glass-floating-window absolute cursor-pointer select-none"
-      :style="{ ...positionStyle }"
-      :class="{ 'is-expanded': showMenu }"
-    >
-      <!-- ========== 折叠态：圆形悬浮按钮 ========== -->
+    <ClientOnly>
       <div
-        v-if="!showMenu"
-        class="collapsed-content flex items-center justify-center w-full h-full"
+        ref="wrapRef"
+        class="float-window-wrap glass-floating-window absolute cursor-pointer select-none"
+        :style="{ ...positionStyle }"
+        :class="{ 'is-expanded': showMenu }"
       >
-        <div class="float-logo">
-          <AmyLogo
-            size="33"
-            :color="colorMode.value === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'"
-            :animation="showGlow"
-          />
+        <!-- ========== 折叠态：圆形悬浮按钮 ========== -->
+        <div
+          v-if="!showMenu"
+          class="collapsed-content flex items-center justify-center w-full h-full"
+        >
+          <div class="float-logo">
+            <AmyLogo
+              size="33"
+              :color="
+                colorMode.value === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'
+              "
+              :animation="showGlow"
+            />
+          </div>
+          <!-- 呼吸光晕 -->
+          <div v-if="showGlow" class="glow-ring glow-ring-1"></div>
+          <div v-if="showGlow" class="glow-ring glow-ring-2"></div>
         </div>
-        <!-- 呼吸光晕 -->
-        <div v-if="showGlow" class="glow-ring glow-ring-1"></div>
-        <div v-if="showGlow" class="glow-ring glow-ring-2"></div>
+
+        <!-- ========== 展开态：菜单面板 ========== -->
+        <div v-else class="expanded-content flex flex-col h-full">
+          <!-- 头部 -->
+          <div class="menu-header flex items-center justify-between shrink-0">
+            <span class="menu-title">AMY</span>
+            <button
+              class="menu-close-btn flex items-center justify-center"
+              @click.stop="toggleMenu"
+            >
+              <span class="i-lucide-x close-icon"></span>
+            </button>
+          </div>
+
+          <!-- 分隔线 -->
+          <div class="menu-divider shrink-0"></div>
+
+          <!-- 菜单项列表 -->
+          <div class="menu-body flex-1 overflow-hidden">
+            <button
+              v-for="item in menuItems"
+              :key="item.label"
+              class="menu-item flex items-center gap-2"
+              @click="onMenuItemClick(item)"
+            >
+              <span :class="[item.icon, 'menu-item-icon']"></span>
+              <span class="menu-item-label">{{ item.label }}</span>
+            </button>
+          </div>
+        </div>
       </div>
-
-      <!-- ========== 展开态：菜单面板 ========== -->
-      <div v-else class="expanded-content flex flex-col h-full">
-        <!-- 头部 -->
-        <div class="menu-header flex items-center justify-between shrink-0">
-          <span class="menu-title">AMY</span>
-          <button class="menu-close-btn flex items-center justify-center" @click.stop="toggleMenu">
-            <span class="i-lucide-x close-icon"></span>
-          </button>
-        </div>
-
-        <!-- 分隔线 -->
-        <div class="menu-divider shrink-0"></div>
-
-        <!-- 菜单项列表 -->
-        <div class="menu-body flex-1 overflow-hidden">
-          <button
-            v-for="item in menuItems"
-            :key="item.label"
-            class="menu-item flex items-center gap-2"
-            @click="onMenuItemClick(item)"
-          >
-            <span :class="[item.icon, 'menu-item-icon']"></span>
-            <span class="menu-item-label">{{ item.label }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    </ClientOnly>
   </div>
 </template>
 

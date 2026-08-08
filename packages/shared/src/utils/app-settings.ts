@@ -17,11 +17,16 @@ export interface UploadSettings {
 export type ColorMode = 'dark' | 'light' | 'system';
 export type HideHomeWindowOrExit = 'hide' | 'exit';
 
+export type AppRunSettings = {
+  showFloatWindow: boolean;
+};
+
 export type AppSettings = {
   login: LoginConfig;
   proxy: UseProxy;
   colorMode: ColorMode;
   hideHomeWindowOrExit: HideHomeWindowOrExit;
+  appRunSettings: AppRunSettings;
 };
 
 type AppSettingGetter = <T extends keyof Flatten<AppSettings>>(

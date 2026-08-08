@@ -62,6 +62,13 @@ export async function getInfo() {
   return await authenticate.getInfo();
 }
 
+export function setAuthenticate(token: string, user: User) {
+  authenticate.authenticate = {
+    token,
+    info: user,
+  };
+}
+
 export function getToken() {
   return authenticate.getToken();
 }

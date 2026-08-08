@@ -1,6 +1,8 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { debouncedStorePositions } from '../windows/float';
 import { ON_EVENT } from './channels';
+import { User } from '@amy/shared';
+import { setAuthenticate } from '../stores/auth';
 
 ipcMain.on(ON_EVENT.OPEN_DEV_TOOLS, (_e) =>
   BrowserWindow.fromWebContents(_e.sender)?.webContents.openDevTools({ mode: 'detach' }),
@@ -24,6 +26,17 @@ ipcMain.on(ON_EVENT.MIN_WINDOW, (_e) => {
 ipcMain.on(ON_EVENT.GET_WINDOW_POSITIONS, (_e) => {
   const window = BrowserWindow.fromWebContents(_e.sender);
   return window?.getPosition();
+});
+
+ipcMain.on(ON_EVENT.LOGIN, async (_e, token: string, user: User) => {
+  setAuthenticate(token, user);
+  await createHomeWindow();
+
+  BrowserWindow.fromWebContents(_e.sender)?.close();
+
+  if (await getSetting('appRunSettings.showFloatWindow')) {
+    createFloatWindow();
+  }
 });
 
 ipcMain.on(

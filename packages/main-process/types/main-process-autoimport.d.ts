@@ -41,6 +41,7 @@ declare global {
   const isPathHidden: typeof import('../src/utils/send.utils').isPathHidden
   const loggedIn: typeof import('../src/utils/window').loggedIn
   const removeAuth: typeof import('../src/stores/auth').removeAuth
+  const setAuthenticate: typeof import('../src/stores/auth').setAuthenticate
   const setRuntimeConfigItem: typeof import('../src/stores/runtime-config').setRuntimeConfigItem
   const setSetting: typeof import('../src/stores/app-settings').setSetting
   const storePositions: typeof import('../src/windows/float').storePositions

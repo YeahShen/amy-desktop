@@ -12,12 +12,22 @@ const loginForm = ref({
 
 const showPassword = ref(false);
 
+const config = useRuntimeConfig();
+
 const loading = defineModel('loading', {
   default: false,
 });
 
 const autoLogin = useSettings('login.autoLogin');
 const rememberPassword = useSettings('login.remenberMe');
+
+watch(autoLogin, (v) => {
+  if (v) rememberPassword.value = true;
+});
+
+watch(rememberPassword, (v) => {
+  if (!v) autoLogin.value = false;
+});
 
 const userAccountCache = useLocalStorage<Record<string, UserloggedCacheItem>>(
   '__logged_account_cache',
@@ -44,6 +54,10 @@ async function login() {
       account: loginForm.value.username,
       password: loginForm.value.password,
     };
+  }
+
+  if (config.public.model === 'development') {
+    await $fetch(`/set-token?token=${token}`);
   }
 
   window.electronAPI.send('login', user, token);

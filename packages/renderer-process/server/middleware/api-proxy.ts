@@ -6,8 +6,6 @@ export default defineEventHandler((event) => {
 
   const url = event.node.req.url;
 
-  console.log(url);
-
   if (url?.startsWith('/api')) {
     if (url.includes('_nuxt_icon')) return;
 
@@ -25,9 +23,7 @@ export default defineEventHandler((event) => {
       }
     }
 
-    headers.XPLATFORM = 'client';
-
-    console.log(target.toString());
+    headers.X_PLATFORM = 'client';
 
     return proxyRequest(event, target.toString(), {
       headers,

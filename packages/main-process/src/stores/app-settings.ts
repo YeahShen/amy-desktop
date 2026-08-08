@@ -14,6 +14,9 @@ const defaultSettings: AppSettings = {
   },
   colorMode: 'system',
   hideHomeWindowOrExit: 'hide',
+  appRunSettings: {
+    showFloatWindow: true,
+  },
 };
 
 function getDefaultValue(key: string): unknown {

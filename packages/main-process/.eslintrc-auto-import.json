@@ -37,6 +37,7 @@
     "isPathHidden": "readonly",
     "loggedIn": "readonly",
     "removeAuth": "readonly",
+    "setAuthenticate": "readonly",
     "setRuntimeConfigItem": "readonly",
     "setSetting": "readonly",
     "storePositions": "readonly",

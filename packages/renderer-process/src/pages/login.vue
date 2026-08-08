@@ -34,22 +34,24 @@ async function usernamePasswordLogin(
   loading.value = true;
 
   try {
-    await $request('/auth/login-by-username-password', {
-      method: 'POST',
-      body: {
-        username,
-        password: encryptPassword(password),
+    const { token, user } = await $request<{ token: string; user: User }>(
+      '/auth/login-by-username-password',
+      {
+        method: 'POST',
+        body: {
+          username,
+          password: encryptPassword(password),
+        },
       },
-    });
-
-    message.success('操作成功');
+    );
 
     return {
-      user: {},
-      token: '',
+      token,
+      user,
     };
-  } finally {
+  } catch {
     loading.value = false;
+    throw new Error();
   }
 }
 </script>
