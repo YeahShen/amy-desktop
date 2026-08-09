@@ -22,7 +22,7 @@ export function createServer() {
         on: {
           proxyReq: (proxyReq, req) => {
             const url = req.url;
-            proxyReq.setHeader('XPLATFORM', 'client');
+            proxyReq.setHeader('X_PLATFORM', 'client');
 
             const resourceID = url?.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')) || '';
 
@@ -48,7 +48,7 @@ export function createServer() {
         },
         on: {
           proxyReq(proxyReq, req) {
-            proxyReq.setHeader('XPLATFORM', 'client');
+            proxyReq.setHeader('X_PLATFORM', 'client');
             const token = getToken();
 
             if (token) {
