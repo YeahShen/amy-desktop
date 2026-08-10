@@ -47,7 +47,7 @@ export function createServer() {
           return BASE_URL;
         },
         on: {
-          proxyReq(proxyReq, req) {
+          proxyReq(proxyReq) {
             proxyReq.setHeader('X_PLATFORM', 'client');
             const token = getToken();
 

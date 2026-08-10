@@ -21,6 +21,7 @@ declare global {
   const createFrameWindow: typeof import('../src/utils/window').createFrameWindow
   const createHomeWindow: typeof import('../src/windows/home').createHomeWindow
   const createLoginWindow: typeof import('../src/windows/login').createLoginWindow
+  const createTray: typeof import('../src/utils/tray').createTray
   const debouncedStorePositions: typeof import('../src/windows/float').debouncedStorePositions
   const fullScreen: typeof import('../src/utils/full-screen').fullScreen
   const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
@@ -35,11 +36,13 @@ declare global {
   const handleSquirrelEvent: typeof import('../src/utils/squirrel').handleSquirrelEvent
   const initColorMode: typeof import('../src/utils/color-mode').initColorMode
   const isAnyAppFullScreen: typeof import('../src/utils/check-full-screen').isAnyAppFullScreen
+  const isAppQuitting: typeof import('../src/utils/tray').isAppQuitting
   const isDark: typeof import('../src/utils/color-mode').isDark
   const isLogin: typeof import('../src/stores/auth').isLogin
   const isPathExists: typeof import('../src/utils/send.utils').isPathExists
   const isPathHidden: typeof import('../src/utils/send.utils').isPathHidden
   const loggedIn: typeof import('../src/utils/window').loggedIn
+  const quitApp: typeof import('../src/utils/tray').quitApp
   const removeAuth: typeof import('../src/stores/auth').removeAuth
   const setAuthenticate: typeof import('../src/stores/auth').setAuthenticate
   const setRuntimeConfigItem: typeof import('../src/stores/runtime-config').setRuntimeConfigItem

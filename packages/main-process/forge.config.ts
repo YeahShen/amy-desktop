@@ -50,6 +50,7 @@ const config: ForgeConfig = {
     extraResource: [
       assetsPath('scripts/koffi'),
       assetsPath('scripts/@koromix'),
+      assetsPath('icon'),
       path.resolve(process.cwd(), '..', 'renderer-process/.output/public'),
     ],
   },

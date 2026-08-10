@@ -1,8 +1,7 @@
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain, BrowserWindow, screen } from 'electron';
 import { HANDLE_EVENT } from './channels';
 
 ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
-  const { screen } = require('electron');
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
   return {

@@ -46,6 +46,7 @@ export default (async function () {
         '**/.nuxt/**',
         '**/dist/**',
         '**/.output/**',
+        '**/.vite/**',
         '.vscode/**',
         '**/tsconfig.json',
       ],
@@ -59,7 +60,7 @@ export default (async function () {
     },
 
     {
-      files: ['packages/main-process/app/**/*.ts', 'packages/zpublisher/src/**/*.ts'],
+      files: ['packages/main-process/src/**/*.ts', 'packages/zpublisher/src/**/*.ts'],
       languageOptions: { globals: { ...globals.node } },
       extends: [tseslint.configs.recommended],
       rules: {
@@ -69,7 +70,7 @@ export default (async function () {
     },
 
     {
-      files: ['packages/main-process/app/**/*.ts'],
+      files: ['packages/main-process/src/**/*.ts'],
       languageOptions: {
         globals: (await getMainProcessAutoImportConfig()).globals,
       },

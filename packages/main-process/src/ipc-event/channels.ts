@@ -7,6 +7,7 @@ export enum ON_EVENT {
   SET_WINDOW_POSITIONS = 'set-window-position',
 
   CLOSE_WINDOW = 'close-window',
+  HID_WINDOW = 'hid-window',
   MIN_WINDOW = 'min-window',
 
   SET_SETTING = 'set-setting',

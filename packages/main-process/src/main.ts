@@ -56,6 +56,8 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
+  createTray();
+
   fullScreen().then(({ check }) => {
     setInterval(async () => {
       if (await check()) {
@@ -69,7 +71,11 @@ app.whenReady().then(async () => {
   if (app.isPackaged) {
     createServer();
 
-    (await isLogin()) ? createHomeWindow() : createLoginWindow();
+    if (await isLogin()) {
+      createHomeWindow();
+    } else {
+      createLoginWindow();
+    }
 
     checkForUpdate();
     return;

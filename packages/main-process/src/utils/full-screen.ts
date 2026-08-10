@@ -5,6 +5,7 @@ import os from 'node:os';
 export async function fullScreen() {
   const koffi = await new Promise<typeof import('koffi')>((resolve) => {
     if (app.isPackaged) {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports -- koffi 为 CJS 原生模块，打包后仅能通过 require 加载
       resolve(require(path.resolve(app.getAppPath(), '..', 'koffi/index.cjs')));
     } else {
       import('koffi').then((res) => {
@@ -18,6 +19,7 @@ export async function fullScreen() {
     const user32 = koffi.load('user32.dll');
 
     // 2. 声明类型与 API
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- koffi 类型注册（有副作用，供下方字符串签名引用）
     const QUERY_USER_NOTIFICATION_STATE = koffi.out(
       koffi.pointer('QUERY_USER_NOTIFICATION_STATE', 'int'),
     );
@@ -26,6 +28,7 @@ export async function fullScreen() {
     );
 
     // 定义 RECT 结构体
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- koffi 类型注册（有副作用，供 GetWindowRect 签名引用）
     const RECT = koffi.struct('RECT', {
       left: 'int',
       top: 'int',

@@ -130,14 +130,6 @@ export interface IUpdateElectronApp {
 const pkg = require('../../package.json');
 const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
 const supportedPlatforms = ['darwin', 'win32'];
-const isHttpsUrl = (maybeURL: string) => {
-  try {
-    const { protocol } = new URL(maybeURL);
-    return protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
 
 export function updateElectronApp(opts: IUpdateElectronAppOptions = {}): IUpdateElectronApp {
   // check for bad input early, so it will be logged during development
@@ -215,7 +207,6 @@ function initUpdater(
     // Authorization: `Bearer ${Buffer.from('ashen' + ':' + 'Lyuanshen520.').toString('base64')}`,
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function log(...args: any[]) {
     logger.log(...args);
   }

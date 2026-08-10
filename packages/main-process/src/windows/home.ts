@@ -23,7 +23,13 @@ export async function createHomeWindow() {
     win?.show();
   });
 
-  win.on('close', () => {
+  win.on('close', (event) => {
+    // 非退出状态下关闭主窗口：隐藏到托盘而非退出应用
+    if (!isAppQuitting()) {
+      event.preventDefault();
+      win.hide();
+      return;
+    }
     homeWindow = null;
   });
 

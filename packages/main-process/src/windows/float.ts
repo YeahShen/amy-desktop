@@ -35,8 +35,6 @@ export function createFloatWindow() {
 
   win.loadURL(buildWindowUrl('float'));
 
-  win.webContents.session;
-
   win.once('ready-to-show', () => {
     win?.show();
   });

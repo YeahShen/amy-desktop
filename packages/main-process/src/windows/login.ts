@@ -10,8 +10,6 @@ export function createLoginWindow() {
 
   win.loadURL(buildWindowUrl('login'));
 
-  win.webContents.session;
-
   win.once('ready-to-show', () => {
     win?.show();
   });

@@ -1,5 +1,5 @@
 import process from 'node:process';
-import childProcess, { exec } from 'node:child_process';
+import childProcess from 'node:child_process';
 import path from 'node:path';
 import { app } from 'electron';
 
