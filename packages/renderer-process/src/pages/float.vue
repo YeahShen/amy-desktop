@@ -86,7 +86,6 @@ const positionStyle = computed(() => {
 let initialMouseX = 0;
 let initialMouseY = 0;
 
-let mouseDownTime = 0;
 let windowInitialX = 0;
 let windowInitialY = 0;
 
@@ -115,7 +114,6 @@ function handleMouseLeave() {
 function handleMouseDown(e: MouseEvent) {
   initialMouseX = e.screenX; // 使用screenX/screenY获取相对于屏幕的坐标
   initialMouseY = e.screenY;
-  mouseDownTime = Date.now();
 
   window.electronAPI.invoke<{ x: number; y: number }>('get-window-position').then(({ x, y }) => {
     windowInitialX = x;
@@ -153,7 +151,6 @@ function toggleMenu() {
 }
 
 function onMenuItemClick(item: (typeof menuItems)[number]) {
-   
   console.log('Menu item clicked:', item.label);
   showMenu.value = false; // 点击菜单项后关闭菜单
 }
@@ -176,7 +173,7 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
         >
           <div class="float-logo">
             <AmyLogo
-              size="33"
+              size="36"
               :color="
                 colorMode.value === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'
               "
@@ -245,7 +242,6 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
    毛玻璃基础样式 — 偏白磨砂质感
    ============================================ */
 .glass-floating-window {
-  // 背景：偏白半透明 + 模糊
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);

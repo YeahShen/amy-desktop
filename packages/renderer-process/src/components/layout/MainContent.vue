@@ -1,6 +1,4 @@
-<script setup lang="ts">
-const colorMode = useColorMode();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="w-full main-content"></div>

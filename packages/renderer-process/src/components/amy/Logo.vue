@@ -31,6 +31,7 @@ function getAnimationStyle(aniStyle: string) {
     preserveAspectRatio="xMidYMid"
     width="182"
     height="182"
+    :style="{ '--logo-color': color, width: size + 'px', height: size + 'px' }"
   >
     <g class="ldl-scale" style="transform-origin: 50% 50%; transform: rotate(0deg) scale(1.2, 1.2)">
       <g class="ldl-ani">
@@ -44,11 +45,9 @@ function getAnimationStyle(aniStyle: string) {
               transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
             "
             :style="
-              getAnimationStyle('animation: 3s linear 0s infinite normal forwards running animate;')
+              getAnimationStyle('animation: 3s linear 0s infinite normal forwards running animate')
             "
-          >
-            <path d="z" class="st0" style="stroke-width: 1" />
-          </g>
+          ></g>
         </g>
         <g class="ldl-layer">
           <g
@@ -61,7 +60,7 @@ function getAnimationStyle(aniStyle: string) {
             "
             :style="
               getAnimationStyle(
-                'animation: 3s linear -0.3s infinite normal forwards running animate;',
+                'animation: 3s linear -0.3s infinite normal forwards running animate',
               )
             "
           >
@@ -71,7 +70,7 @@ function getAnimationStyle(aniStyle: string) {
               cx="82.8"
               class="st1"
               style="stroke-width: 1"
-              :style="{ fill: color }"
+              :style="{ fill: 'var(--logo-color)' }"
             />
           </g>
         </g>
@@ -86,11 +85,16 @@ function getAnimationStyle(aniStyle: string) {
             "
             :style="
               getAnimationStyle(
-                'animation: 3s linear -0.6s infinite normal forwards running animate;',
+                'animation: 3s linear -0.6s infinite normal forwards running animate',
               )
             "
           >
-            <path d="M26.6,82H86" class="st2" style="stroke-width: 3" :style="{ stroke: color }" />
+            <path
+              d="M26.6,82H86"
+              class="st2"
+              style="stroke-width: 3"
+              :style="{ stroke: 'var(--logo-color)' }"
+            />
           </g>
         </g>
         <g class="ldl-layer">
@@ -127,7 +131,7 @@ function getAnimationStyle(aniStyle: string) {
                         "
                         :style="
                           getAnimationStyle(
-                            'animation: 3s linear -0.9s infinite normal forwards running animate;',
+                            'animation: 3s linear -0.9s infinite normal forwards running animate',
                           )
                         "
                       >
@@ -135,7 +139,7 @@ function getAnimationStyle(aniStyle: string) {
                           d="M72.7,48c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4L72.7,48 L72.7,48z"
                           class="st1"
                           style="stroke-width: 1"
-                          :style="{ fill: color }"
+                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -173,7 +177,7 @@ function getAnimationStyle(aniStyle: string) {
                         "
                         :style="
                           getAnimationStyle(
-                            'animation: 3s linear -1.2s infinite normal forwards running animate;',
+                            'animation: 3s linear -1.2s infinite normal forwards running animate',
                           )
                         "
                       >
@@ -185,7 +189,7 @@ function getAnimationStyle(aniStyle: string) {
                           class="st1"
                           transform="matrix(0.866 -0.5 0.5 0.866 -39.9331 40.617)"
                           style="stroke-width: 1"
-                          :style="{ fill: color }"
+                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -231,7 +235,7 @@ function getAnimationStyle(aniStyle: string) {
                           d="M72.7,19.2c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4 C72.8,19.1,72.7,19.2,72.7,19.2z"
                           class="st1"
                           style="stroke-width: 1"
-                          :style="{ fill: color }"
+                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -257,7 +261,7 @@ function getAnimationStyle(aniStyle: string) {
                     d="M70.8,87.9V19.2"
                     class="st3"
                     style="stroke-width: 3"
-                    :style="{ stroke: color }"
+                    :style="{ stroke: 'var(--logo-color)' }"
                   />
                 </g>
               </g>
@@ -300,7 +304,7 @@ function getAnimationStyle(aniStyle: string) {
                           d="M72.7,33.5c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4L72.7,33.5z"
                           class="st1"
                           style="stroke-width: 1"
-                          :style="{ fill: color }"
+                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -329,7 +333,7 @@ function getAnimationStyle(aniStyle: string) {
               d="M26.6,62.8H86"
               class="st2"
               style="stroke-width: 3"
-              :style="{ stroke: color }"
+              :style="{ stroke: 'var(--logo-color)' }"
             />
           </g>
         </g>
@@ -347,9 +351,7 @@ function getAnimationStyle(aniStyle: string) {
                 'animation: 3s linear -2.7s infinite normal forwards running animate',
               )
             "
-          >
-            <path d="z" class="st0" style="stroke-width: 1"></path>
-          </g>
+          ></g>
         </g>
         <metadata xmlns:d="https://loading.io/stock/"></metadata>
       </g>
