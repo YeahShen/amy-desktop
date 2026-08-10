@@ -33,6 +33,7 @@ main-process/
 │   │   ├── preload.ts       # Preload 脚本（electronAPI 尚未实现，当前为空模板）
 │   │   └── tsconfig.json    # Preload 专用 TS 配置（CommonJS, DOM+ESNext）
 │   ├── ipc-event/
+│   │   ├── index.ts         # 汇总入口（import handle/send/on）
 │   │   ├── channels.ts      # IPC 通道类型定义（OnEventChannels / HandleEventChannels / SendEventChannels）
 │   │   ├── on.ts            # ipcMain.on 事件处理注册
 │   │   ├── send.ts          # BrowserWindow.webContents.send 封装
@@ -57,7 +58,7 @@ main-process/
 │   │   ├── window.ts        # 窗口工具函数
 │   │   ├── send.utils.ts    # 发送请求工具
 │   │   ├── color-mode.ts    # 颜色模式工具（主题切换）
-│   │   ├── check-full-screen.ts # 全屏检测
+│   │   ├── full-screen.ts   # 全屏检测
 │   │   ├── check-ipv6.ts    # IPv6 检测工具
 │   │   └── squirrel.ts      # Squirrel 安装事件处理
 │   └── updater/
@@ -83,16 +84,33 @@ main-process/
 renderer-process/
 ├── src/
 │   ├── app.vue              # Nuxt 根组件
+│   ├── app.config.ts        # Nuxt UI 主题定制（formField label 等样式覆盖）
 │   ├── pages/
-│   │   └── login.vue        # 登录页面
+│   │   ├── login.vue        # 登录页面
+│   │   ├── home.vue         # 主页面（侧边栏 + 内容区）
+│   │   └── float.vue        # 悬浮窗页面（empty 布局 + 透明背景）
 │   ├── layouts/
-│   │   ├── default.vue      # 默认布局
-│   │   └── empty.vue        # 空白布局（用于弹窗窗口）
+│   │   ├── default.vue      # 默认布局（Navbar + Sidebar + MainContent）
+│   │   └── empty.vue        # 空白布局（用于弹窗/悬浮窗窗口）
+│   ├── components/
+│   │   ├── amy/             # 通用组件（Logo、Scrollbar、Message、Combobox）
+│   │   │   └── window/      # 窗口控制按钮（Close / MinSize / MaxSize）
+│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent）
+│   │   └── login/           # 登录页组件（Header、UsernameInput、Usernamepassword）
+│   ├── composables/
+│   │   ├── useRequest.ts    # useRequest / $request — 基于 Nuxt useFetch 的请求封装
+│   │   ├── useMessage.ts    # 消息提示封装
+│   │   └── useSettings.ts   # 应用设置读取（基于 electronAPI IPC）
+│   ├── plugins/
+│   │   └── request.ts       # $request 插件（$fetch 实例，mock 模式走 /mock/api，否则 /api）
+│   ├── utils/
+│   │   └── app-settings.ts  # getSetting/setSetting（appSettingBuilder + electronAPI IPC）
 │   └── assets/
 │       ├── css/
-│       │   ├── main.css     # 主样式入口
+│       │   ├── main.css     # 主样式入口（全局 body/html 样式）
 │       │   ├── tailwind.css # Tailwind CSS v4 导入层
-│       │   └── themes.css   # 主题系统（明/暗色模式变量）
+│       │   ├── themes.css   # 主题系统（明/暗色模式变量）
+│       │   └── fonts.css    # 自定义字体（Fredoka、Nunito woff2）
 │       └── icons/           # 自定义图标目录（Nuxt Icon 自定义集合）
 ├── shared/
 │   ├── electron-types.d.ts  # Window.electronAPI 全局类型声明（IPC、设置、文件操作）
@@ -102,7 +120,10 @@ renderer-process/
 │   │   ├── api-proxy.ts     # /api/* 请求代理到后端，自动附加 Bearer token
 │   │   └── static-resource-proxy.ts # /resource/* 静态资源代理
 │   ├── routes/
-│   │   └── set-token.ts     # Token 写入路由（接收 ?token=xxx 参数写入文件）
+│   │   ├── set-token.ts     # Token 写入路由（接收 ?token=xxx 参数写入文件）
+│   │   └── mock/            # Mock 接口（模拟后端 API，前端独立开发时使用）
+│   │       ├── api/auth/login-by-username-password.post.ts # 模拟登录接口
+│   │       └── api/user/update-info.ts                     # 模拟更新用户信息
 │   └── plugins/
 │       └── html-transform.ts # HTML 渲染钩子，注入 color-mode class/style 属性
 ├── nuxt.config.ts           # Nuxt 配置（srcDir, modules, css, colorMode, runtimeConfig, nitro）
@@ -220,11 +241,15 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - Token 持久化：主进程通过 `_auth_token` 文件读写认证 token，渲染进程 Nitro server 代理时读取该文件
 
 ### Renderer (Nuxt)
-- **Nuxt UI 4 + Tailwind CSS 4** — UI 组件和样式系统
+- **Nuxt UI 4 + Tailwind CSS 4** — UI 组件和样式系统（`app.config.ts` 中可覆盖 UI 主题样式）
 - **@nuxtjs/color-mode** — 支持 system/light/dark 主题切换，通过 cookie 持久化
 - **Pinia** — 状态管理（通过 @pinia/nuxt 模块）
 - **VueUse** — 组合式工具集（通过 @vueuse/nuxt 模块）
 - **Nuxt Icon** — 自定义图标集合（`custom` 前缀，路径 `app/assets/icons`）
+- 请求封装：`plugins/request.ts` 提供 `$request`（$fetch 实例），按 `AMY_MODE` 决定 baseURL（`mock` → `/mock/api`，否则 `/api`）；`composables/useRequest.ts` 提供 `useRequest`/`$request` 组合式封装
+- **Mock 模式**：`AMY_MODE=mock` 时请求走 Nitro `server/routes/mock/` 下的模拟接口，无需启动后端即可调试前端流程（如登录）
+- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent），默认布局由三者组合
+- 应用设置：渲染进程通过 `window.electronAPI` 的 getSetting/setSetting 读写主进程 electron-store（见 `utils/app-settings.ts`）
 - Nitro server 在开发模式下提供 API 代理（`/api/*` → `apiUrl`）和静态资源代理（`/resource/*`）
 - `html-transform` 插件注入服务端颜色模式属性到 HTML，避免 FOUC
 - `set-token` 路由允许主进程将认证 token 传递给 Nitro 服务端
@@ -239,7 +264,7 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 ### Environment Variables
 - `.env.development` — 开发环境（`AMY_APP_NAME=AMY_DEV`, `AMY_MODE=development`, `AMY_PORT=5326`）
 - `.env.production` — 生产环境（`AMY_APP_NAME='AMY STATIONS'`, `AMY_MODE=production`, `AMY_PORT=32369`）
-- 公共变量：`AMY_BASE_URL`（后端 API 地址）、`AMY_UPGRADE_URL`、`AMY_UPGRADE_IPV6_URL`（更新服务器地址）、`AMY_RAS_KEY`
+- 公共变量：`AMY_BASE_URL`（后端 API 地址）、`AMY_UPGRADE_URL`、`AMY_UPGRADE_IPV6_URL`（更新服务器地址）、`AMY_RAS_KEY`（RSA 公钥，登录密码加密用，对应后端私钥）
 - Renderer dev/build 通过 `--dotenv ../../.env.{environment}` 加载环境变量
 - Forge config 通过 dotenv 加载环境变量，`AMY_APP_NAME` 用于应用命名
 - Publisher 凭证通过 `AMY_PUBLISH_USERNAME` / `AMY_PUBLISH_PASSWORD`（set in CI secrets）
