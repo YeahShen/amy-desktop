@@ -1,6 +1,8 @@
 <script setup lang="ts">
+const hidOrClose = useSettings('hideHomeWindowOrExit');
+
 async function closeWindow() {
-  if ((await getSetting('hideHomeWindowOrExit')) === 'hide') {
+  if (hidOrClose.value === 'hide') {
     window.electronAPI.send('hid-window');
   } else {
     window.electronAPI.send('close-window');

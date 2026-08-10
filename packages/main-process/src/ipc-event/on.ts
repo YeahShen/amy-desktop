@@ -23,6 +23,10 @@ ipcMain.on(ON_EVENT.MIN_WINDOW, (_e) => {
   BrowserWindow.fromWebContents(_e.sender)?.minimize();
 });
 
+ipcMain.on(ON_EVENT.HID_WINDOW, (_e) => {
+  BrowserWindow.fromWebContents(_e.sender)?.hide();
+});
+
 ipcMain.on(ON_EVENT.GET_WINDOW_POSITIONS, (_e) => {
   const window = BrowserWindow.fromWebContents(_e.sender);
   return window?.getPosition();

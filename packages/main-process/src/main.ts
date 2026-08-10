@@ -56,8 +56,6 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
-  createTray();
-
   fullScreen().then(({ check }) => {
     setInterval(async () => {
       if (await check()) {
@@ -83,3 +81,5 @@ app.whenReady().then(async () => {
 
   createLoginWindow();
 });
+
+app.on('window-all-closed', app.quit);

@@ -1,13 +1,16 @@
-import { type BrowserWindow } from 'electron';
+import { type BrowserWindow, app } from 'electron';
 
 let homeWindow: BrowserWindow | null = null;
 
 export async function createHomeWindow() {
   const dark = await isDark();
 
+  // 仅登录成功（HomeWindow 创建）后才启动系统托盘
+  createTray();
+
   const win = (homeWindow = createFrameWindow({
     width: getRuntimeConfigItem('homeSize.width'),
-    height: getRuntimeConfigItem('homeSize.width'),
+    height: getRuntimeConfigItem('homeSize.height'),
     minWidth: HOME_WINDOW_BASE_SIZE.width,
     minHeight: HOME_WINDOW_BASE_SIZE.heiht,
     resizable: true,
@@ -23,15 +26,7 @@ export async function createHomeWindow() {
     win?.show();
   });
 
-  win.on('close', (event) => {
-    // 非退出状态下关闭主窗口：隐藏到托盘而非退出应用
-    if (!isAppQuitting()) {
-      event.preventDefault();
-      win.hide();
-      return;
-    }
-    homeWindow = null;
-  });
+  win.on('close', () => app.quit());
 
   return homeWindow;
 }
