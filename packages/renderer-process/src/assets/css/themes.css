@@ -40,8 +40,8 @@
   --ui-text-highlighted: white;
   --ui-text-inverted: var(--ui-color-neutral-900);
 
-  --ui-bg: #16191d;
-  --ui-bg-card: #17171c;
+  --ui-bg: #242424;
+  --ui-bg-card: #161717;
 
   --ui-border-default: #27272a;
   --ui-border-muted: #3f3f46;
