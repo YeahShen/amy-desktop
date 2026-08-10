@@ -153,7 +153,7 @@ function toggleMenu() {
 }
 
 function onMenuItemClick(item: (typeof menuItems)[number]) {
-  // eslint-disable-next-line no-console
+   
   console.log('Menu item clicked:', item.label);
   showMenu.value = false; // 点击菜单项后关闭菜单
 }

@@ -70,7 +70,7 @@ async function usernamePasswordLogin(
     </div>
 
     <div class="mt-3 px-4">
-      <LoginUsernamepassword :login-fn="usernamePasswordLogin" v-model:loading="loading" />
+      <LoginUsernamepassword v-model:loading="loading" :login-fn="usernamePasswordLogin" />
     </div>
 
     <div class="w-full flex items-center justify-center gap-x-2 absolute bottom-6">

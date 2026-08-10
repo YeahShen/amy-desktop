@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "@amy/shared": "workspace:*",
+    "@nuxt/eslint": "^1.17.0",
     "@nuxt/schema": "4.4.6",
     "@nuxtjs/color-mode": "^4.0.1",
     "@pinia/nuxt": "^1.0.1",
@@ -27,7 +28,6 @@
     "vue-tsc": "^3.2.6"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.16.0",
     "@nuxt/ui": "^4.10.0",
     "tailwindcss": "^4.3.3"
   }
