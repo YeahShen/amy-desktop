@@ -17,7 +17,7 @@ useHead({
 const loading = ref(false);
 const config = useRuntimeConfig();
 
-const message = useMessage();
+// const message = useMessage();
 
 function encryptPassword(pwd: string) {
   // @ts-ignore

@@ -1,7 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-full main-content"></div>
+  <div class="w-full main-content">
+    <NuxtPage />
+  </div>
 </template>
 
 <style lang="scss">

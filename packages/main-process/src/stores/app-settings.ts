@@ -15,7 +15,7 @@ const defaultSettings: AppSettings = {
   colorMode: 'system',
   hideHomeWindowOrExit: 'hide',
   appRunSettings: {
-    showFloatWindow: true,
+    showFloatWindow: false,
   },
 };
 

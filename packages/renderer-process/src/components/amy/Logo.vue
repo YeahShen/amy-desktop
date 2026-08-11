@@ -14,10 +14,11 @@ const props = withDefaults(
   },
 );
 
-/** size 支持数字（px）或字符串（如 '2rem'），统一转为样式字符串 */
-const sizeStyle = computed(() =>
-  typeof props.size === 'number' ? `${props.size}px` : props.size,
-);
+/** size 支持数字或字符串；纯数字字符串（模板静态属性如 size="36"）补 px，带单位的字符串（如 '2rem'）原样透传 */
+const sizeStyle = computed(() => {
+  if (typeof props.size === 'number') return `${props.size}px`;
+  return /^\d+(\.\d+)?$/.test(props.size) ? `${props.size}px` : props.size;
+});
 
 function getAnimationStyle(aniStyle: string) {
   if (!props.animation) return {};

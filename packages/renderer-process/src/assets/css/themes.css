@@ -1,5 +1,5 @@
 :root {
-  --sidebar-width: 74px;
+  --sidebar-width: 60px;
   --navbar-height: 70px;
 
   --ui-primary: var(--color-primary-500);
@@ -16,8 +16,9 @@
   --ui-text-highlighted: var(--ui-color-neutral-900);
   --ui-text-inverted: white;
 
-  --ui-bg: white;
+  --ui-bg: #ffffff;
   --ui-bg-card: #fff;
+  --ui-bg-elevated: #f6f6f4;
 
   --ui-border-default: #e4e4e7;
   --ui-border-muted: #d4d4d8;
@@ -40,8 +41,9 @@
   --ui-text-highlighted: white;
   --ui-text-inverted: var(--ui-color-neutral-900);
 
-  --ui-bg: #242424;
+  --ui-bg: #1a1a19;
   --ui-bg-card: #161717;
+  --ui-bg-elevated: #212120;
 
   --ui-border-default: #27272a;
   --ui-border-muted: #3f3f46;

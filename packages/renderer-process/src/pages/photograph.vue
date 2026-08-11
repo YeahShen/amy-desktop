@@ -1,11 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-  workspace: 'home',
+  workspace: 'photograph',
 });
 </script>
 
 <template>
-  <div>home</div>
+  <div></div>
 </template>
 
 <style lang="scss"></style>

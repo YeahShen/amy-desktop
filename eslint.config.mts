@@ -89,6 +89,14 @@ export default (async function () {
     },
 
     ...rendererProcessConfig,
+
+    {
+      files: ['packages/renderer-process/src/**/*.vue'],
+      rules: {
+        '@typescript-eslint/ban-ts-comment': 'off',
+      },
+    },
+
     eslintConfigPrettier,
   ]);
 })();
