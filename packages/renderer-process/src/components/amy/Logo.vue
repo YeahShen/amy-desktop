@@ -4,34 +4,37 @@ const props = withDefaults(
     size?: number | string;
     color?: string;
     animation?: boolean;
+    label?: string;
   }>(),
   {
     size: 36,
     color: '#fff',
     animation: true,
+    label: 'AMY Logo',
   },
 );
 
+/** size 支持数字（px）或字符串（如 '2rem'），统一转为样式字符串 */
+const sizeStyle = computed(() =>
+  typeof props.size === 'number' ? `${props.size}px` : props.size,
+);
+
 function getAnimationStyle(aniStyle: string) {
-  if (props.animation) {
-    return Object.fromEntries([aniStyle.split(':').map((i) => i.trim())]);
-  } else {
-    return {};
-  }
+  if (!props.animation) return {};
+  const sep = aniStyle.indexOf(':');
+  if (sep === -1) return {};
+  return { [aniStyle.slice(0, sep).trim()]: aniStyle.slice(sep + 1).trim() };
 }
 </script>
 
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xml:space="preserve"
     viewBox="0 0 128 128"
-    version="1.1"
     preserveAspectRatio="xMidYMid"
-    width="182"
-    height="182"
-    :style="{ '--logo-color': color, width: size + 'px', height: size + 'px' }"
+    role="img"
+    :aria-label="label"
+    :style="{ '--logo-color': color, width: sizeStyle, height: sizeStyle }"
   >
     <g class="ldl-scale" style="transform-origin: 50% 50%; transform: rotate(0deg) scale(1.2, 1.2)">
       <g class="ldl-ani">
@@ -70,7 +73,6 @@ function getAnimationStyle(aniStyle: string) {
               cx="82.8"
               class="st1"
               style="stroke-width: 1"
-              :style="{ fill: 'var(--logo-color)' }"
             />
           </g>
         </g>
@@ -139,7 +141,6 @@ function getAnimationStyle(aniStyle: string) {
                           d="M72.7,48c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4L72.7,48 L72.7,48z"
                           class="st1"
                           style="stroke-width: 1"
-                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -189,7 +190,6 @@ function getAnimationStyle(aniStyle: string) {
                           class="st1"
                           transform="matrix(0.866 -0.5 0.5 0.866 -39.9331 40.617)"
                           style="stroke-width: 1"
-                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -235,7 +235,6 @@ function getAnimationStyle(aniStyle: string) {
                           d="M72.7,19.2c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4 C72.8,19.1,72.7,19.2,72.7,19.2z"
                           class="st1"
                           style="stroke-width: 1"
-                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -261,7 +260,6 @@ function getAnimationStyle(aniStyle: string) {
                     d="M70.8,87.9V19.2"
                     class="st3"
                     style="stroke-width: 3"
-                    :style="{ stroke: 'var(--logo-color)' }"
                   />
                 </g>
               </g>
@@ -304,7 +302,6 @@ function getAnimationStyle(aniStyle: string) {
                           d="M72.7,33.5c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4L72.7,33.5z"
                           class="st1"
                           style="stroke-width: 1"
-                          :style="{ fill: 'var(--logo-color)' }"
                         />
                       </g>
                     </g>
@@ -353,7 +350,6 @@ function getAnimationStyle(aniStyle: string) {
             "
           ></g>
         </g>
-        <metadata xmlns:d="https://loading.io/stock/"></metadata>
       </g>
     </g>
   </svg>
@@ -364,12 +360,12 @@ function getAnimationStyle(aniStyle: string) {
   fill: none;
 }
 .st1 {
-  fill: #333;
+  fill: var(--logo-color);
 }
 .st2,
 .st3 {
   fill: none;
-  stroke: #333;
+  stroke: var(--logo-color);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-miterlimit: 10;
@@ -380,6 +376,12 @@ function getAnimationStyle(aniStyle: string) {
 
 .ldl-ani {
   will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ldl-ani {
+    animation: none !important;
+  }
 }
 
 @keyframes animate {

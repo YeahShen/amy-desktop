@@ -23,18 +23,19 @@ const dragging = ref(false);
 
 const { width, height } = useElementSize(wrapRef);
 const { width: viewWidth, height: viewHeight } = useElementSize(viewRef);
+const { height: trackHeight } = useElementSize(trackRef);
 
 const sizeHeight = computed(() =>
   thumbPercent.value > 0 && thumbPercent.value < 100 ? `${thumbPercent.value}%` : '',
 );
 
 const thumbStyle = computed(() => {
-  const translate = `translateY(${move.value}%)`;
+  // move 是轨道高度百分比，但 translateY(%) 相对滑块自身尺寸，
+  // 必须换算成轨道像素高度，否则滚到底时滑块无法到达轨道底部
+  const translateY = trackHeight.value > 0 ? (move.value / 100) * trackHeight.value : 0;
   return {
     height: sizeHeight.value,
-    transform: translate,
-    msTransform: translate,
-    webkitTransform: translate,
+    transform: `translateY(${translateY}px)`,
   };
 });
 
@@ -191,7 +192,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="scrollbar h-full w-full position-relative">
+  <div
+    class="scrollbar h-full w-full position-relative"
+    :class="{ 'is-dragging': dragging }"
+  >
     <!-- 原生滚动条已隐藏（见样式），滚动行为由内容手势/滚轮/键盘驱动 -->
     <div
       ref="wrap"
@@ -234,8 +238,8 @@ onUnmounted(() => {
 <style lang="scss">
 .scrollbar {
   &__wrap {
-    overflow: scroll;
-    height: 100%;
+    // overflow 由模板类控制（overflow-x-hidden / overflow-y-auto），
+    // 此处仅隐藏原生滚动条，避免无 layer 的 SCSS 覆盖 Tailwind utilities
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -245,7 +249,8 @@ onUnmounted(() => {
   }
 
   &:hover,
-  &:focus-within {
+  &:focus-within,
+  &.is-dragging {
     > .scrollbar__track {
       opacity: 1;
       transition: opacity 340ms ease-out;
