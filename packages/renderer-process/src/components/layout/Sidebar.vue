@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const route = useRoute();
 
-console.log(route);
-
 type MenuItem = {
   icon: string;
   title: string;
@@ -62,8 +60,16 @@ const topMenu: MenuItem[] = [
         </NuxtLink>
       </div>
 
-      <div id="sidebar-bottom-menu">
+      <div id="sidebar-bottom-menu" class="flex flex-col pb-4 gap-y-2">
         <AmySwitchColorMode class="no-drag" />
+
+        <button class="b-icon no-drag">
+          <NuxtIcon name="amy:cloud-check-broken" size="20" />
+        </button>
+
+        <button class="b-icon no-drag">
+          <NuxtIcon name="amy:settings-line-duotone" size="20" />
+        </button>
       </div>
     </div>
   </div>
@@ -76,6 +82,27 @@ const topMenu: MenuItem[] = [
   .logo-wrap {
     width: 100%;
     height: var(--navbar-height);
+  }
+
+  .b-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: var(--ui-text-muted);
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover {
+      background: color-mix(in srgb, var(--ui-text-dimmed) 40%, transparent);
+      color: var(--ui-text);
+    }
   }
 }
 
