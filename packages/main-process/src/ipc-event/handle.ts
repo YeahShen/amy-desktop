@@ -1,5 +1,9 @@
 import { ipcMain, BrowserWindow, screen } from 'electron';
 import { HANDLE_EVENT } from './channels';
+import { Bounding } from '@amy/shared';
+
+import { v4 } from 'uuid';
+import { createDialogWindow } from '../windows/dialog';
 
 ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -17,3 +21,29 @@ ipcMain.handle(HANDLE_EVENT.GET_WINDOW_POSITIONS, (_e) => {
 ipcMain.handle(HANDLE_EVENT.GET_SETTING, (_e, key) => {
   return getSetting(key);
 });
+
+ipcMain.handle(
+  HANDLE_EVENT.OPEN_DIALOG,
+  (
+    _e,
+    options: { bounding: Bounding; args: Record<string, string>; name: string; onTop: boolean },
+  ) => {
+    const id = v4();
+
+    const dialog = createDialogWindow(
+      options.bounding,
+      options.name,
+      { ...options.args, dialogId: id },
+      options.onTop,
+      BrowserWindow.fromWebContents(_e.sender)!,
+    );
+
+    return new Promise((resolve) => {
+      ipcMain.on(`close_dialog:${id}`, (_e, result: any) => {
+        dialog.close();
+        dialog.destroy();
+        resolve(result);
+      });
+    });
+  },
+);

@@ -19,6 +19,8 @@ export enum HANDLE_EVENT {
   GET_WINDOW_POSITIONS = 'get-window-position',
 
   GET_SETTING = 'get-setting',
+
+  OPEN_DIALOG = 'open-dialog',
 }
 
 export enum SEND_EVENT {

@@ -27,6 +27,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   getPathForFile: (file: File) => webUtils.getPathForFile(file),
 
+  closeDialog: (id: string, result: any) => {
+    ipcRenderer.send(`close_dialog:${id}`, result);
+  },
+
   // parseFilePath: (fPath: string) => {
   //   const size = fs.statSync(fPath).size;
   //   return { ...path.parse(fPath), size, path: fPath, chunkSize: UPLOAD_CHUNK_SIZE };

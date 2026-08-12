@@ -6,3 +6,4 @@ export * from './utils/zip';
 export * from './utils/user';
 export * from './utils/app-settings';
 export * from './utils/tools';
+export * from './utils/common-dialog';
