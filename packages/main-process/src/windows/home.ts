@@ -28,6 +28,16 @@ export async function createHomeWindow() {
 
   win.on('close', () => app.quit());
 
+  win.on('maximize', () => {
+    console.log(1);
+
+    win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, true);
+  });
+
+  win.on('unmaximize', () => {
+    win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, false);
+  });
+
   return homeWindow;
 }
 

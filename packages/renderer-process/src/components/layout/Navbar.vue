@@ -13,8 +13,13 @@ async function closeWindow() {
 <template>
   <div class="w-full navbar drag flex justify-between px-4">
     <div class="w-fit h-full"></div>
+
     <div class="w-fit h-full flex">
-      <div class="flex items-center">
+      <div class="flex items-center gap-x-4">
+        <AmyWindowMinSize />
+
+        <AmyWindowMaxSize />
+
         <AmyWindowClose @close="closeWindow" />
       </div>
     </div>

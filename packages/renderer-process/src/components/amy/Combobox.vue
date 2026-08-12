@@ -115,7 +115,7 @@ function blur() {
         <div
           v-for="(item, idx) in showItems"
           :key="idx"
-          class="w-full my-1 cursor-pointer py-2 px-2 dark:hover:bg-primary-800/30 hover:bg-primary-50/10 rounded-md"
+          class="w-full my-1 cursor-pointer py-2 px-2 dark:hover:bg-primary-800/30 hover:bg-primary-200/20 rounded-md"
           @click="select(item)"
         >
           <slot name="item" :item="item"></slot>
