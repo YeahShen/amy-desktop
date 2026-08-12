@@ -18,6 +18,7 @@ declare module '#app' {
   // 扩展 PageMeta 接口
   interface PageMeta {
     colorMode?: 'light' | 'dark';
+    immersiveSidebar?: boolean;
     workspace?: 'artist' | 'film' | 'home' | 'clound' | 'photograph';
     dialog?: DialogMeta;
   }
