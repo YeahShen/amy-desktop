@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div></div>
+  <div>ffff</div>
 </template>
 
 <style lang="scss"></style>
