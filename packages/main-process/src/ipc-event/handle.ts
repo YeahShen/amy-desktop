@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, screen } from 'electron';
+import { ipcMain, BrowserWindow, screen, type IpcMainEvent } from 'electron';
 import { HANDLE_EVENT } from './channels';
 import { Bounding } from '@amy/shared';
 
@@ -39,10 +39,21 @@ ipcMain.handle(
     );
 
     return new Promise((resolve) => {
-      ipcMain.on(`close_dialog:${id}`, (_e, result: any) => {
+      const onCloseDialog = (_e: IpcMainEvent, result: any) => {
+        // 先移除监听器，避免每次弹窗泄漏一个 ipcMain 监听
+        ipcMain.off(`close_dialog:${id}`, onCloseDialog);
         dialog.close();
         dialog.destroy();
         resolve(result);
+      };
+
+      ipcMain.on(`close_dialog:${id}`, onCloseDialog);
+
+      // 兜底：窗口未走 closeDialog 流程被直接关闭时（加载失败、父窗口关闭等），
+      // 同样释放监听器并结束挂起的 Promise，避免 invoke 永久挂起
+      dialog.once('closed', () => {
+        ipcMain.off(`close_dialog:${id}`, onCloseDialog);
+        resolve(undefined);
       });
     });
   },
