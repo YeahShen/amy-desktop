@@ -91,7 +91,7 @@ export default (async function () {
     ...rendererProcessConfig,
 
     {
-      files: ['packages/renderer-process/src/**/*.vue'],
+      files: ['packages/renderer-process/**/*{vue,ts}'],
       rules: {
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/no-explicit-any': 'off',

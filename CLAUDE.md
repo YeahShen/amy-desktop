@@ -37,9 +37,9 @@ main-process/
 │   │   └── tsconfig.json    # Preload 专用 TS 配置（CommonJS, DOM+ESNext）
 │   ├── ipc-event/
 │   │   ├── index.ts         # 汇总入口（import handle/send/on）
-│   │   ├── channels.ts      # 通道定义：ON_EVENT(10) / HANDLE_EVENT(3) / SEND_EVENT(空)
+│   │   ├── channels.ts      # 通道定义：ON_EVENT(11) / HANDLE_EVENT(3) / SEND_EVENT(1)
 │   │   ├── on.ts            # ipcMain.on：login、open-dev-tools、窗口控制、set-window-position、set-setting
-│   │   ├── send.ts          # 空文件（尚无主→渲染推送通道）
+│   │   ├── send.ts          # 空文件（主→渲染推送由各窗口直接 webContents.send，如 home.ts 的 WINDOW_SIZE_STATE）
 │   │   └── handle.ts        # ipcMain.handle：get-screen-rect、get-window-position、get-setting
 │   ├── server/
 │   │   ├── index.ts         # 内置 Koa 服务器（打包态）：/api、/resource/* 代理到后端
@@ -54,18 +54,21 @@ main-process/
 │   │   └── runtime-config.ts# 运行时配置（electron-store 'runtime-config'：主窗口尺寸、悬浮窗位置）
 │   ├── windows/
 │   │   ├── login.ts         # 登录窗口（360×440，无边框）
-│   │   ├── home.ts          # 主窗口（尺寸持久化，关闭即退出应用）
+│   │   ├── home.ts          # 主窗口（尺寸持久化，maximize/unmaximize 推送 WINDOW_SIZE_STATE，关闭即退出）
 │   │   ├── float.ts         # 悬浮窗（透明 + 置顶 + skipTaskbar + 位置持久化）
 │   │   └── dialog.ts        # 空占位文件
 │   ├── utils/
-│   │   ├── constants.ts     # HTML_URL、HOME_WINDOW_BASE_SIZE、color-mode cookie 键
+│   │   ├── constants.ts     # HTML_URL、HOME_WINDOW_BASE_SIZE、color-mode cookie 键、RESOURCE_PATH、DEFAULT_FONT_TYPE
 │   │   ├── window.ts        # createFrameWindow / buildWindowUrl（frame: false, contextIsolation: true）
 │   │   ├── tray.ts          # 系统托盘（Win 左键切换主窗口显隐；仅登录成功后创建）
 │   │   ├── color-mode.ts    # initColorMode / isDark（读写 cookie --amy-color-mode / --system-color-theme）
 │   │   ├── full-screen.ts   # koffi 原生调用全屏检测（Windows：SHQueryUserNotificationState + 前台窗口矩形）
-│   │   ├── squirrel.ts      # Squirrel 安装/卸载事件处理
+│   │   ├── font-installer.ts# installFont — 系统字体安装（仅 .ttf；Windows 用户字体目录+注册表+AddFontResourceW；Linux XDG+fc-cache；幂等跳过）
+│   │   ├── squirrel.ts      # Squirrel 安装事件处理（安装/更新时装默认字体 + 创建快捷方式，处理完无条件退出）
 │   │   ├── check-ipv6.ts    # IPv6 探测（ipv6.icanhazip.com，3s 超时）
 │   │   └── send.utils.ts    # isPathExists / isPathHidden / getFileType
+│   ├── __test__/            # Vitest 单元测试
+│   │   └── font-installer.test.ts # installFont 全链路测试（mock reg/koffi/electron，构造最小 TTF）
 │   └── updater/
 │       ├── index.ts         # 更新检查入口（IPv6 感知 + StaticStorage update source）
 │       └── updater.ts       # 自动更新逻辑（vendored update-electron-app 实现）
@@ -77,8 +80,8 @@ main-process/
 │   └── *.d.ts               # 其他类型补丁
 ├── vite.main.config.ts      # Vite 构建配置（AMY_ env → define + define.d.ts 生成 + auto-import）
 ├── vite.preload.config.ts   # Vite preload 构建配置
-├── vitest.config.ts         # Vitest 测试配置
-├── forge.config.ts          # Electron Forge 配置（Squirrel/ZIP/Deb/Rpm、Fuses、extraResource、@amy/publisher）
+├── vitest.config.ts         # Vitest 测试配置（globals, src/**/*.test.ts）
+├── forge.config.ts          # Electron Forge 配置（Squirrel/ZIP/Deb/Rpm、Fuses、extraResource 含 fonts、@amy/publisher）
 ├── .eslintrc-auto-import.json # 自动生成：ESLint auto-import globals 声明
 └── tsconfig.json            # 扩展 @tsconfig/node22
 ```
@@ -102,7 +105,7 @@ renderer-process/
 │   │   └── empty.vue        # 空白布局（用于登录/悬浮窗）
 │   ├── components/
 │   │   ├── amy/             # 通用组件：Logo、Scrollbar、Message、Combobox、Skeleton、SwitchColorMode
-│   │   │   └── window/      # 窗口控制按钮（Close / MinSize / MaxSize）
+│   │   │   └── window/      # 窗口控制按钮（Close / MinSize / MaxSize-最大化还原）
 │   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent）
 │   │   └── login/           # 登录页组件（Header、UsernameInput、Usernamepassword）
 │   ├── composables/
@@ -115,15 +118,15 @@ renderer-process/
 │   │   └── app.ts           # Pinia appStore（当前为空实现）
 │   └── assets/
 │       ├── css/
-│       │   ├── main.css     # 全局 body/html 样式（高度 100%、overflow: hidden、user-select: none）
+│       │   ├── main.css     # 全局 body/html 样式（高度 100%、overflow: hidden、user-select: none；body 用系统 PingFangSC）
 │       │   ├── tailwind.css # Tailwind CSS v4 导入层（@theme 主色调 + drag/no-drag utilities）
 │       │   ├── themes.css   # 主题系统（--ui-* 语义色变量 + --sidebar-width/--navbar-height）
-│       │   └── fonts.css    # 自定义字体（Fredoka、Nunito、Orbitron、PingFangSC-Regular woff2）
-│       ├── icons/           # amy 自定义图标集合（Nuxt Icon custom 前缀，13 个 svg）
-│       └── fonts/           # woff2 字体文件
+│       │   └── fonts.css    # 仅 Orbitron 走 woff2 内嵌；PingFangSC 等由主进程安装为系统字体
+│       ├── icons/           # amy 自定义图标集合（Nuxt Icon custom 前缀，15 个 svg）
+│       └── fonts/           # Orbitron.woff2（仅保留标题字体）
 ├── shared/
 │   ├── electron-types.d.ts  # Window.electronAPI 全局类型声明（IPC、设置、文件操作）
-│   └── page.d.ts            # 页面元数据扩展（workspace、colorMode、dialog、requiresAuth）
+│   └── page.d.ts            # 页面元数据扩展（workspace、colorMode、immersiveSidebar、dialog、requiresAuth）
 ├── server/                  # Nuxt Nitro 服务端
 │   ├── middleware/
 │   │   ├── api-proxy.ts     # /api/* 请求代理到后端（读 .nuxt/_auth_token 附加 Bearer + X_PLATFORM）
@@ -135,7 +138,7 @@ renderer-process/
 │   │       └── api/user/update-info.ts                     # 空实现占位
 │   └── plugins/
 │       └── html-transform.ts # HTML 渲染钩子，注入 color-mode class/style 属性（防 FOUC）
-├── nuxt.config.ts           # Nuxt 配置（srcDir, modules, css, colorMode, runtimeConfig, nitro brotli, amy 图标集合）
+├── nuxt.config.ts           # Nuxt 配置（srcDir, modules, css, colorMode, runtimeConfig, nitro brotli, amy 图标集合, body font-family）
 └── tsconfig.json            # 引用 .nuxt 自动生成的 tsconfig
 ```
 
@@ -161,6 +164,7 @@ shared/src/
 │   └── task-scheduler.test.ts
 └── assets/                  # 图标 & 脚本资源
     ├── icon/                # 应用图标（favicon.ico/icns/png 多尺寸 + logo svg）
+    ├── fonts/               # 系统字体（PingFangSC-Medium/Regular.ttf，打包后经 extraResource 分发，安装时注册到系统）
     └── scripts/             # svg2png.py、koffi 原生模块（打包后作为 extraResource 分发）
 ```
 
@@ -202,6 +206,7 @@ pnpm publish       # 构建发布器 + 渲染进程 + 发布到远程
 
 # Per-package
 cd packages/main-process && pnpm dev     # 启动 Electron 开发模式（先确保 renderer dev 已在跑）
+cd packages/main-process && pnpm test    # 运行 Vitest 测试（font-installer 等）
 cd packages/renderer-process && pnpm dev # 启动 Nuxt 开发服务器（--dotenv ../../.env.development）
 cd packages/renderer-process && pnpm dev:mock # Mock 模式开发
 cd packages/shared && pnpm test          # 运行 Vitest 测试
@@ -246,8 +251,10 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - 多窗口架构：登录窗口（login）、主窗口（home）、浮动窗口（float）；dialog.ts 尚未实现
 - 内置 Koa 服务器（`server/index.ts`）在**打包态**启动：代理 `/api`、`/resource` 到 `AMY_BASE_URL`（自动附加 Bearer token + `X_PLATFORM: client`），brotli 托管 Nuxt 静态产物，`/local?path=` 读任意图片
 - **Preload 已实现**：`window.electronAPI` 暴露 `send(channel, ...args)` / `on(channel, fn)` / `invoke(channel, ...args)` / `getSetting` / `setSetting` / `getPathForFile`（对应类型声明见 renderer `shared/electron-types.d.ts`）
-- IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT` = login、open-dev-tools、set-ignore-mouse-events、get/set-window-position、close/hid/min-window、set-setting；`HANDLE_EVENT` = get-screen-rect、get-window-position、get-setting；`SEND_EVENT` 为空
-- **登录流程**：渲染进程 RSA 公钥加密密码 → `POST /auth/login-by-username-password` → `electronAPI.send('login', user, token)` → 主进程 `setAuthenticate` + 创建主窗口 + 关闭登录窗 +（若开启）创建悬浮窗
+- IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT` = login、open-dev-tools、set-ignore-mouse-events、set-window-position、close/hid/min/max/restore-window、set-setting；`HANDLE_EVENT` = get-screen-rect、get-window-position、get-setting；`SEND_EVENT` = window-size-state（主→渲染推送，home.ts 直接 webContents.send）
+- **登录流程**：渲染进程 RSA 公钥加密密码 → `POST /auth/login-by-username-password` → `electronAPI.send('login', token, user)` → 主进程 `setAuthenticate` + 创建主窗口 + 关闭登录窗 +（若开启）创建悬浮窗
+- **字体安装体系**：字体资源（PingFangSC ttf）在 `shared/src/assets/fonts/`，打包为 extraResource（`resources/fonts`）；Squirrel 安装/更新事件调用 `installFont(DEFAULT_FONT_TYPE)` 注册到系统（Windows 用户字体目录 + HKCU 注册表 + AddFontResourceW；Linux XDG + fc-cache）；渲染进程通过系统字体名 `PingFangSC` 直接使用，仅 Orbitron 内嵌 woff2
+- **Squirrel 事件**：install/updated/uninstall 处理完**无条件 `app.quit()`**（防止安装器动画期间打开应用窗口）；字体安装失败仅告警不阻断流程
 - Token 持久化：主进程 electron-store `'amy-auth'`；dev/mock 模式另经 Nitro `set-token` 路由写入 `.nuxt/_auth_token` 供开发代理使用
 - `unplugin-auto-import` 自动导入 `src/utils`、`src/windows`、`src/stores`、`src/ipc-event` 中的导出，类型生成至 `types/main-process-autoimport.d.ts`
 - `vite.main.config.ts` 将 `AMY_` 前缀环境变量转为 `define` 全局常量，并生成 `types/define.d.ts` 类型声明
@@ -260,17 +267,18 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - **@nuxtjs/color-mode** — system/light/dark 三态，cookie 持久化（键 `--amy-color-mode`），主进程 `initColorMode` 同步系统主题到 `--system-color-theme` cookie；`html-transform` 插件注入 class/style 防 FOUC
 - **Pinia** — 状态管理（`stores/app.ts`，当前为空）
 - **VueUse** — 组合式工具集（useElementSize、useLocalStorage 等）
-- **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（13 个 svg：home-2-bold、videocamera-add-bold、photo、cup-star-bold-duotone、cloud-check-broken、settings-line-duotone、user-outlined、lock-outlined、eye/eye-off、minus、window-close、logo-base）；lucide 前缀用于通用图标
+- **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（15 个 svg：home-2-bold、videocamera-add-bold、photo、cup-star-bold-duotone、cloud-check-broken、settings-line-duotone、user-outlined、lock-outlined、eye/eye-off、minus、window-close、full-screen、restore、logo-base）；lucide 前缀用于通用图标
 - 请求封装：`plugins/request.ts` 提供 `$request`（$fetch 实例），按 `AMY_MODE` 决定 baseURL（`mock` → `/mock/api`，否则 `/api`）；400 响应抛出 `createError`；`composables/useRequest.ts` 提供 `useRequest`/`$request` 封装
 - **Mock 模式**（`pnpm dev:mock`，`.env.mock`）：请求走 Nitro `server/routes/mock/` 模拟接口，无需启动后端
 - 应用设置：`composables/useSettings(key)` 通过 `window.electronAPI.getSetting/setSetting` 读写主进程 electron-store（'amy-setting'），watch 变化自动回写；键类型由 `@amy/shared` 的 `AppSettings` + `Flatten` 推导
-- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent），默认布局由三者组合；侧边栏菜单（home/film/photograph/artist）以页面 `workspace` meta 驱动高亮
+- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent），默认布局由三者组合；侧边栏菜单（home/film/photograph/artist）以页面 `workspace` meta 驱动高亮；Navbar 含 最小化/最大化还原/关闭 三窗口按钮（MaxSize 监听 `window-size-state` 推送切换图标）
 - 悬浮窗（`pages/float.vue`）：折叠圆形 Logo 按钮 + 呼吸光晕，展开菜单（搜索/笔记/任务/设置），基于 `set-ignore-mouse-events` 实现鼠标穿透，拖拽移动窗口并持久化位置
-- 页面级元数据（`definePageMeta`）：`workspace`（'home'|'film'|'photograph'|'artist'）、`dialog`（DialogMeta，尚未使用）
-- 字体：Fredoka / Nunito / Orbitron / PingFangSC-Regular（woff2 本地加载）
+- 页面级元数据（`definePageMeta`）：`workspace`（'home'|'film'|'photograph'|'artist'）、`immersiveSidebar`、`dialog`（DialogMeta，尚未使用）
+- 字体策略：正文用系统安装的 `PingFangSC`（Squirrel 安装时注册，见主进程字体安装体系）；仅标题字体 Orbitron 内嵌 woff2（fonts.css）
 
 ### Testing
-- `packages/shared` uses Vitest 2 — tests in `src/__test__/`
+- `packages/shared` uses Vitest 2 — tests in `src/__test__/`（auth-axios / file / track-promise / task-scheduler）
+- `packages/main-process` uses Vitest 2 — tests in `src/__test__/`（font-installer：mock child_process/electron/koffi + 构造最小 TTF 全链路验证）
 - `packages/zpublisher` uses Vitest 2 — tests in `src/__test__/`
 - Run with `pnpm test` inside respective package directories
 
@@ -294,6 +302,6 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - **Do not manually edit** `packages/main-process/out/`、`.vite/`、`types/define.d.ts`、`types/main-process-autoimport.d.ts`、`.eslintrc-auto-import.json` — 构建/插件自动生成
 - `*.mts` files are TypeScript modules (ESM) — used for ESLint config and similar
 - Type declaration files in `types/**/*.d.ts` per package
-- Assets (icons, fonts, scripts) live in `packages/shared/src/assets/` (icon/koffi scripts) 或 `packages/renderer-process/src/assets/` (css/icons/fonts)
+- Assets 分布：`packages/shared/src/assets/`（icon / fonts / koffi scripts，打包 extraResource）、`packages/renderer-process/src/assets/`（css / icons / fonts-Orbitron）
 - Renderer shared types (`packages/renderer-process/shared/`) — Nuxt 类型声明扩展（electronAPI、PageMeta），不参与构建产物
 - 模板字符串风格的 IPC 通道：preload 的 `electronAPI` 类型从主进程 `channels.ts` 导入，渲染进程通过 `shared/electron-types.d.ts` 声明全局 `Window.electronAPI`

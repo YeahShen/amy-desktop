@@ -14,7 +14,7 @@ const showPassword = ref(false);
 
 const config = useRuntimeConfig();
 
-const loading = defineModel('loading', {
+const loading = defineModel<boolean>('loading', {
   default: false,
 });
 
