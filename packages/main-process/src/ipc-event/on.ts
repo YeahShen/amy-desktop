@@ -27,11 +27,6 @@ ipcMain.on(ON_EVENT.HID_WINDOW, (_e) => {
   BrowserWindow.fromWebContents(_e.sender)?.hide();
 });
 
-ipcMain.on(ON_EVENT.GET_WINDOW_POSITIONS, (_e) => {
-  const window = BrowserWindow.fromWebContents(_e.sender);
-  return window?.getPosition();
-});
-
 ipcMain.on(ON_EVENT.LOGIN, async (_e, token: string, user: User) => {
   setAuthenticate(token, user);
   await createHomeWindow();
@@ -41,6 +36,14 @@ ipcMain.on(ON_EVENT.LOGIN, async (_e, token: string, user: User) => {
   if (await getSetting('appRunSettings.showFloatWindow')) {
     createFloatWindow();
   }
+});
+
+ipcMain.on(ON_EVENT.MAX_WINDOW, (_e) => {
+  BrowserWindow.fromWebContents(_e.sender)?.maximize();
+});
+
+ipcMain.on(ON_EVENT.RESTORE_WINDOW, (_e) => {
+  BrowserWindow.fromWebContents(_e.sender)?.restore();
 });
 
 ipcMain.on(

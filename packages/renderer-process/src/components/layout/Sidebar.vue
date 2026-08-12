@@ -50,7 +50,7 @@ const topMenu: MenuItem[] = [
       <div id="sidebar-top-menu" class="flex items-center flex-col gap-y-5">
         <NuxtLink v-for="item in topMenu" :key="item.path" :to="item.path">
           <div
-            class="w-fit h-fit flex items-center justify-center px-1 py-1 rounded text-muted cursor-pointer no-drag"
+            class="w-fit h-fit flex items-center justify-center px-1 py-1 rounded text-muted cursor-pointer no-drag hover:text-toned"
             :class="{
               'dark:bg-[#1a1a19] bg-white text-primary!': route.meta.workspace === item.workspace,
             }"

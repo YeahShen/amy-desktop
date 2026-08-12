@@ -3,12 +3,13 @@ export enum ON_EVENT {
 
   OPEN_DEV_TOOLS = 'open-dev-tools',
   SET_IGNORE_MOUSE_EVENTS = 'set-ignore-mouse-events',
-  GET_WINDOW_POSITIONS = 'get-window-position',
   SET_WINDOW_POSITIONS = 'set-window-position',
 
   CLOSE_WINDOW = 'close-window',
   HID_WINDOW = 'hid-window',
   MIN_WINDOW = 'min-window',
+  MAX_WINDOW = 'max-window',
+  RESTORE_WINDOW = 'restore-window',
 
   SET_SETTING = 'set-setting',
 }
@@ -20,7 +21,9 @@ export enum HANDLE_EVENT {
   GET_SETTING = 'get-setting',
 }
 
-export enum SEND_EVENT {}
+export enum SEND_EVENT {
+  WINDOW_SIZE_STATE = 'window-size-state',
+}
 
 export type OnEventChannels = `${ON_EVENT}`;
 
