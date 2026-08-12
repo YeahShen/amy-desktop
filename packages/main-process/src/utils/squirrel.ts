@@ -25,27 +25,30 @@ export async function handleSquirrelEvent() {
     case '--squirrel-install':
     case '--squirrel-updated': {
       // 安装或更新时创建快捷方式
-      await installFont(DEFAULT_FONT_TYPE);
 
-      const a = executeSquirrelCommand(['--createShortcut', path.basename(process.execPath)]);
+      // 字体安装失败只告警，不阻断安装流程
+      try {
+        await installFont(DEFAULT_FONT_TYPE);
+      } catch (err) {
+        console.error('安装默认字体失败（跳过）:', err);
+      }
+
+      executeSquirrelCommand(['--createShortcut', path.basename(process.execPath)]);
 
       // await deleteRightClickMenu();
       // await registerRightClickMenu();
 
-      if (a) {
-        app.quit();
-        return true;
-      }
-
-      break;
+      // Squirrel 事件处理完成必须退出，否则应用会继续正常启动流程，
+      // 在安装器动画期间打开应用窗口
+      app.quit();
+      return true;
     }
     case '--squirrel-uninstall':
       // await deleteRightClickMenu();
-      if (executeSquirrelCommand(['--removeShortcut', path.basename(process.execPath)])) {
-        app.quit();
-        return true;
-      }
-      break;
+      // 无论移除快捷方式成功与否都退出，避免应用正常启动
+      executeSquirrelCommand(['--removeShortcut', path.basename(process.execPath)]);
+      app.quit();
+      return true;
 
     case '--squirrel-firstrun':
       return false;
