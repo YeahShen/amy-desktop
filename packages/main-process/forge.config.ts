@@ -51,6 +51,7 @@ const config: ForgeConfig = {
       assetsPath('scripts/koffi'),
       assetsPath('scripts/@koromix'),
       assetsPath('icon'),
+      assetsPath('fonts'),
       path.resolve(process.cwd(), '..', 'renderer-process/.output/public'),
     ],
   },

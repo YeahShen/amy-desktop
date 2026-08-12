@@ -1,4 +1,12 @@
 export default defineNuxtConfig({
+  app: {
+    head: {
+      bodyAttrs: {
+        style: 'font-family: PingFangSC;',
+      },
+    },
+  },
+
   srcDir: 'src',
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/color-mode', '@vueuse/nuxt', '@pinia/nuxt'],
 

@@ -7,11 +7,13 @@
 export {}
 declare global {
   const AMY_COLOR_KEY: typeof import('../src/utils/constants').AMY_COLOR_KEY
+  const DEFAULT_FONT_TYPE: typeof import('../src/utils/constants').DEFAULT_FONT_TYPE
   const HANDLE_EVENT: typeof import('../src/ipc-event/channels').HANDLE_EVENT
   const HOME_WINDOW_BASE_SIZE: typeof import('../src/utils/constants').HOME_WINDOW_BASE_SIZE
   const HTML_URL: typeof import('../src/utils/constants').HTML_URL
   const MAIN_WINDOW_BOUNDS: typeof import('../src/utils/constants').MAIN_WINDOW_BOUNDS
   const ON_EVENT: typeof import('../src/ipc-event/channels').ON_EVENT
+  const RESOURCE_PATH: typeof import('../src/utils/constants').RESOURCE_PATH
   const SEND_EVENT: typeof import('../src/ipc-event/channels').SEND_EVENT
   const SYSTEM_COLOR_KEY: typeof import('../src/utils/constants').SYSTEM_COLOR_KEY
   const buildWindowUrl: typeof import('../src/utils/window').buildWindowUrl
@@ -35,6 +37,7 @@ declare global {
   const getToken: typeof import('../src/stores/auth').getToken
   const handleSquirrelEvent: typeof import('../src/utils/squirrel').handleSquirrelEvent
   const initColorMode: typeof import('../src/utils/color-mode').initColorMode
+  const installFont: typeof import('../src/utils/font-installer').installFont
   const isAnyAppFullScreen: typeof import('../src/utils/check-full-screen').isAnyAppFullScreen
   const isAppQuitting: typeof import('../src/utils/tray').isAppQuitting
   const isDark: typeof import('../src/utils/color-mode').isDark

@@ -1,6 +1,7 @@
 {
   "globals": {
     "AMY_COLOR_KEY": "readonly",
+    "DEFAULT_FONT_TYPE": "readonly",
     "FloatWindowPosition": "readonly",
     "HANDLE_EVENT": "readonly",
     "HOME_WINDOW_BASE_SIZE": "readonly",
@@ -9,6 +10,7 @@
     "HomeWindowSize": "readonly",
     "ON_EVENT": "readonly",
     "OnEventChannels": "readonly",
+    "RESOURCE_PATH": "readonly",
     "RuntimeConfig": "readonly",
     "SEND_EVENT": "readonly",
     "SYSTEM_COLOR_KEY": "readonly",
@@ -32,6 +34,7 @@
     "getToken": "readonly",
     "handleSquirrelEvent": "readonly",
     "initColorMode": "readonly",
+    "installFont": "readonly",
     "isAppQuitting": "readonly",
     "isDark": "readonly",
     "isLogin": "readonly",

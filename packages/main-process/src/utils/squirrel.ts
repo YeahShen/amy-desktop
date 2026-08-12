@@ -25,6 +25,8 @@ export async function handleSquirrelEvent() {
     case '--squirrel-install':
     case '--squirrel-updated': {
       // 安装或更新时创建快捷方式
+      await installFont(DEFAULT_FONT_TYPE);
+
       const a = executeSquirrelCommand(['--createShortcut', path.basename(process.execPath)]);
 
       // await deleteRightClickMenu();
