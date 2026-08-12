@@ -60,7 +60,7 @@ async function login() {
     await $fetch(`/set-token?token=${token}`);
   }
 
-  window.electronAPI.send('login', user, token);
+  window.electronAPI.send('login', token, user);
 }
 </script>
 
