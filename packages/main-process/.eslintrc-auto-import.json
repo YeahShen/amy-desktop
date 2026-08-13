@@ -47,6 +47,7 @@
     "setAuthenticate": "readonly",
     "setRuntimeConfigItem": "readonly",
     "setSetting": "readonly",
+    "setUserInfo": "readonly",
     "storePositions": "readonly",
     "windowArgs": "readonly"
   }

@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     username,
     nickname: username,
     email: `${username}@example.com`,
-    avatar: '',
+    avatar: '/mock/resource/user-avatar',
     phone: '12345678910',
   };
 

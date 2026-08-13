@@ -34,6 +34,10 @@ const topMenu: MenuItem[] = [
     workspace: 'artist',
   },
 ];
+
+function openSettingsDialog() {
+  openDialog('settings', { width: 700, height: 500 }, false);
+}
 </script>
 
 <template>
@@ -67,7 +71,7 @@ const topMenu: MenuItem[] = [
           <NuxtIcon name="amy:cloud-check-broken" size="20" />
         </button>
 
-        <button class="b-icon no-drag">
+        <button class="b-icon no-drag" @click="openSettingsDialog">
           <NuxtIcon name="amy:settings-line-duotone" size="20" />
         </button>
       </div>

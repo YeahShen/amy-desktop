@@ -22,6 +22,13 @@ ipcMain.handle(HANDLE_EVENT.GET_SETTING, (_e, key) => {
   return getSetting(key);
 });
 
+ipcMain.handle(HANDLE_EVENT.GET_USER_DETAIL, async () => {
+  return {
+    token: getToken(),
+    info: await getInfo(),
+  };
+});
+
 ipcMain.handle(
   HANDLE_EVENT.OPEN_DIALOG,
   (

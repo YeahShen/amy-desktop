@@ -46,6 +46,10 @@ ipcMain.on(ON_EVENT.RESTORE_WINDOW, (_e) => {
   BrowserWindow.fromWebContents(_e.sender)?.restore();
 });
 
+ipcMain.on(ON_EVENT.SET_USER_INFO, (_e, info) => {
+  setUserInfo(info);
+});
+
 ipcMain.on(
   ON_EVENT.SET_WINDOW_POSITIONS,
   (_e, position: { x: number; y: number; window: string }) => {

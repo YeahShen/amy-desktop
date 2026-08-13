@@ -51,6 +51,7 @@ declare global {
   const setAuthenticate: typeof import('../src/stores/auth').setAuthenticate
   const setRuntimeConfigItem: typeof import('../src/stores/runtime-config').setRuntimeConfigItem
   const setSetting: typeof import('../src/stores/app-settings').setSetting
+  const setUserInfo: typeof import('../src/stores/auth').setUserInfo
   const storePositions: typeof import('../src/windows/float').storePositions
   const windowArgs: typeof import('../src/utils/window').windowArgs
 }

@@ -12,6 +12,7 @@ export enum ON_EVENT {
   RESTORE_WINDOW = 'restore-window',
 
   SET_SETTING = 'set-setting',
+  SET_USER_INFO = 'set-user-info',
 }
 
 export enum HANDLE_EVENT {
@@ -19,8 +20,9 @@ export enum HANDLE_EVENT {
   GET_WINDOW_POSITIONS = 'get-window-position',
 
   GET_SETTING = 'get-setting',
-
   OPEN_DIALOG = 'open-dialog',
+
+  GET_USER_DETAIL = 'get-user-detail',
 }
 
 export enum SEND_EVENT {

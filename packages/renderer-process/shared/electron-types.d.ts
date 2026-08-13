@@ -26,7 +26,7 @@ declare global {
       parseFilePath(filePath: string): ParsedPath & { size: number; chunkSize: string };
       getPathForFile(file?: File): string;
 
-      closeDialog(id: string, result: any): void;
+      closeDialog(id: string, result?: any): void;
     };
   }
 }
