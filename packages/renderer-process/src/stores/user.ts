@@ -13,16 +13,14 @@ export const useUserStore = defineStore('userStore', () => {
     info.value = detail.info;
   });
 
-  watch(
-    info,
-    (v) => {
-      window.electronAPI.send('set-user-info', v);
-    },
-    { deep: true },
-  );
+  function updateUserInfo(user: User) {
+    info.value = user;
+    window.electronAPI.send('set-user-info', user);
+  }
 
   return {
     token,
     info,
+    updateUserInfo,
   };
 });
