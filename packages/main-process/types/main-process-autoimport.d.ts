@@ -19,6 +19,7 @@ declare global {
   const buildWindowUrl: typeof import('../src/utils/window').buildWindowUrl
   const checkFullScreen: typeof import('../src/utils/check-full-screen').checkFullScreen
   const checkIPv6HTTP: typeof import('../src/utils/check-ipv6').checkIPv6HTTP
+  const createDialogWindow: typeof import('../src/windows/dialog').createDialogWindow
   const createFloatWindow: typeof import('../src/windows/float').createFloatWindow
   const createFrameWindow: typeof import('../src/utils/window').createFrameWindow
   const createHomeWindow: typeof import('../src/windows/home').createHomeWindow

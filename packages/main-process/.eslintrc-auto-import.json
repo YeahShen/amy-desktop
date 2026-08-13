@@ -17,6 +17,7 @@
     "SendEventChannels": "readonly",
     "buildWindowUrl": "readonly",
     "checkIPv6HTTP": "readonly",
+    "createDialogWindow": "readonly",
     "createFloatWindow": "readonly",
     "createFrameWindow": "readonly",
     "createHomeWindow": "readonly",

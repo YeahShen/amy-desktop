@@ -5,7 +5,9 @@ definePageMeta({
 </script>
 
 <template>
-  <div>home</div>
+  <div>
+    <LayoutNavbarLeftContext> home </LayoutNavbarLeftContext>
+  </div>
 </template>
 
 <style lang="scss"></style>

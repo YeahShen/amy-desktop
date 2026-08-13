@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     nickname: username,
     email: `${username}@example.com`,
     avatar: '',
-    mobile: '12345678910',
+    phone: '12345678910',
   };
 
   const mockToken = 'mock-token-' + Date.now();

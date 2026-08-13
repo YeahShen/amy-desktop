@@ -1,7 +1,7 @@
 export interface User {
   id?: string;
   username?: string;
-  mobile?: string;
+  phone?: string;
   email?: string;
   nickname?: string;
   avatar?: string;
