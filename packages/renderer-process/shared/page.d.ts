@@ -21,6 +21,7 @@ declare module '#app' {
     immersiveSidebar?: boolean;
     workspace?: 'artist' | 'film' | 'home' | 'clound' | 'photograph';
     dialog?: DialogMeta;
+    sidebarMode?: 'immersive' | 'default' | 'frosted';
   }
 }
 

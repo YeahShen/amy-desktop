@@ -38,10 +38,23 @@ const topMenu: MenuItem[] = [
 function openSettingsDialog() {
   openDialog('settings', { width: 700, height: 500 }, false);
 }
+
+const sideMode = computed(() => {
+  const model = route.meta.sidebarMode ?? 'default';
+
+  if (model === 'frosted') {
+    return 'apple-glass';
+  }
+
+  if (model === 'immersive') {
+    return '';
+  }
+  return 'bg-elevated';
+});
 </script>
 
 <template>
-  <div class="sidebar h-full bg-elevated drag flex flex-col">
+  <div class="sidebar h-full drag flex flex-col" :class="[sideMode]">
     <div class="logo-wrap flex items-center justify-center">
       <ClientOnly>
         <div class="logo-sunken w-fit h-fit px-1 py-1 rounded-xl">
@@ -125,5 +138,31 @@ function openSettingsDialog() {
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.35),
     inset 0 -1px 2px rgba(255, 255, 255, 0.06);
+}
+
+.light {
+  .apple-glass {
+    /* 1. 背景与透明度：使用带有高透明度的白色 */
+    background: rgba(255, 255, 255, 0.25);
+
+    /* 2. 核心：高斯模糊效果，配合饱和度提升（苹果 UI 的鲜艳感） */
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+
+    /* 4. 圆角与阴影：大圆角与弥散柔和的深色阴影 */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+
+    /* 5. 补充：防内溢 */
+    overflow: hidden;
+  }
+}
+
+.dark {
+  .apple-glass {
+    background: rgba(30, 30, 30, 0.45);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
 }
 </style>
