@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   },
 
   srcDir: 'src',
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/color-mode', '@vueuse/nuxt', '@pinia/nuxt'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@vueuse/nuxt', '@pinia/nuxt'],
 
   devServer: {
     port: Number(process.env.AMY_PORT),
@@ -23,6 +23,7 @@ export default defineNuxtConfig({
 
   ui: {
     fonts: false,
+    colorMode: false,
   },
 
   nitro: {
@@ -44,17 +45,6 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['@vue/devtools-core', '@vue/devtools-kit'],
     },
-  },
-
-  colorMode: {
-    preference: 'system',
-    fallback: 'light', // fallback value if not system preference found
-    globalName: '__NUXT_COLOR_MODE__',
-    componentName: 'ColorScheme',
-    classPrefix: '',
-    classSuffix: '',
-    storage: 'cookie', // or 'sessionStorage' or 'cookie'
-    storageKey: '--amy-color-mode',
   },
 
   icon: {

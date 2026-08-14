@@ -44,7 +44,7 @@
     "**/Thumbs.db": true,
     "**/out": true,
     "**/.vite": true,
-    // "**/.nuxt": true,
+    "**/.nuxt": true,
     "**/.output": true,
     "**/dist": true
   },

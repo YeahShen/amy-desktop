@@ -3,6 +3,7 @@ import type { User } from '@amy/shared';
 
 definePageMeta({
   layout: 'empty',
+  colorMode: 'dark',
 });
 
 useHead({

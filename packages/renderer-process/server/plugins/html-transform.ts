@@ -7,6 +7,10 @@ export default defineNitroPlugin((nitroApp) => {
     const systemColorTheme = getCookie(event, '--system-color-theme');
     const colorMode = getCookie(event, '--amy-color-mode');
 
+    console.log(html.htmlAttrs);
+
+    console.log(systemColorTheme, colorMode);
+
     const res = html.htmlAttrs
       .find((item) => {
         return item.trim().startsWith('data-color-mode-forced');
