@@ -50,7 +50,7 @@ main-process/
 │   │       └── type.ts      # SendOptions 类型定义
 │   ├── stores/
 │   │   ├── auth.ts          # 认证状态（electron-store 'amy-auth'，token + User + restart 标记）
-│   │   ├── app-settings.ts  # 应用设置（electron-store 'amy-setting' + @amy/shared appSettingBuilder）
+│   │   ├── app-settings.ts  # 应用设置（electron-store 'amy-setting'，默认值走 schema default，经 @amy/shared appSettingBuilder 读写）
 │   │   └── runtime-config.ts# 运行时配置（electron-store 'runtime-config'：主窗口尺寸、悬浮窗位置）
 │   ├── windows/
 │   │   ├── login.ts         # 登录窗口（360×440，无边框）
@@ -58,10 +58,10 @@ main-process/
 │   │   ├── float.ts         # 悬浮窗（透明 + 置顶 + skipTaskbar + 位置持久化）
 │   │   └── dialog.ts        # 空占位文件
 │   ├── utils/
-│   │   ├── constants.ts     # HTML_URL、HOME_WINDOW_BASE_SIZE、color-mode cookie 键、RESOURCE_PATH、DEFAULT_FONT_TYPE
+│   │   ├── constants.ts     # HTML_URL、HOME_WINDOW_BASE_SIZE、RESOURCE_PATH、DEFAULT_FONT_TYPE
 │   │   ├── window.ts        # createFrameWindow / buildWindowUrl（frame: false, contextIsolation: true）
 │   │   ├── tray.ts          # 系统托盘（Win 左键切换主窗口显隐；仅登录成功后创建）
-│   │   ├── color-mode.ts    # initColorMode / isDark（读写 cookie --amy-color-mode / --system-color-theme）
+│   │   ├── color-mode.ts    # initColorMode / getColorModel / isDark（把 store 偏好解析为最终主题写入 cookie --amy-color-mode）
 │   │   ├── full-screen.ts   # koffi 原生调用全屏检测（Windows：SHQueryUserNotificationState + 前台窗口矩形）
 │   │   ├── font-installer.ts# installFont — 系统字体安装（仅 .ttf；Windows 用户字体目录+注册表+AddFontResourceW；Linux XDG+fc-cache；幂等跳过）
 │   │   ├── squirrel.ts      # Squirrel 安装事件处理（安装/更新时装默认字体 + 创建快捷方式，处理完无条件退出）
@@ -94,26 +94,31 @@ renderer-process/
 │   ├── app.vue              # Nuxt 根组件（F12 → open-dev-tools IPC）
 │   ├── app.config.ts        # Nuxt UI 主题定制（formField label 等样式覆盖）
 │   ├── pages/
-│   │   ├── login.vue        # 登录页（empty 布局，RSA 密码加密 + $request 登录）
+│   │   ├── login.vue        # 登录页（empty 布局，强制暗色 colorMode: 'dark'，RSA 密码加密 + $request 登录）
 │   │   ├── home.vue         # 主页（空壳，workspace: 'home'）
 │   │   ├── film.vue         # 影视页（空壳）
 │   │   ├── photograph.vue   # 摄影页（空壳）
 │   │   ├── artist.vue       # 艺术家页（空壳）
-│   │   └── float.vue        # 悬浮窗页（empty 布局 + 透明背景，折叠圆形按钮/展开菜单 + 拖动 + 鼠标穿透）
+│   │   ├── settings.vue     # 设置页（dialog 布局，含深色模式切换 AmySwitchColorMode）
+│   │   └── float.vue        # 悬浮窗页（empty 布局 + 透明背景，折叠圆形按钮/展开菜单 + 拖动 + 鼠标穿透；Logo 配色用 useColorModel）
 │   ├── layouts/
 │   │   ├── default.vue      # 默认布局（Sidebar + Navbar + MainContent）
-│   │   └── empty.vue        # 空白布局（用于登录/悬浮窗）
+│   │   ├── empty.vue        # 空白布局（用于登录/悬浮窗）
+│   │   └── dialog.vue       # 弹窗布局（设置等 dialog 页）
 │   ├── components/
-│   │   ├── amy/             # 通用组件：Logo、Scrollbar、Message、Combobox、Skeleton、SwitchColorMode
+│   │   ├── amy/             # 通用组件：Logo、Scrollbar、Message、Combobox、Skeleton、SwitchColorMode、Divider
 │   │   │   └── window/      # 窗口控制按钮（Close / MinSize / MaxSize-最大化还原）
-│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent）
+│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent、NavbarLeftContext、DialogFooter、Search）
 │   │   └── login/           # 登录页组件（Header、UsernameInput、Usernamepassword）
 │   ├── composables/
 │   │   ├── useRequest.ts    # useRequest / $request — 基于 Nuxt useFetch 的请求封装
 │   │   ├── useMessage.ts    # 全局消息提示（antd 风格 API：success/error/info/warning/loading/open/destroy/config）
-│   │   └── useSettings.ts   # 应用设置读写（基于 electronAPI getSetting/setSetting + watch 回写）
+│   │   ├── useSettings.ts   # 应用设置读写（基于 electronAPI getSetting/setSetting + watch 回写）
+│   │   ├── useColorModel.ts # 颜色模式读写（cookie --amy-color-mode + 切换时应用 <html> class + setSetting 持久化）
+│   │   └── useDialog.ts     # 弹窗窗口控制（基于 open-dialog IPC + closeDialog 回调）
 │   ├── plugins/
-│   │   └── request.ts       # $request 插件（$fetch 实例，mock 模式走 /mock/api，否则 /api）
+│   │   ├── request.ts       # $request 插件（$fetch 实例，mock 模式走 /mock/api，否则 /api）
+│   │   └── color-mode.server.ts # 页面级强制主题：把 definePageMeta({ colorMode }) 注入 html 的 data-color-mode-forced 属性
 │   ├── stores/
 │   │   └── app.ts           # Pinia appStore（当前为空实现）
 │   └── assets/
@@ -137,8 +142,8 @@ renderer-process/
 │   │       ├── api/auth/login-by-username-password.post.ts # 模拟登录接口
 │   │       └── api/user/update-info.ts                     # 空实现占位
 │   └── plugins/
-│       └── html-transform.ts # HTML 渲染钩子，注入 color-mode class/style 属性（防 FOUC）
-├── nuxt.config.ts           # Nuxt 配置（srcDir, modules, css, colorMode, runtimeConfig, nitro brotli, amy 图标集合, body font-family）
+│       └── html-transform.ts # Nitro HTML 钩子，开发模式读 cookie 注入 color-mode class/style（防 FOUC）
+├── nuxt.config.ts           # Nuxt 配置（srcDir, modules, css, runtimeConfig, nitro brotli, ui.colorMode:false, amy 图标集合, body font-family）
 └── tsconfig.json            # 引用 .nuxt 自动生成的 tsconfig
 ```
 
@@ -146,17 +151,19 @@ renderer-process/
 
 ```
 shared/src/
-├── index.ts                 # 统一导出入口（另导出 ./favicon.ico 子路径）
+├── index.ts                 # 统一导出入口（另导出 ./favicon.ico、./utils/color-mode 子路径）
 ├── utils/
 │   ├── auth-axios.ts        # createAuthAxios — 带认证拦截器的 Axios 实例（60s 超时）
 │   ├── track-promise.ts     # createTrackedPromise — 可同步查询状态/值/原因的 Promise
 │   ├── task-scheduler.ts    # TaskScheduler — 并发任务调度器（重试 + 进度回调 + 事件）
 │   ├── file.ts              # fileChunk / fileStat / getFileSize / getFileTotalChunks — 文件分块
 │   ├── upload-file.ts       # createUploadFileFn — 文件分块上传封装（form-data）
-│   ├── zip.ts               # makeZip — ZIP 压缩（archiver，level 9）
+│   ├── zip.ts               # makeZip — ZIP 压缩（archiver，level 9；⚠ Node 专属，渲染进程勿从 barrel 导入）
 │   ├── tools.ts             # Flatten / UnionToIntersection 类型工具
 │   ├── user.ts              # User / UserloggedCacheItem 接口定义
-│   └── app-settings.ts      # AppSettings 类型 + appSettingBuilder（默认值兜底）
+│   ├── app-settings.ts      # AppSettings 类型 + ColorMode + appSettingBuilder（读写器工厂）
+│   ├── color-mode.ts        # getColorModeCookie() — 返回 --amy-color-mode 键名（单一事实来源）
+│   └── common-dialog.ts     # 弹窗窗口类型定义（Bounding / DialogMeta 等）
 ├── __test__/                # Vitest 单元测试
 │   ├── auth-axios.test.ts
 │   ├── file.test.ts
@@ -184,7 +191,7 @@ zpublisher/src/
 | Package | Key Dependencies |
 |---------|-----------------|
 | `packages/main-process` | Electron 43.1.1, Electron Forge 7.11, Vite 5.4, TypeScript 5.7, Node 22, Koa 3.2 (内置服务器), electron-store 11, electron-log, koffi (原生 FFI), cheerio, dotenv, unplugin-auto-import |
-| `packages/renderer-process` | Nuxt 4.3, Vue 3, TypeScript 6, Nuxt UI 4.10, Tailwind CSS 4.3, Pinia, VueUse 14, @nuxtjs/color-mode 4, axios-retry |
+| `packages/renderer-process` | Nuxt 4.3, Vue 3, TypeScript 6, Nuxt UI 4.10, Tailwind CSS 4.3, Pinia, VueUse 14, axios-retry |
 | `packages/shared` | TypeScript 5.6, Vitest 2, axios 1.18, archiver 8, uuid 14, lodash-es |
 | `packages/zpublisher` | @electron-forge/publisher-base 7.11, axios, form-data, Vitest 2 |
 | Root | ESLint 10 (flat config), Prettier 3.9.5, TypeScript-ESLint 8 |
@@ -241,7 +248,8 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 ### Imports
 - Internal workspace packages use `workspace:*` protocol
 - Avoid relative imports between packages — use the published package name (e.g. `@amy/shared`, `@amy/publisher`)
-- **`@amy/shared` exports raw TypeScript source** (`"exports": {".": "./src/index.ts"}`) — not compiled JS, consuming packages resolve it at build time
+- **`@amy/shared` exports raw TypeScript source** (`"exports": {".": "./src/index.ts", "./utils/color-mode": "./src/utils/color-mode.ts"}`) — not compiled JS, consuming packages resolve it at build time
+- ⚠️ **渲染进程（浏览器）只用子路径导入** `@amy/shared` 的浏览器安全工具（如 `@amy/shared/utils/color-mode`），不要从 barrel 导入——barrel 含 `zip.ts`（archiver）等 Node 专属依赖，会打进浏览器 bundle 导致 `util.inherits is not a function` 崩溃
 
 ### Electron
 - Uses Electron Forge 7 for packaging/building; main entry `src/main.ts`
@@ -249,7 +257,7 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - `@electron/fuses` 安全加固：RunAsNode 禁用、cookie 加密、Node options/cli inspect 禁用、Asar 完整性校验、OnlyLoadAppFromAsar
 - 自定义发布器（`@amy/publisher`）分块上传产物到 `https://release.ashen-station.top`（credentials in `AMY_PUBLISH_USERNAME` / `AMY_PUBLISH_PASSWORD`）
 - 多窗口架构：登录窗口（login）、主窗口（home）、浮动窗口（float）；dialog.ts 尚未实现
-- 内置 Koa 服务器（`server/index.ts`）在**打包态**启动：代理 `/api`、`/resource` 到 `AMY_BASE_URL`（自动附加 Bearer token + `X_PLATFORM: client`），brotli 托管 Nuxt 静态产物，`/local?path=` 读任意图片
+- 内置 Koa 服务器（`server/index.ts`）在**打包态**启动：代理 `/api`、`/resource` 到 `AMY_BASE_URL`（自动附加 Bearer token + `X_PLATFORM: client`），brotli 托管 Nuxt 静态产物，`/local?path=` 读任意图片；`send/index.ts` serve HTML 时 cheerio 注入主题 class（生产 FOUC 防护，见 Renderer 颜色模式）
 - **Preload 已实现**：`window.electronAPI` 暴露 `send(channel, ...args)` / `on(channel, fn)` / `invoke(channel, ...args)` / `getSetting` / `setSetting` / `getPathForFile`（对应类型声明见 renderer `shared/electron-types.d.ts`）
 - IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT` = login、open-dev-tools、set-ignore-mouse-events、set-window-position、close/hid/min/max/restore-window、set-setting；`HANDLE_EVENT` = get-screen-rect、get-window-position、get-setting；`SEND_EVENT` = window-size-state（主→渲染推送，home.ts 直接 webContents.send）
 - **登录流程**：渲染进程 RSA 公钥加密密码 → `POST /auth/login-by-username-password` → `electronAPI.send('login', token, user)` → 主进程 `setAuthenticate` + 创建主窗口 + 关闭登录窗 +（若开启）创建悬浮窗
@@ -264,7 +272,13 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 
 ### Renderer (Nuxt)
 - **Nuxt UI 4 + Tailwind CSS 4** — UI 组件和样式系统；自定义语义色通过 `themes.css` 的 `--ui-*` CSS 变量覆盖；`tailwind.css` 定义 primary 品牌色阶 + `drag`/`no-drag` 窗口拖拽 utilities
-- **@nuxtjs/color-mode** — system/light/dark 三态，cookie 持久化（键 `--amy-color-mode`），主进程 `initColorMode` 同步系统主题到 `--system-color-theme` cookie；`html-transform` 插件注入 class/style 防 FOUC
+- **颜色模式（自研，已移除 @nuxtjs/color-mode，`ui.colorMode: false`）**：
+  - 单一 cookie `--amy-color-mode`，键名由 `@amy/shared` `getColorModeCookie()` 提供（单一事实来源，避免多端漂移）
+  - 主进程 `initColorMode()` 启动时把 store 的 `colorMode` 设置（'dark'|'light'|'system'，'system' 经 `nativeTheme.shouldUseDarkColors` 解析为具体主题）写入 cookie（10 天过期）
+  - **生产 FOUC 防护**：主进程 Koa `server/send/index.ts` serve HTML 时用 cheerio 注入 `<html class>` + `color-scheme`（页面有 `data-color-mode-forced` 属性则优先，否则用 `getColorModel()`）
+  - **开发 FOUC 防护**：Nitro `server/plugins/html-transform.ts` 读 cookie 注入 class
+  - **页面级强制主题**：`plugins/color-mode.server.ts` 把 `definePageMeta({ colorMode })` 注入为 html 的 `data-color-mode-forced` 属性（如 login.vue 强制暗色）
+  - **客户端**：`composables/useColorModel.ts` 读写 cookie（`useCookie`）、`toggleMode()` 同步 `<html>` class + color-scheme 并 `setSetting('colorMode')` 持久化；`SwitchColorMode.vue`（View Transitions 圆形扩散）与 `float.vue`（Logo 配色）使用
 - **Pinia** — 状态管理（`stores/app.ts`，当前为空）
 - **VueUse** — 组合式工具集（useElementSize、useLocalStorage 等）
 - **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（15 个 svg：home-2-bold、videocamera-add-bold、photo、cup-star-bold-duotone、cloud-check-broken、settings-line-duotone、user-outlined、lock-outlined、eye/eye-off、minus、window-close、full-screen、restore、logo-base）；lucide 前缀用于通用图标
@@ -298,8 +312,8 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 
 ## File Patterns
 
-- **Do not manually edit** `packages/renderer-process/.nuxt/` or `.output/` — auto-generated by Nuxt
-- **Do not manually edit** `packages/main-process/out/`、`.vite/`、`types/define.d.ts`、`types/main-process-autoimport.d.ts`、`.eslintrc-auto-import.json` — 构建/插件自动生成
+- **Do not manually edit** `packages/renderer-process/.nuxt/`、`.output/` — auto-generated by Nuxt（已 .gitignore 不入库）
+- **Do not manually edit** `packages/main-process/out/`、`.vite/`、`types/define.d.ts`、`types/main-process-autoimport.d.ts`、`.eslintrc-auto-import.json` — 构建/插件自动生成（`types/define.d.ts`、`*autoimport.d.ts` 已 .gitignore 不入库；`.eslintrc-auto-import.json` 仍被追踪）
 - `*.mts` files are TypeScript modules (ESM) — used for ESLint config and similar
 - Type declaration files in `types/**/*.d.ts` per package
 - Assets 分布：`packages/shared/src/assets/`（icon / fonts / koffi scripts，打包 extraResource）、`packages/renderer-process/src/assets/`（css / icons / fonts-Orbitron）
