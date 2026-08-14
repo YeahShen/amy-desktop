@@ -24,7 +24,7 @@ const active = computed(() => has.value || focus.value);
     <input type="text" placeholder="输入关键词..." />
 
     <div class="w-8 h-8 shrink-0 flex items-center justify-center cursor-pointer">
-      <NuxtIcon name="i-lucide-search" />
+      <NuxtIcon name="amy:search" />
     </div>
   </div>
 </template>

@@ -65,7 +65,7 @@ async function toggle(e: MouseEvent) {
       <Transition name="mode-icon" mode="out-in">
         <UIcon
           :key="isDark ? 'dark' : 'light'"
-          :name="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
+          :name="isDark ? 'amy:moon' : 'amy:sun'"
           class="size-5"
         />
       </Transition>
