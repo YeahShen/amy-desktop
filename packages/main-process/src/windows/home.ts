@@ -24,6 +24,7 @@ export async function createHomeWindow() {
   win.once('ready-to-show', () => {
     // initTasks(loadTaskList());
     win?.show();
+    win.webContents.openDevTools({ mode: 'detach' });
   });
 
   win.on('close', () => app.quit());

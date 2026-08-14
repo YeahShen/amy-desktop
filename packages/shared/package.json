@@ -8,6 +8,10 @@
       "import": "./src/index.ts",
       "types": "./src/index.ts"
     },
+    "./utils/color-mode": {
+      "import": "./src/utils/color-mode.ts",
+      "types": "./src/utils/color-mode.ts"
+    },
     "./favicon.ico": "./src/assets/icon/favicon.ico"
   },
   "scripts": {

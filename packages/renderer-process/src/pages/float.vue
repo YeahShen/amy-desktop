@@ -29,7 +29,7 @@ onMounted(async () => {
   windowPosition.value = await window.electronAPI.invoke('get-window-position');
 });
 
-const colorMode = useColorMode();
+const { colorMode } = useColorModel();
 
 // 菜单项定义
 const menuItems = [
@@ -174,9 +174,7 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
           <div class="float-logo">
             <AmyLogo
               size="36"
-              :color="
-                colorMode.value === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'
-              "
+              :color="colorMode === 'light' ? 'rgba(0,0,0,0.85)' : 'rgba(255, 255, 255, 0.65)'"
               :animation="showGlow"
             />
           </div>

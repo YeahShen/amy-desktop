@@ -1,33 +1,35 @@
-import Store from 'electron-store';
+import Store, { Schema } from 'electron-store';
 import { type AppSettings, appSettingBuilder } from '@amy/shared';
 
-const store = new Store<AppSettings>({ name: 'amy-setting' });
-
-const defaultSettings: AppSettings = {
+const schema: Schema<AppSettings> = {
   login: {
-    remenberMe: false,
-    autoLogin: false,
+    type: 'object',
+    properties: {
+      remenberMe: { type: 'boolean', default: false },
+      autoLogin: { type: 'boolean', default: false },
+    },
   },
   proxy: {
-    enabled: false,
-    url: '',
+    type: 'object',
+    properties: {
+      enabled: { type: 'boolean', default: false },
+      url: { type: 'string', default: '' },
+    },
   },
-  colorMode: 'system',
-  hideHomeWindowOrExit: 'hide',
+  colorMode: { type: 'string', default: 'system' },
+  hideHomeWindowOrExit: { type: 'string', default: 'hide' },
   appRunSettings: {
-    showFloatWindow: false,
+    type: 'object',
+    properties: {
+      showFloatWindow: { type: 'boolean', default: false },
+    },
   },
 };
 
-function getDefaultValue(key: string): unknown {
-  return key.split('.').reduce((obj: any, part) => obj?.[part], defaultSettings);
-}
+const store = new Store<AppSettings>({ name: 'amy-setting', schema });
 
 export const { getSetting, setSetting } = appSettingBuilder({
-  getter: async (key) => {
-    const value = store.get(key as any);
-    return value !== undefined ? value : (getDefaultValue(key as string) as any);
-  },
+  getter: async (key) => store.get(key as any),
   setter(key, value) {
     store.set(key as any, value);
   },

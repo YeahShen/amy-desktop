@@ -1,6 +1,5 @@
 {
   "globals": {
-    "AMY_COLOR_KEY": "readonly",
     "DEFAULT_FONT_TYPE": "readonly",
     "FloatWindowPosition": "readonly",
     "HANDLE_EVENT": "readonly",
@@ -13,7 +12,6 @@
     "RESOURCE_PATH": "readonly",
     "RuntimeConfig": "readonly",
     "SEND_EVENT": "readonly",
-    "SYSTEM_COLOR_KEY": "readonly",
     "SendEventChannels": "readonly",
     "buildWindowUrl": "readonly",
     "checkIPv6HTTP": "readonly",
@@ -25,6 +23,7 @@
     "createTray": "readonly",
     "debouncedStorePositions": "readonly",
     "fullScreen": "readonly",
+    "getColorModel": "readonly",
     "getFileType": "readonly",
     "getFloatWindow": "readonly",
     "getHomeWindow": "readonly",

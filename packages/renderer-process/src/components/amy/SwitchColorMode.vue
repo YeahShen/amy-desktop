@@ -9,9 +9,7 @@
  * 顶层快照与页面最终主题一致，闪烁在构造上不可见。
  * 不支持 API 或系统开启"减少动态效果"时退化为直接切换。
  */
-// const colorMode = useColorMode();
-
-const isDark = computed(() => true);
+const { isDark, toggleMode } = useColorModel();
 
 /** 注入动画圆心；方向不区分——新主题快照始终置顶扩散 */
 function applyTransitionVars(x: number, y: number) {
@@ -28,6 +26,9 @@ async function toggle(e: MouseEvent) {
 
   if (!supportsViewTransition) {
     // colorMode.preference = goingDark ? 'dark' : 'light';
+
+    toggleMode();
+
     return;
   }
 
@@ -37,6 +38,8 @@ async function toggle(e: MouseEvent) {
 
   const transition = document.startViewTransition(async () => {
     // colorMode.preference = goingDark ? 'dark' : 'light';
+
+    toggleMode();
 
     // 等待 Vue 微任务队列把主题 class 应用到 html，快照才能捕获新主题。
     // 注意：不能用 requestAnimationFrame 等待——窗口失焦/不可见时 rAF 不触发，

@@ -7,3 +7,4 @@ export * from './utils/user';
 export * from './utils/app-settings';
 export * from './utils/tools';
 export * from './utils/common-dialog';
+export * from './utils/color-mode';

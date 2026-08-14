@@ -28,6 +28,7 @@ declare global {
   const debouncedStorePositions: typeof import('../src/windows/float').debouncedStorePositions
   const fullScreen: typeof import('../src/utils/full-screen').fullScreen
   const getBaseHtml: typeof import('../src/utils/window').getBaseHtml
+  const getColorModel: typeof import('../src/utils/color-mode').getColorModel
   const getFileType: typeof import('../src/utils/send.utils').getFileType
   const getFloatWindow: typeof import('../src/windows/float').getFloatWindow
   const getHomeWindow: typeof import('../src/windows/home').getHomeWindow

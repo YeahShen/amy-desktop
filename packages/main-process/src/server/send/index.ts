@@ -140,9 +140,6 @@ export async function send(ctx: ParameterizedContext, filePath: string, opts: Se
       encoding: 'utf-8',
     });
 
-    const systemColorTheme = ctx.cookies.get('--system-color-theme');
-    const colorMode = ctx.cookies.get('amy-color-mode');
-
     const $ = cheerio.load(data);
 
     const forced = $('html').attr('data-color-mode-forced');
@@ -151,13 +148,9 @@ export async function send(ctx: ParameterizedContext, filePath: string, opts: Se
       $('html').addClass(forced);
       $('html').css('color-scheme', forced);
     } else {
-      if (colorMode === 'system' || !colorMode) {
-        $('html').addClass(systemColorTheme);
-        $('html').css('color-scheme', systemColorTheme as string);
-      } else {
-        $('html').addClass(colorMode);
-        $('html').css('color-scheme', colorMode);
-      }
+      const model = await getColorModel();
+      $('html').addClass(model);
+      $('html').css('color-scheme', model as string);
     }
 
     ctx.body = $.html();
