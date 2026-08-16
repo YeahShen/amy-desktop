@@ -5,6 +5,7 @@ export default defineNuxtConfig({
         style: 'font-family: PingFangSC;',
       },
     },
+    pageTransition: { name: 'fade', mode: 'out-in' },
   },
 
   srcDir: 'src',

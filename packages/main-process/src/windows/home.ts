@@ -24,19 +24,22 @@ export async function createHomeWindow() {
   win.once('ready-to-show', () => {
     // initTasks(loadTaskList());
     win?.show();
-    win.webContents.openDevTools({ mode: 'detach' });
   });
 
   win.on('close', () => app.quit());
 
   win.on('maximize', () => {
-    console.log(1);
-
     win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, true);
   });
 
   win.on('unmaximize', () => {
     win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, false);
+  });
+
+  win.on('resize', () => {
+    const bounds = win.getBounds();
+    setRuntimeConfigItem('homeSize.height', bounds.height);
+    setRuntimeConfigItem('homeSize.width', bounds.width);
   });
 
   return homeWindow;

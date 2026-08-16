@@ -1,8 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-full main-content">
-    <NuxtPage />
+  <div class="w-full main-content relative">
+    <AmyScrollbar>
+      <NuxtPage />
+    </AmyScrollbar>
   </div>
 </template>
 

@@ -6,7 +6,9 @@ definePageMeta({
 
 <template>
   <div>
-    <LayoutNavbarLeftContext> home </LayoutNavbarLeftContext>
+    CDC的
+
+    <p v-for="i in 100">cdsa {{ i }}</p>
   </div>
 </template>
 

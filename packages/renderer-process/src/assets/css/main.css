@@ -40,3 +40,14 @@ label {
   -ms-user-select: none;
   user-select: none;
 }
+
+/* 页面切换过渡（对应 nuxt.config.ts 的 app.pageTransition） */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
