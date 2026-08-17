@@ -44,7 +44,7 @@ label {
 /* 页面切换过渡（对应 nuxt.config.ts 的 app.pageTransition） */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 .fade-enter-from,

@@ -25,6 +25,10 @@ class Authenticate {
     }
   }
 
+  get authenticate() {
+    return { info: this._info, token: this._token };
+  }
+
   set authenticate(obj: { info?: User; token?: string }) {
     this._info = obj.info;
     this._token = obj.token;
@@ -63,7 +67,10 @@ export async function getInfo() {
 }
 
 export function setUserInfo(info: User) {
-  authenticate.authenticate.info = info;
+  authenticate.authenticate = {
+    token: authenticate.getToken(),
+    info,
+  };
 }
 
 export function setAuthenticate(token: string, user: User) {

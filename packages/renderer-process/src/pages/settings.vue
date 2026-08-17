@@ -6,36 +6,52 @@ definePageMeta({
     minSizeAble: true,
   },
 });
+
+const menu = ref([
+  {
+    key: 1,
+    label: '账号管理',
+    icon: 'amy:shield-user-bold',
+  },
+  {
+    key: 2,
+    label: '通用设置',
+    icon: 'amy:settings-bold-duotone',
+  },
+  {
+    key: 3,
+    label: '关于 AMY STATION',
+    icon: 'amy:bag-heart-bold-duotone',
+  },
+]);
+
+const selectedKey = ref(1);
 </script>
 
 <template>
-  <div>
-    <div class="flex flex-col gap-6 p-4">
-      <section class="flex flex-col gap-2">
-        <h6 class="text-xs text-muted">外观</h6>
-        <div
-          class="flex items-center justify-between rounded-lg border border-default bg-card px-3 py-2.5"
-        >
-          <div class="flex flex-col gap-0.5">
-            <span class="text-sm text-default">深色模式</span>
-            <span class="text-xs text-muted">切换应用主题外观</span>
-          </div>
-          <AmySwitchColorMode />
-        </div>
-      </section>
-
-      <section class="flex flex-col gap-2">
-        <h6 class="text-xs text-muted">关于</h6>
-        <div
-          class="flex items-center justify-between rounded-lg border border-default bg-card px-3 py-2.5"
-        >
-          <span class="text-sm text-default">版本</span>
-          <span class="text-xs text-muted">v0.0.14</span>
-        </div>
-      </section>
+  <div class="w-full h-full flex">
+    <div class="w-50 h-full px-2 flex flex-col gap-1">
+      <div
+        v-for="item in menu"
+        :key="item.key"
+        class="w-full h-10 flex rounded-xl items-center px-3 text-sm cursor-pointer gap-x-2 hover:bg-primary-100/10"
+        :class="{ 'bg-primary/80!': item.key === selectedKey }"
+        @click="selectedKey = item.key"
+      >
+        <NuxtIcon :name="item.icon" size="18" />
+        <p>{{ item.label }}</p>
+      </div>
     </div>
 
-    <LayoutDialogFooter> </LayoutDialogFooter>
+    <div class="flex-1 h-full relative">
+      <AmyScrollbar>
+        <div class="w-full h-fit pl-4 pr-4 pb-4">
+          <SettingsUserProfile v-if="selectedKey === 1" />
+          <SettingsCommon v-else-if="selectedKey === 2" />
+          <SettingsAbout v-else />
+        </div>
+      </AmyScrollbar>
+    </div>
   </div>
 </template>
 

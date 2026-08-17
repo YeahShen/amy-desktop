@@ -8,7 +8,9 @@
       "Bash(curl -s -o /dev/null -w \"login: %{http_code}\\\\n\" --max-time 15 \"http://[::1]:5326/login\")",
       "Bash(curl -s -o /dev/null -w \"float: %{http_code}\\\\n\" --max-time 15 \"http://[::1]:5326/float\")",
       "Read(//tmp/**)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

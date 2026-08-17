@@ -32,38 +32,40 @@ async function comfirm() {
 </script>
 
 <template>
-  <Teleport to="#layout-dialog-footer">
-    <div class="w-full shrink-0 flex items-center justify-between gap-2 px-4 py-4">
-      <div class="w-fit h-full">
-        <slot name="left" />
-      </div>
+  <ClientOnly>
+    <Teleport to="#layout-dialog-footer">
+      <div class="w-full shrink-0 flex items-center justify-between gap-2 px-4 py-4">
+        <div class="w-fit h-full">
+          <slot name="left" />
+        </div>
 
-      <div class="w-fit h-full">
-        <slot>
-          <div class="flex items-center gap-x-4">
-            <u-button
-              variant="outline"
-              color="neutral"
-              :ui="{
-                base: 'px-5',
-              }"
-              @click="close"
-              >{{ cnacelText }}</u-button
-            >
+        <div class="w-fit h-full">
+          <slot>
+            <div class="flex items-center gap-x-4">
+              <u-button
+                variant="outline"
+                color="neutral"
+                :ui="{
+                  base: 'px-5',
+                }"
+                @click="close"
+                >{{ cnacelText }}</u-button
+              >
 
-            <u-button
-              :ui="{
-                base: 'px-5',
-              }"
-              :loading="comfirmLoading"
-              @click="comfirm"
-              >{{ comfirmText }}</u-button
-            >
-          </div>
-        </slot>
+              <u-button
+                :ui="{
+                  base: 'px-5',
+                }"
+                :loading="comfirmLoading"
+                @click="comfirm"
+                >{{ comfirmText }}</u-button
+              >
+            </div>
+          </slot>
+        </div>
       </div>
-    </div>
-  </Teleport>
+    </Teleport>
+  </ClientOnly>
 </template>
 
 <style lang="scss"></style>
