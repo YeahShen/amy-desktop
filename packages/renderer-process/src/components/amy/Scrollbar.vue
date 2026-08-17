@@ -3,10 +3,12 @@ withDefaults(
   defineProps<{
     disabled?: boolean;
     thumbWidth?: string;
+    trackClass?: string;
   }>(),
   {
     disabled: false,
     thumbWidth: '6px',
+    trackClass: '',
   },
 );
 
@@ -192,10 +194,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    class="scrollbar h-full w-full position-relative"
-    :class="{ 'is-dragging': dragging }"
-  >
+  <div class="scrollbar h-full w-full position-relative" :class="{ 'is-dragging': dragging }">
     <!-- 原生滚动条已隐藏（见样式），滚动行为由内容手势/滚轮/键盘驱动 -->
     <div
       ref="wrap"
@@ -220,6 +219,7 @@ onUnmounted(() => {
       v-if="!disabled"
       ref="track"
       class="scrollbar__track"
+      :class="trackClass"
       :style="{ width: thumbWidth }"
       @mousedown="clickTrackHandler"
     >

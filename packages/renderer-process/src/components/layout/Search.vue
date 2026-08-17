@@ -7,6 +7,10 @@ const focus = ref(false);
 onClickOutside(searchWrapRef, () => (focus.value = false));
 
 const active = computed(() => has.value || focus.value);
+
+const appStore = useAppStore();
+
+watch(active, (v) => (appStore.searchActive = v));
 </script>
 
 <template>

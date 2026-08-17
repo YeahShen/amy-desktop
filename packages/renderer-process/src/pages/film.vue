@@ -5,7 +5,9 @@ definePageMeta({
 </script>
 
 <template>
-  <div>ffff</div>
+  <div>
+    <p>所达成的</p>
+  </div>
 </template>
 
 <style lang="scss"></style>

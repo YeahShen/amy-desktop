@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 definePageMeta({
   workspace: 'home',
 });
@@ -6,9 +6,9 @@ definePageMeta({
 
 <template>
   <div>
-    CDC的
-
-    <p v-for="i in 100">cdsa {{ i }}</p>
+    <LayoutPageTitle>
+      <div class="text-primary">HOME</div>
+    </LayoutPageTitle>
   </div>
 </template>
 

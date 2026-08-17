@@ -4,8 +4,8 @@
   <div class="w-full h-full flex">
     <layout-sidebar />
 
-    <div class="main h-full">
-      <layout-navbar />
+    <div class="main h-full relative">
+      <layout-navbar class="absolute top-0 left-0 right-0" />
 
       <layout-main-content />
     </div>
