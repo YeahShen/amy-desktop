@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@nuxt/ui": "^4.10.0",
-    "tailwindcss": "^4.3.3",
-    "valibot": "^1.4.2"
+    "tailwindcss": "^4.3.3"
   }
 }

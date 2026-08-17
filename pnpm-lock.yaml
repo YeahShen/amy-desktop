@@ -186,9 +186,6 @@ importers:
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
-      valibot:
-        specifier: ^1.4.2
-        version: 1.4.2(typescript@6.0.3)
     devDependencies:
       '@amy/shared':
         specifier: workspace:*
@@ -16548,6 +16545,7 @@ snapshots:
   valibot@1.4.2(typescript@6.0.3):
     optionalDependencies:
       typescript: 6.0.3
+    optional: true
 
   validate-npm-package-license@3.0.4:
     dependencies:
