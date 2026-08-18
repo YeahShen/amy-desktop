@@ -1,8 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="tsx"></script>
 
 <template>
   <div class="w-full h-full">
-    <slot />
+    <NuxtPage />
   </div>
 </template>
 

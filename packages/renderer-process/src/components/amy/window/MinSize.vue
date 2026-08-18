@@ -5,14 +5,11 @@ function click() {
 </script>
 
 <template>
-  <UButton
-    class="no-drag"
-    icon="amy:minus"
-    size="md"
-    color="neutral"
-    variant="ghost"
-    @click="click"
-  />
+  <a-button type="text" class="no-drag" @click="click">
+    <template #icon>
+      <NuxtIcon name="amy:minus" size="20" />
+    </template>
+  </a-button>
 </template>
 
 <style lang="scss"></style>

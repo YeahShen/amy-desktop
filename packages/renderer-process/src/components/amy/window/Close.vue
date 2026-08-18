@@ -1,18 +1,15 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 const emits = defineEmits<{
   close: [];
 }>();
 </script>
 
 <template>
-  <UButton
-    icon="amy:window-close"
-    size="md"
-    variant="ghost"
-    color="neutral"
-    class="no-drag"
-    @click="emits('close')"
-  />
+  <a-button type="text" class="no-drag" @click="emits('close')">
+    <template #icon>
+      <NuxtIcon name="amy:window-close" size="20" />
+    </template>
+  </a-button>
 </template>
 
 <style lang="scss"></style>

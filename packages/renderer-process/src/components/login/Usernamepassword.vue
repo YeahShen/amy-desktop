@@ -1,5 +1,6 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type { UserloggedCacheItem, User } from '@amy/shared';
+import { useLocalStorage } from '@vueuse/core';
 
 const props = defineProps<{
   loginFn: (username: string, password: string) => Promise<{ user: User; token: string }>;
@@ -65,64 +66,7 @@ async function login() {
 </script>
 
 <template>
-  <div class="flex flex-col w-full">
-    <LoginUsernameInput
-      v-model="loginForm.username"
-      :logged-items="loggedUser"
-      :disabled="loading"
-      @set-password="(v) => (loginForm.password = v)"
-    />
-
-    <UInput
-      v-model="loginForm.password"
-      class="w-full mt-4"
-      size="xl"
-      :disabled="loading"
-      :ui="{ trailing: 'pe-1' }"
-      :type="showPassword ? 'text' : 'password'"
-    >
-      <template #leading>
-        <UIcon name="amy:lock-outlined" class="size-5" />
-      </template>
-
-      <template #trailing>
-        <UButton
-          color="neutral"
-          variant="link"
-          size="sm"
-          :icon="showPassword ? 'amy:eye-off' : 'amy:eye'"
-          :aria-label="showPassword ? 'Hide password' : 'Show password'"
-          :aria-pressed="showPassword"
-          aria-controls="password"
-          @click="showPassword = !showPassword"
-        />
-      </template>
-    </UInput>
-
-    <div class="w-full flex gap-x-4 mt-4">
-      <UCheckbox v-model="autoLogin">
-        <template #label>
-          <span class="text-default">自动登录</span>
-        </template>
-      </UCheckbox>
-
-      <UCheckbox v-model="rememberPassword">
-        <template #label>
-          <span class="text-default">记住密码</span>
-        </template>
-      </UCheckbox>
-    </div>
-
-    <UButton
-      class="mt-7 w-full flex justify-center"
-      loading-icon="i-lucide-loader"
-      :loading
-      size="xl"
-      :ui="{}"
-      @click="login"
-      >登录</UButton
-    >
-  </div>
+  <div class="flex flex-col w-full"></div>
 </template>
 
 <style lang="scss"></style>

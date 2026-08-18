@@ -1,6 +1,6 @@
 import { getColorModeCookie } from '@amy/shared/utils/color-mode';
 
-export function useColorModel() {
+export function useColorMode() {
   const colorMode = useCookie<'dark' | 'light'>(getColorModeCookie(), {
     path: '/',
     default: () => 'light',

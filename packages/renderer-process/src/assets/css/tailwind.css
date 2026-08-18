@@ -1,5 +1,6 @@
 @import 'tailwindcss';
-@import '@nuxt/ui';
+
+@import '@antdv-next/tailwind/theme.css';
 
 @theme {
   --background-color-card: var(--ui-bg-card);
@@ -30,4 +31,10 @@
 
 @utility no-drag {
   -webkit-app-region: no-drag;
+}
+
+@layer base {
+  html {
+    font-size: 16px; /* 相当于 10px，方便 rem 计算 */
+  }
 }

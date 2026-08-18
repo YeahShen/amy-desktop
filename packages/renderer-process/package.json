@@ -1,5 +1,5 @@
 {
-  "name": "@amy/renderer-process",
+  "name": "renderer-process",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,18 +16,20 @@
   "license": "ISC",
   "devDependencies": {
     "@amy/shared": "workspace:*",
+    "@antdv-next/icons": "^1.1.2",
+    "@antdv-next/nuxt": "^1.1.0",
+    "@antdv-next/tailwind": "^1.1.1",
     "@nuxt/eslint": "^1.17.0",
+    "@nuxt/icon": "2.5.0",
     "@nuxt/schema": "4.4.6",
     "@pinia/nuxt": "^1.0.1",
-    "@vueuse/nuxt": "^14.4.0",
-    "axios-retry": "^4.5.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vueuse/core": "^14.4.0",
+    "antdv-next": "^1.5.1",
     "nuxt": "4.3.1",
     "sass-embedded": "^1.100.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.2",
     "vue-tsc": "^3.2.6"
-  },
-  "dependencies": {
-    "@nuxt/ui": "^4.10.0",
-    "tailwindcss": "^4.3.3"
   }
 }

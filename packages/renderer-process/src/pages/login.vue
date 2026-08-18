@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import type { User } from '@amy/shared';
 
 definePageMeta({
   layout: 'empty',
-  colorMode: 'light',
+  colorMode: 'dark',
 });
 
 useHead({
@@ -71,13 +71,7 @@ async function usernamePasswordLogin(
     </div>
 
     <div class="mt-3 px-4">
-      <LoginUsernamepassword v-model:loading="loading" :login-fn="usernamePasswordLogin" />
-    </div>
-
-    <div class="w-full flex items-center justify-center gap-x-2 absolute bottom-6">
-      <UButton color="neutral" variant="ghost" size="xs">扫码登陆</UButton>
-      <span class="text-muted">|</span>
-      <UButton color="neutral" variant="ghost" size="xs">更多选项</UButton>
+      <LoginUsernamepassword :login-fn="usernamePasswordLogin" />
     </div>
   </div>
 </template>

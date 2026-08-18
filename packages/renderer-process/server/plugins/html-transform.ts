@@ -16,6 +16,11 @@ export default defineNitroPlugin((nitroApp) => {
       ?.trim()
       ?.split('=');
 
+    if (res)
+      setCookie(event, getColorModeCookie(), res[1] + '', {
+        path: getRequestPath(event),
+      });
+
     // 主进程 initColorMode 已把用户偏好（含 system）解析为最终主题写入 cookie
     const colorMode = res ? res[1] : (getCookie(event, getColorModeCookie()) ?? 'light');
 

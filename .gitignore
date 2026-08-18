@@ -42,3 +42,5 @@ coverage/
 out/
 .nuxt/
 output/
+# 重构备份目录（遗留，勿提交）
+packages/renderer-process__old/

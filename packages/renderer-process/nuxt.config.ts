@@ -1,3 +1,5 @@
+import tailwindcss from '@tailwindcss/vite';
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -8,8 +10,9 @@ export default defineNuxtConfig({
     pageTransition: { name: 'fade', mode: 'out-in' },
   },
 
+  modules: ['@nuxt/eslint', '@pinia/nuxt', '@nuxt/icon', '@antdv-next/nuxt'],
+
   srcDir: 'src',
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@vueuse/nuxt', '@pinia/nuxt'],
 
   devServer: {
     port: Number(process.env.AMY_PORT),
@@ -21,11 +24,6 @@ export default defineNuxtConfig({
     '~/assets/css/themes.css',
     '~/assets/css/fonts.css',
   ],
-
-  ui: {
-    fonts: false,
-    colorMode: false,
-  },
 
   nitro: {
     compressPublicAssets: {
@@ -46,6 +44,7 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['@vue/devtools-core', '@vue/devtools-kit'],
     },
+    plugins: [tailwindcss()],
   },
 
   icon: {
@@ -56,5 +55,9 @@ export default defineNuxtConfig({
         dir: 'src/assets/icons',
       },
     ],
+  },
+
+  antd: {
+    icon: false,
   },
 });

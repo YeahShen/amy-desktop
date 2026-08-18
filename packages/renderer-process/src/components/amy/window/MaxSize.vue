@@ -17,14 +17,11 @@ function setWindow() {
 </script>
 
 <template>
-  <UButton
-    class="no-drag"
-    :icon="isFullScreen ? 'amy:restore' : 'amy:full-screen'"
-    size="md"
-    color="neutral"
-    variant="ghost"
-    @click="setWindow"
-  />
+  <a-button type="text" class="no-drag" @click="setWindow">
+    <template #icon>
+      <NuxtIcon :name="isFullScreen ? 'amy:restore' : 'amy:full-screen'" size="20" />
+    </template>
+  </a-button>
 </template>
 
 <style lang="scss"></style>
