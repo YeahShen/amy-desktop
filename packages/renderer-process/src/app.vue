@@ -17,11 +17,9 @@ onMounted(() => {
 <template>
   <a-config-provider :theme="{ zeroRuntime: true }">
     <a-app class="h-full">
-      <div id="styw" class="w-full min-h-full h-fit">
-        <NuxtLayout>
-          <NuxtPage />
-        </NuxtLayout>
-      </div>
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
     </a-app>
   </a-config-provider>
 </template>

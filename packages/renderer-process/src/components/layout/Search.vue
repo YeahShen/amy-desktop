@@ -38,7 +38,7 @@ watch(active, (v) => (appStore.searchActive = v));
 <style lang="scss">
 .search-wrap {
   position: absolute;
-  right: 260px;
+  right: 280px;
   top: 50%;
   transform: translate3d(0, -50%, 0);
   transition: all 0.25s;
