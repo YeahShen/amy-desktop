@@ -19,6 +19,8 @@ export default defineNuxtConfig({
   },
 
   css: [
+    '~/assets/css/antd.css',
+    '~/assets/css/antd.dark.css',
     '~/assets/css/main.css',
     '~/assets/css/tailwind.css',
     '~/assets/css/themes.css',

@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { theme } from 'antdv-next';
+// import { theme } from 'antdv-next';
 
 onMounted(() => {
   document.addEventListener('keydown', (event) => {
@@ -11,22 +11,17 @@ onMounted(() => {
   });
 });
 
-const { isDark } = useColorMode();
+// const { isDark } = useColorMode();
 </script>
 
 <template>
-  <a-config-provider
-    :theme="{
-      token: {
-        colorPrimary: '#28a17c',
-      },
-      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-    }"
-  >
+  <a-config-provider :theme="{ zeroRuntime: true }">
     <a-app class="h-full">
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
+      <div id="styw" class="w-full min-h-full h-fit">
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+      </div>
     </a-app>
   </a-config-provider>
 </template>

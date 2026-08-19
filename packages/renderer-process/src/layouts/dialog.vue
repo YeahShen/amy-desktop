@@ -1,7 +1,10 @@
 <script setup lang="tsx"></script>
 
 <template>
-  <div></div>
+  <div class="w-full h-full dialog-wrap"></div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.dialog-wrap {
+}
+</style>
