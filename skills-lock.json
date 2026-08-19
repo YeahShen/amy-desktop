@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "antdv-next": {
+      "source": "antdv-next/skills",
+      "sourceType": "github",
+      "skillPath": "skills/antdv-next/SKILL.md",
+      "computedHash": "4f006bda55acac7c7e0999b025cf0f67022cdf3beb57b7662e6bd9c894f60428"
+    },
     "nuxt-ui": {
       "source": "nuxt/ui",
       "sourceType": "github",

@@ -61,7 +61,11 @@ watch(active, (v) => (appStore.searchActive = v));
     right: 50%;
     width: 350px;
     transform: translate3d(50%, -50%, 0);
-    border: 1px solid var(--color-primary-400);
+    border: 1px solid var(--ant-color-primary-border);
+  }
+
+  &:hover {
+    border: 1px solid var(--ant-color-primary-border-hover);
   }
 }
 </style>

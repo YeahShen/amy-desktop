@@ -14,11 +14,11 @@ const userStore = useUserStore();
 
 <template>
   <div class="w-full navbar drag flex justify-end px-4 z-9999 absolute">
-    <!-- <LayoutSearch /> -->
+    <LayoutSearch />
 
     <div class="w-fit h-full flex items-center">
       <div class="no-drag">
-        <a-avatar size="large" :src="userStore.info?.avatar">
+        <a-avatar :src="userStore.info?.avatar">
           <template #icon>
             <div></div>
           </template>
