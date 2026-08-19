@@ -4,8 +4,8 @@ let loginWindow: BrowserWindow | null = null;
 
 export function createLoginWindow() {
   const win = (loginWindow = createFrameWindow({
-    width: 360,
-    height: 440,
+    width: 370,
+    height: 460,
   }));
 
   win.loadURL(buildWindowUrl('login'));

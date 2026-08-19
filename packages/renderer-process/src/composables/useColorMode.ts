@@ -1,10 +1,7 @@
 import { getColorModeCookie } from '@amy/shared/utils/color-mode';
 
 export function useColorMode() {
-  const colorMode = useCookie<'dark' | 'light'>(getColorModeCookie(), {
-    path: '/',
-    default: () => 'light',
-  });
+  const colorMode = useCookie<'dark' | 'light'>(getColorModeCookie());
 
   const isDark = computed(() => colorMode.value === 'dark');
 

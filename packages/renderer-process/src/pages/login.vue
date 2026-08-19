@@ -63,7 +63,7 @@ async function usernamePasswordLogin(
 
     <div class="flex w-full gap-x-2 justify-start text-2xl title mt-3 px-4">
       <span class="text-primary font-bold">Amy</span>
-      <span class="font-bold">Station</span>
+      <span class="font-bold text-inverted">Station</span>
     </div>
 
     <div class="mt-6 w-full text-toned px-4">
@@ -72,6 +72,12 @@ async function usernamePasswordLogin(
 
     <div class="mt-3 px-4">
       <LoginUsernamepassword :login-fn="usernamePasswordLogin" />
+    </div>
+
+    <div class="w-full flex items-center justify-center gap-x-2 absolute bottom-4">
+      <AButton type="text">扫码登陆</AButton>
+      <span class="text-muted">|</span>
+      <AButton type="text">更多选项</AButton>
     </div>
   </div>
 </template>

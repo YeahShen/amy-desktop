@@ -7,12 +7,12 @@ export async function initColorMode() {
     path: '/',
     name: getColorModeCookie(),
     value: await getColorModel(),
-    expirationDate: Math.floor(Date.now() / 1000) + 360000, // 10 天，避免会话 cookie 重启丢失导致首屏闪烁
   });
 }
 
 export async function getColorModel() {
   const userSetColorModel = await getSetting('colorMode');
+
   let colorModel;
 
   if (userSetColorModel === 'system') {

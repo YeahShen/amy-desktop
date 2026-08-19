@@ -12,29 +12,18 @@ onMounted(() => {
 });
 
 const { isDark } = useColorMode();
-
-const token = computed(() => {
-  if (isDark.value) {
-    return theme.darkAlgorithm({
-      ...theme.getDesignToken(),
-      colorPrimary: '#28a17c',
-    });
-  }
-
-  return theme.defaultAlgorithm({
-    ...theme.getDesignToken(),
-    colorPrimary: '#28a17c',
-  });
-});
 </script>
 
 <template>
   <a-config-provider
     :theme="{
-      token: token,
+      token: {
+        colorPrimary: '#28a17c',
+      },
+      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     }"
   >
-    <a-app>
+    <a-app class="h-full">
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>

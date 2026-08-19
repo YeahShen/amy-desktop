@@ -11,8 +11,6 @@ const loginForm = ref({
   password: '',
 });
 
-const showPassword = ref(false);
-
 const config = useRuntimeConfig();
 
 const loading = defineModel<boolean>('loading', {
@@ -63,10 +61,70 @@ async function login() {
 
   window.electronAPI.send('login', token, user);
 }
+
+const options = computed(() => loggedUser.value.map((i) => ({ value: i.account })));
+
+const showSearch = {
+  filterOption: (inputValue: string, option?: { value?: string }) => {
+    return (option?.value ?? '').toUpperCase().includes(inputValue.toUpperCase());
+  },
+};
+
+function selectAccount(value: string) {
+  const account = loggedUser.value.find((i) => i.account === value);
+
+  if (account) {
+    loginForm.value.password = account.password as string;
+  }
+}
 </script>
 
 <template>
-  <div class="flex flex-col w-full"></div>
+  <a-form>
+    <a-form-item
+      name="username"
+      :rules="[{ required: true, message: 'Please input your username!' }]"
+    >
+      <a-auto-complete
+        v-model:value="loginForm.username"
+        size="large"
+        :show-search="showSearch"
+        :options="options"
+        @select="selectAccount"
+      >
+        <template #prefix>
+          <NuxtIcon name="amy:user-outlined" size="20" />
+        </template>
+      </a-auto-complete>
+    </a-form-item>
+
+    <a-form-item
+      name="password"
+      :rules="[{ required: true, message: 'Please input your password!' }]"
+    >
+      <a-input-password v-model:value="loginForm.password" size="large">
+        <template #prefix>
+          <NuxtIcon name="amy:lock-outlined" size="20" />
+        </template>
+      </a-input-password>
+    </a-form-item>
+
+    <div class="w-full flex gap-x-4 mt-4">
+      <a-checkbox v-model:checked="rememberPassword">
+        <span class="text-default">记住密码</span>
+      </a-checkbox>
+
+      <a-checkbox v-model:checked="autoLogin">
+        <span class="text-default">自动登录</span>
+      </a-checkbox>
+    </div>
+
+    <div class="mt-7 w-full">
+      <a-button type="primary" block size="large" :loading="loading" @click="login">
+        登录
+      </a-button>
+    </div>
+  </a-form>
 </template>
 
 <style lang="scss"></style>

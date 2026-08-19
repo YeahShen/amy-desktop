@@ -26,6 +26,14 @@ function getAnimationStyle(aniStyle: string) {
   if (sep === -1) return {};
   return { [aniStyle.slice(0, sep).trim()]: aniStyle.slice(sep + 1).trim() };
 }
+
+/** ldl-ani 图层基础姿态。用对象绑定而非静态 style：SSR 与客户端走同一 stringifyStyle 序列化，避免 hydration style mismatch */
+const ANI_BASE_STYLE = {
+  transformBox: 'view-box',
+  opacity: 1,
+  transformOrigin: '64px 64px',
+  transform: 'matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1)',
+} as const;
 </script>
 
 <template>
@@ -42,31 +50,19 @@ function getAnimationStyle(aniStyle: string) {
         <g class="ldl-layer">
           <g
             class="ldl-ani"
-            style="
-              transform-box: view-box;
-              opacity: 1;
-              transform-origin: 64px 64px;
-              transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
-            "
-            :style="
-              getAnimationStyle('animation: 3s linear 0s infinite normal forwards running animate')
-            "
+            :style="[
+              ANI_BASE_STYLE,
+              getAnimationStyle('animation: 3s linear 0s infinite normal forwards running animate'),
+            ]"
           ></g>
         </g>
         <g class="ldl-layer">
           <g
             class="ldl-ani"
-            style="
-              transform-box: view-box;
-              opacity: 1;
-              transform-origin: 64px 64px;
-              transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
-            "
-            :style="
-              getAnimationStyle(
-                'animation: 3s linear -0.3s infinite normal forwards running animate',
-              )
-            "
+            :style="[
+              ANI_BASE_STYLE,
+              getAnimationStyle('animation: 3s linear -0.3s infinite normal forwards running animate'),
+            ]"
           >
             <circle
               r="3.8"
@@ -80,17 +76,10 @@ function getAnimationStyle(aniStyle: string) {
         <g class="ldl-layer">
           <g
             class="ldl-ani"
-            style="
-              transform-box: view-box;
-              opacity: 1;
-              transform-origin: 64px 64px;
-              transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
-            "
-            :style="
-              getAnimationStyle(
-                'animation: 3s linear -0.6s infinite normal forwards running animate',
-              )
-            "
+            :style="[
+              ANI_BASE_STYLE,
+              getAnimationStyle('animation: 3s linear -0.6s infinite normal forwards running animate'),
+            ]"
           >
             <path
               d="M26.6,82H86"
@@ -109,34 +98,10 @@ function getAnimationStyle(aniStyle: string) {
                     <g class="ldl-layer">
                       <g
                         class="ldl-ani"
-                        style="
-                          transform-box: view-box;
-                          opacity: 1;
-                          transform-origin: 64px 64px;
-                          transform: matrix3d(
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1
-                          );
-                        "
-                        :style="
-                          getAnimationStyle(
-                            'animation: 3s linear -0.9s infinite normal forwards running animate',
-                          )
-                        "
+                        :style="[
+                          ANI_BASE_STYLE,
+                          getAnimationStyle('animation: 3s linear -0.9s infinite normal forwards running animate'),
+                        ]"
                       >
                         <path
                           d="M72.7,48c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4L72.7,48 L72.7,48z"
@@ -154,34 +119,10 @@ function getAnimationStyle(aniStyle: string) {
                     <g class="ldl-layer">
                       <g
                         class="ldl-ani"
-                        style="
-                          transform-box: view-box;
-                          opacity: 1;
-                          transform-origin: 64px 64px;
-                          transform: matrix3d(
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1
-                          );
-                        "
-                        :style="
-                          getAnimationStyle(
-                            'animation: 3s linear -1.2s infinite normal forwards running animate',
-                          )
-                        "
+                        :style="[
+                          ANI_BASE_STYLE,
+                          getAnimationStyle('animation: 3s linear -1.2s infinite normal forwards running animate'),
+                        ]"
                       >
                         <ellipse
                           ry="12.2"
@@ -203,34 +144,10 @@ function getAnimationStyle(aniStyle: string) {
                     <g class="ldl-layer">
                       <g
                         class="ldl-ani"
-                        style="
-                          transform-box: view-box;
-                          opacity: 1;
-                          transform-origin: 64px 64px;
-                          transform: matrix3d(
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1
-                          );
-                        "
-                        :style="
-                          getAnimationStyle(
-                            'animation: 3s linear -1.5s infinite normal forwards running animate',
-                          )
-                        "
+                        :style="[
+                          ANI_BASE_STYLE,
+                          getAnimationStyle('animation: 3s linear -1.5s infinite normal forwards running animate'),
+                        ]"
                       >
                         <path
                           d="M72.7,19.2c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4 C72.8,19.1,72.7,19.2,72.7,19.2z"
@@ -245,17 +162,10 @@ function getAnimationStyle(aniStyle: string) {
               <g class="ldl-layer">
                 <g
                   class="ldl-ani"
-                  style="
-                    transform-box: view-box;
-                    opacity: 1;
-                    transform-origin: 64px 64px;
-                    transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
-                  "
-                  :style="
-                    getAnimationStyle(
-                      'animation: 3s linear -1.8s infinite normal forwards running animate',
-                    )
-                  "
+                  :style="[
+                    ANI_BASE_STYLE,
+                    getAnimationStyle('animation: 3s linear -1.8s infinite normal forwards running animate'),
+                  ]"
                 >
                   <path
                     d="M70.8,87.9V19.2"
@@ -270,34 +180,10 @@ function getAnimationStyle(aniStyle: string) {
                     <g class="ldl-layer">
                       <g
                         class="ldl-ani"
-                        style="
-                          transform-box: view-box;
-                          opacity: 1;
-                          transform-origin: 64px 64px;
-                          transform: matrix3d(
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0.91,
-                            0,
-                            0,
-                            0,
-                            0,
-                            1
-                          );
-                        "
-                        :style="
-                          getAnimationStyle(
-                            'animation: 3s linear -2.1s infinite normal forwards running animate',
-                          )
-                        "
+                        :style="[
+                          ANI_BASE_STYLE,
+                          getAnimationStyle('animation: 3s linear -2.1s infinite normal forwards running animate'),
+                        ]"
                       >
                         <path
                           d="M72.7,33.5c0,1.5,0.6,3.1,1.9,4.1l1.9,1.5c0.6,0.5,1.4,1,1.9,1.7c2.3,2.6,5,5.4,7.4,8.6 c1.2,1.7,2.3,3.5,3.2,5.4c0.3,0.5,0.4,1,0.6,1.5c0.1,0.5,0.4,1,0.5,1.5c0.3,1,0.5,2,0.6,3.1c0.3,2.2-0.1,4.5-0.9,6.3 c-0.4,0.9-0.9,1.8-1.4,2.7c-0.5,0.8-0.8,1.7-1.5,2.3c-0.4,0.3-0.9,0.3-1.2,0c-0.1-0.1-0.3-0.4-0.3-0.5c-0.1-1.2,0.4-1.9,0.8-2.8 c0.4-0.9,0.6-1.8,0.9-2.6c0.5-1.7,0.5-3.2,0.1-4.7c-0.9-3.2-2.9-5.9-5.6-8.2c-2.6-2.3-5.8-4.4-8.6-7.3c-0.8-0.8-1.4-1.5-1.8-2.6 c-0.5-1-0.9-2-1.3-3.1c-0.3-1.2-0.5-2.2-0.6-3.3c-0.3-1-0.3-2.2-0.5-3.3c-0.3-1,0.5-2,1.5-2.3c1-0.3,2,0.5,2.3,1.5v0.4L72.7,33.5z"
@@ -315,17 +201,10 @@ function getAnimationStyle(aniStyle: string) {
         <g class="ldl-layer">
           <g
             class="ldl-ani"
-            style="
-              transform-box: view-box;
-              opacity: 1;
-              transform-origin: 64px 64px;
-              transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
-            "
-            :style="
-              getAnimationStyle(
-                'animation: 3s linear -2.4s infinite normal forwards running animate',
-              )
-            "
+            :style="[
+              ANI_BASE_STYLE,
+              getAnimationStyle('animation: 3s linear -2.4s infinite normal forwards running animate'),
+            ]"
           >
             <path
               d="M26.6,62.8H86"
@@ -338,17 +217,10 @@ function getAnimationStyle(aniStyle: string) {
         <g class="ldl-layer">
           <g
             class="ldl-ani"
-            style="
-              transform-box: view-box;
-              opacity: 1;
-              transform-origin: 64px 64px;
-              transform: matrix3d(0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 0.91, 0, 0, 0, 0, 1);
-            "
-            :style="
-              getAnimationStyle(
-                'animation: 3s linear -2.7s infinite normal forwards running animate',
-              )
-            "
+            :style="[
+              ANI_BASE_STYLE,
+              getAnimationStyle('animation: 3s linear -2.7s infinite normal forwards running animate'),
+            ]"
           ></g>
         </g>
       </g>

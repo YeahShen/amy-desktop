@@ -1,7 +1,19 @@
 <script setup lang="tsx"></script>
 
 <template>
-  <div></div>
+  <div class="w-full h-full flex">
+    <LayoutSidebar />
+
+    <div class="main h-full relative">
+      <LayoutNavbar />
+
+      <LayoutMainContent />
+    </div>
+  </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.main {
+  width: calc(100% - #{var(--sidebar-width)});
+}
+</style>
