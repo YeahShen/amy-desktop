@@ -6,6 +6,8 @@ import { debounce } from 'lodash-es';
 let floatWindow: BrowserWindow | null = null;
 
 export function createFloatWindow() {
+  if (floatWindow != null) return;
+
   const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
 
   const x = getRuntimeConfigItem('floatWindowPosition.x') ?? screenWidth * 0.8;
@@ -37,6 +39,11 @@ export function createFloatWindow() {
 
   win.once('ready-to-show', () => {
     win?.show();
+  });
+
+  win.once('closed', () => {
+    win.destroy();
+    floatWindow = null;
   });
 }
 

@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, screen, type IpcMainEvent } from 'electron';
+import { app, ipcMain, BrowserWindow, screen, type IpcMainEvent } from 'electron';
 import { HANDLE_EVENT } from './channels';
 import { Bounding } from '@amy/shared';
 
@@ -28,6 +28,8 @@ ipcMain.handle(HANDLE_EVENT.GET_USER_DETAIL, async () => {
     info: await getInfo(),
   };
 });
+
+ipcMain.handle(HANDLE_EVENT.GET_APP_VERSION, () => app.getVersion());
 
 ipcMain.handle(
   HANDLE_EVENT.OPEN_DIALOG,

@@ -69,6 +69,24 @@ ipcMain.on(
   },
 );
 
-ipcMain.on(ON_EVENT.SET_SETTING, (_e, key: any, value: any) => {
+ipcMain.on(ON_EVENT.SET_SETTING, async (_e, key: any, value: any) => {
   setSetting(key, value);
+
+  if (key === 'colorMode') {
+    const home = getHomeWindow();
+
+    const dark = await isDark();
+
+    home?.setBackgroundColor(dark ? '#17181a' : '#fff');
+  }
+});
+
+ipcMain.on(ON_EVENT.OPEN_FLOAT_WINDOW, createFloatWindow);
+
+ipcMain.on(ON_EVENT.CLOSE_FLOAT_WINDOW, () => {
+  const win = getFloatWindow();
+
+  if (win) {
+    win.close();
+  }
 });

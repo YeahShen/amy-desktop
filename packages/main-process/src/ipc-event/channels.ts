@@ -13,6 +13,9 @@ export enum ON_EVENT {
 
   SET_SETTING = 'set-setting',
   SET_USER_INFO = 'set-user-info',
+
+  OPEN_FLOAT_WINDOW = 'open-float-window',
+  CLOSE_FLOAT_WINDOW = 'close-float-window',
 }
 
 export enum HANDLE_EVENT {
@@ -23,6 +26,7 @@ export enum HANDLE_EVENT {
   OPEN_DIALOG = 'open-dialog',
 
   GET_USER_DETAIL = 'get-user-detail',
+  GET_APP_VERSION = 'get-app-version',
 }
 
 export enum SEND_EVENT {

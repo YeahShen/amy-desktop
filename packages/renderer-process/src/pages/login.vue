@@ -63,7 +63,7 @@ async function usernamePasswordLogin(
 
     <div class="flex w-full gap-x-2 justify-start text-2xl title mt-3 px-4">
       <span class="text-primary font-bold">Amy</span>
-      <span class="font-bold text-inverted">Station</span>
+      <span class="font-bold">Station</span>
     </div>
 
     <div class="mt-6 w-full text-toned px-4">
