@@ -1,7 +1,7 @@
 <script setup lang="tsx"></script>
 
 <template>
-  <div class="w-full h-full flex">
+  <div class="w-full h-full flex bg-(--ui-bg)">
     <LayoutSidebar />
 
     <div class="main h-full relative">
