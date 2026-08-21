@@ -7,6 +7,8 @@
 @theme {
   --background-color-card: var(--ui-bg-card);
   --background-color-container: var(--ui-bg);
+  --background-color-sidebar: var(--ui-bg-sidebar);
+
   --border-color-default: var(--ui-border-default);
   --border-color-muted: var(--ui-border-muted);
   --border-color-accented: var(--ui-border-accented);
@@ -29,6 +31,10 @@
 
 @utility no-drag {
   -webkit-app-region: no-drag;
+}
+
+@utility h-main-content {
+  height: calc(100vh - var(--navbar-height));
 }
 
 @layer base {

@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-full main-content relative">
+  <div class="w-full main-content relative h-full">
     <AmyScrollbar track-class="main-content_track">
       <NuxtPage />
     </AmyScrollbar>
@@ -10,7 +10,6 @@
 
 <style lang="scss">
 .main-content {
-  height: calc(100% - #{var(--navbar-height)});
   padding-top: var(--navbar-height);
 
   &_track {

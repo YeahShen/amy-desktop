@@ -2,6 +2,8 @@
   --sidebar-width: 60px;
   --navbar-height: 70px;
 
+  --main-content-height: calc(100vh - var(--navbar-height));
+
   --ui-primary: var(--color-primary-500);
   --ui-secondary: var(--ui-color-secondary-500);
   --ui-success: var(--ui-color-success-500);
@@ -19,6 +21,7 @@
   --ui-bg: #ffffff;
   --ui-bg-card: #fff;
   --ui-bg-elevated: #f6f6f4;
+  --ui-bg-sidebar: #f9fafb;
 
   --ui-border-default: #e4e4e7;
   --ui-border-muted: #d4d4d8;
@@ -44,6 +47,7 @@
   --ui-bg: #1a1a19;
   --ui-bg-card: #161717;
   --ui-bg-elevated: #212120;
+  --ui-bg-sidebar: #1b1b1c;
 
   --ui-border-default: #27272a;
   --ui-border-muted: #3f3f46;

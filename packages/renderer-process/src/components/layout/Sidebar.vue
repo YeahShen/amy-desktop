@@ -49,7 +49,7 @@ const sideMode = computed(() => {
   if (model === 'immersive') {
     return '';
   }
-  return 'bg-elevated';
+  return 'bg-sidebar';
 });
 </script>
 
