@@ -6,11 +6,13 @@ withDefaults(
     disabled?: boolean;
     thumbWidth?: string;
     trackClass?: string;
+    viewClass?: string;
   }>(),
   {
     disabled: false,
     thumbWidth: '6px',
     trackClass: '',
+    viewClass: '',
   },
 );
 
@@ -212,7 +214,7 @@ onUnmounted(() => {
       @scroll="handleScroll"
       @keydown="handleKeydown"
     >
-      <div :id="viewId" ref="view" class="scrollbar__view">
+      <div :id="viewId" ref="view" class="scrollbar__view" :class="viewClass">
         <slot />
       </div>
     </div>

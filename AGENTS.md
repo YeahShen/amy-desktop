@@ -12,7 +12,10 @@ amy-desktop/
 │   ├── shared/              # 共享库 (@amy/shared, TypeScript + Vitest)
 │   └── zpublisher/          # 自定义发布器 (@amy/publisher, Electron Forge Publisher)
 ├── .github/workflows/       # CI/CD (package.yml + publish.yml)
-├── .Codex/                 # Codex 配置（skills: gitpush/publish）
+├── .claude/                 # Claude Code 配置（settings + skills: gitpush/publish）
+├── .agents/skills/          # 跨 agent 技能（gitpush/publish 副本 + antdv-next 完整组件文档）
+├── AGENTS.md                # 供其他 agent（Codex 等）读取的项目说明，内容镜像 CLAUDE.md（⚠ 改动 CLAUDE.md 后需同步）
+├── llms-full.txt            # AntDV Next 完整文档/类型参考（编辑 antdv-next 组件前查阅）
 ├── eslint.config.mts        # 根 ESLint flat config
 ├── pnpm-workspace.yaml      # pnpm workspace 定义（packages/*）
 ├── .prettierrc.json         # Prettier 配置
@@ -37,12 +40,13 @@ main-process/
 │   │   └── tsconfig.json    # Preload 专用 TS 配置（CommonJS, DOM+ESNext）
 │   ├── ipc-event/
 │   │   ├── index.ts         # 汇总入口（import handle/send/on）
-│   │   ├── channels.ts      # 通道定义：ON_EVENT(11) / HANDLE_EVENT(5) / SEND_EVENT(1)
+│   │   ├── channels.ts      # 通道定义：ON_EVENT(13) / HANDLE_EVENT(6) / SEND_EVENT(1)
 │   │   ├── on.ts            # ipcMain.on：login、open-dev-tools、set-ignore-mouse-events、set-window-position、
-│   │   │                    #   窗口控制（close/hid/min/max/restore）、set-setting、set-user-info
+│   │   │                    #   窗口控制（close/hid/min/max/restore）、set-setting、set-user-info、
+│   │   │                    #   open/close-float-window（悬浮窗开关）；set-setting 遇 colorMode 变更同步主窗口背景色
 │   │   ├── send.ts          # 空文件（主→渲染推送由各窗口直接 webContents.send，如 home.ts 的 WINDOW_SIZE_STATE）
 │   │   └── handle.ts        # ipcMain.handle：get-screen-rect、get-window-position、get-setting、
-│   │                        #   open-dialog（动态弹窗 + close_dialog:{id} 回调释放）、get-user-detail
+│   │                        #   open-dialog（动态弹窗 + close_dialog:{id} 回调释放）、get-user-detail、get-app-version
 │   ├── server/
 │   │   ├── index.ts         # 内置 Koa 服务器（打包态）：/api、/resource/* 代理到后端
 │   │   │                    # （自动附加 Bearer token + X_PLATFORM: client），brotli 静态托管，/local 读图
@@ -57,7 +61,7 @@ main-process/
 │   ├── windows/
 │   │   ├── login.ts         # 登录窗口（360×440，无边框）
 │   │   ├── home.ts          # 主窗口（尺寸持久化，maximize/unmaximize 推送 WINDOW_SIZE_STATE，关闭即退出）
-│   │   ├── float.ts         # 悬浮窗（透明 + 置顶 + skipTaskbar + 位置持久化）
+│   │   ├── float.ts         # 悬浮窗（透明 + 置顶 + skipTaskbar + 位置持久化；单例守卫防重复创建，closed 时清引用）
 │   │   └── dialog.ts        # createDialogWindow — 弹窗窗口（居中于父窗口、modal 阻塞，支持 onTop 置顶；
 │   │                        #   open-dialog invoke 返回 Promise，close_dialog:{id} 关闭并释放监听）
 │   ├── utils/
@@ -94,30 +98,32 @@ main-process/
 ```
 renderer-process/
 ├── src/
-│   ├── app.vue              # Nuxt 根组件（F12 → open-dev-tools IPC；a-config-provider 注入 AntDV 主题
-│   │                        #   token colorPrimary #28a17c + dark/light algorithm，a-app 包裹）
+│   ├── app.vue              # Nuxt 根组件（F12 → open-dev-tools IPC；a-config-provider 注入 AntDV zero-runtime
+│   │                        #   静态主题 { zeroRuntime: true }，a-app 包裹 + antdv message.useMessage() ContextHolder）
 │   ├── pages/
-│   │   ├── login.vue        # 登录页（empty 布局，强制暗色 colorMode: 'dark'，jsencrypt RSA 密码加密 + $request 登录；
+│   │   ├── login.vue        # 登录页（empty 布局，强制浅色 colorMode: 'light'，jsencrypt RSA 密码加密 + $request 登录；
 │   │   │                    #   底部扫码登录/更多选项入口）
 │   │   ├── home.vue         # 主页（空壳，workspace: 'home'）
 │   │   ├── film.vue         # 影视页（空壳）
 │   │   ├── photograph.vue   # 摄影页（空壳）
-│   │   ├── artist.vue       # 艺术家页（空壳）
-│   │   ├── settings.vue     # 设置页（dialog 布局，当前为空壳占位）
+│   │   ├── artist.vue       # 艺术家页（工具栏雏形：ARTIST 标题 + plus/reload 操作按钮，workspace: 'artist'）
+│   │   ├── settings.vue     # 设置页（dialog 布局，三分区菜单：账户设置/通用设置/关于 AMY Station）
 │   │   └── float.vue        # 悬浮窗页（empty 布局 + 透明背景，折叠圆形按钮/展开菜单 + 拖动 + 鼠标穿透；
 │   │                        #   Logo 配色用 useColorMode，菜单用 i-lucide-* 图标）
 │   ├── layouts/
 │   │   ├── default.vue      # 默认布局（Sidebar + Navbar + MainContent）
 │   │   ├── empty.vue        # 空白布局（用于登录/悬浮窗）
-│   │   └── dialog.vue       # 弹窗布局（设置等 dialog 页，当前为空壳）
+│   │   └── dialog.vue       # 弹窗布局（DialogHeader 头部 + NuxtPage + #dialog-footer-wrapper 底部操作区挂载点）
 │   ├── components/
-│   │   ├── amy/             # 通用组件：Logo、Scrollbar、SwitchColorMode
+│   │   ├── amy/             # 通用组件：Logo、Scrollbar、SwitchColorMode、FadeTransition（渐变过渡）
 │   │   │   └── window/      # 窗口控制按钮（Close / MinSize / MaxSize-最大化还原）
-│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent、Search）
+│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent、Search、TitleWrap、ListWrap）
+│   │   ├── dialog/          # 弹窗布局组件（Header-从 meta 读标题/关闭、Footer-底部操作区 Teleport 到 #dialog-footer-wrapper）
+│   │   ├── setting/         # 设置页分区（UserProfile、Common、About）
 │   │   └── login/           # 登录页组件（Header、Usernamepassword）
 │   ├── composables/
 │   │   ├── useRequest.ts    # $request / useRequest — 基于 Nuxt $fetch/useFetch 的请求封装
-│   │   ├── useMessage.ts    # 全局消息提示（自研 antd 风格 API：success/error/info/warning/loading/open/destroy/config）
+│   │   ├── useMessage.ts    # 全局消息提示（自研 antd 风格 API；⚠ 已弃用，实际改用 antdv 原生 message.useMessage()，见 app.vue ContextHolder）
 │   │   ├── useSettings.ts   # 应用设置读写（基于 electronAPI getSetting/setSetting + watch 回写）
 │   │   ├── useColorMode.ts  # 颜色模式读写（cookie --amy-color-mode + 切换时应用 <html> class + setSetting 持久化）
 │   │   └── useDialog.ts     # openDialog / useDialog — 弹窗窗口控制（基于 open-dialog IPC + closeDialog 回调）
@@ -131,10 +137,13 @@ renderer-process/
 │       ├── css/
 │       │   ├── main.css     # 全局 body/html 样式（高度 100%、overflow: hidden、user-select: none；body 用系统 PingFangSC）
 │       │   ├── tailwind.css # Tailwind CSS v4 导入层（@antdv-next/tailwind theme + @custom-variant dark +
-│       │   │                #   @theme 语义色映射 + drag/no-drag utilities）
-│       │   ├── themes.css   # 主题系统（--ui-* 语义色变量映射 AntDV token + --sidebar-width/--navbar-height）
-│       │   └── fonts.css    # 仅 Orbitron 走 woff2 内嵌；PingFangSC 等由主进程安装为系统字体
-│       ├── icons/           # amy 自定义图标集合（Nuxt Icon custom 前缀，21 个 svg）
+│       │   │                #   @theme 语义色映射 + drag/no-drag/h-main-content utilities）
+│       │   ├── themes.css   # 主题系统（--ui-* 语义色变量映射 AntDV token + --sidebar-width/--navbar-height/--main-content-height）
+│       │   ├── fonts.css    # 仅 Orbitron 走 woff2 内嵌；PingFangSC 等由主进程安装为系统字体
+│       │   ├── antd.css     # AntDV zero-runtime 静态主题（light，html.light/light .css-var 选择器下 --ant-* token 变量）
+│       │   ├── antd.dark.css# AntDV zero-runtime 静态主题（dark，html.dark 下 --ant-* token 变量）
+│       │   └── reset.css    # 浏览器样式重置（box-sizing、html/body 100%、清除 input 清除键等；⚠ 尚未接入 nuxt css 数组）
+│       ├── icons/           # amy 自定义图标集合（Nuxt Icon custom 前缀，24 个 svg）
 │       └── fonts/           # Orbitron.woff2（仅保留标题字体）
 ├── shared/
 │   ├── electron-types.d.ts  # Window.electronAPI 全局类型声明（IPC、设置、文件操作）
@@ -269,7 +278,7 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - 多窗口架构：登录窗口（login）、主窗口（home）、浮动窗口（float）、弹窗窗口（dialog，经 `openDialog` IPC 动态创建）
 - 内置 Koa 服务器（`server/index.ts`）在**打包态**启动：代理 `/api`、`/resource` 到 `AMY_BASE_URL`（自动附加 Bearer token + `X_PLATFORM: client`），brotli 托管 Nuxt 静态产物，`/local?path=` 读任意图片；`send/index.ts` serve HTML 时 cheerio 注入主题 class（生产 FOUC 防护，见 Renderer 颜色模式）
 - **Preload 已实现**：`window.electronAPI` 暴露 `send(channel, ...args)` / `on(channel, fn)` / `invoke(channel, ...args)` / `getSetting` / `setSetting` / `getPathForFile`（webUtils）/ `closeDialog`（发 `close_dialog:{id}` 通道）（对应类型声明见 renderer `shared/electron-types.d.ts`）
-- IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT` = login、open-dev-tools、set-ignore-mouse-events、set-window-position、close/hid/min/max/restore-window、set-setting、set-user-info；`HANDLE_EVENT` = get-screen-rect、get-window-position、get-setting、open-dialog、get-user-detail；`SEND_EVENT` = window-size-state（主→渲染推送，home.ts 直接 webContents.send）；另含动态通道 `close_dialog:{id}` 回传弹窗结果
+- IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT`(13) = login、open-dev-tools、set-ignore-mouse-events、set-window-position、close/hid/min/max/restore-window、set-setting、set-user-info、open-float-window、close-float-window；`HANDLE_EVENT`(6) = get-screen-rect、get-window-position、get-setting、open-dialog、get-user-detail、get-app-version；`SEND_EVENT`(1) = window-size-state（主→渲染推送，home.ts 直接 webContents.send）；另含动态通道 `close_dialog:{id}` 回传弹窗结果
 - **登录流程**：渲染进程 jsencrypt RSA 加密密码 → `POST /auth/login-by-username-password` → `electronAPI.send('login', token, user)` → 主进程 `setAuthenticate` + 创建主窗口 + 关闭登录窗 +（若 `appRunSettings.showFloatWindow`）创建悬浮窗；主窗口 `userStore` 经 `get-user-detail` 拉取 token/用户信息，`set-user-info` 回写
 - **字体安装体系**：字体资源（PingFangSC ttf）在 `shared/src/assets/fonts/`，打包为 extraResource（`resources/fonts`）；Squirrel 安装/更新事件调用 `installFont(DEFAULT_FONT_TYPE)` 注册到系统（Windows 用户字体目录 + HKCU 注册表 + AddFontResourceW；Linux XDG + fc-cache）；渲染进程通过系统字体名 `PingFangSC` 直接使用，仅 Orbitron 内嵌 woff2
 - **Squirrel 事件**：install/updated/uninstall 处理完**无条件 `app.quit()`**（防止安装器动画期间打开应用窗口）；字体安装失败仅告警不阻断流程
@@ -281,24 +290,27 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - 更新：StaticStorage 更新源（`AMY_UPGRADE_URL`，IPv6 可达时用 `AMY_UPGRADE_IPV6_URL`），baseUrl 拼 `${platform}/${arch}`
 
 ### Renderer (Nuxt)
-- **AntDV Next + Tailwind CSS 4** — UI 组件库（`@antdv-next/nuxt` 模块自动注册组件：小写 `a-*` 标签如 a-avatar/a-divider，或大写 `A*` 组件如 AButton）；主题在 `app.vue` 用 `a-config-provider` 注入（`colorPrimary: #28a17c`，`theme.darkAlgorithm` / `theme.defaultAlgorithm` 跟随颜色模式），`a-app` 包裹；语义色 token 通过 `themes.css` 的 `--ui-*` CSS 变量（映射 AntDV token）+ `tailwind.css` 的 `@theme` 映射（`text-muted`/`bg-elevated`/`border-default` 等 Tailwind 类）；`tailwind.css` 引入 `@antdv-next/tailwind/theme.css` 与 `@custom-variant dark`，并定义 `drag`/`no-drag` 窗口拖拽 utilities
+- **AntDV Next + Tailwind CSS 4（zero-runtime 静态主题）** — UI 组件库（`@antdv-next/nuxt` 模块自动注册组件：小写 `a-*` 标签如 a-avatar/a-divider，或大写 `A*` 组件如 AButton）；主题走 **zero-runtime 静态模式**：`app.vue` 里 `a-config-provider :theme="{ zeroRuntime: true }"` 声明（不再用运行时 `algorithm`），token 由 `antd.css`（light）/ `antd.dark.css`（dark）两套静态文件提供——`html.light` / `html.dark` 选择器下全是 `--ant-*` token 变量，随颜色模式切换 class 生效，`a-app` 包裹 + antdv `message.useMessage()` ContextHolder；语义色 token 通过 `themes.css` 的 `--ui-*` CSS 变量（映射 AntDV token）+ `tailwind.css` 的 `@theme` 映射（`text-muted`/`bg-elevated`/`bg-sidebar`/`border-default` 等 Tailwind 类）；`tailwind.css` 引入 `@antdv-next/tailwind/theme.css` 与 `@custom-variant dark`，并定义 `drag`/`no-drag`/`h-main-content` 等 utilities；`nuxt.config.ts` `css` 数组按序引入 main → tailwind → themes → fonts → antd → antd.dark
 - ⚠️ **编辑涉及 antdv-next 组件（`a-*` 小写或 `A*` 大写前缀，如 a-avatar/a-divider/AButton）的代码前，先参考根目录 `/llms-full.txt`**（AntDV Next 完整文档/类型参考）确认组件的 props/slots/API，不要凭记忆写组件用法
 - **颜色模式（自研，不依赖第三方 color-mode 模块）**：
   - 单一 cookie `--amy-color-mode`，键名由 `@amy/shared` `getColorModeCookie()` 提供（单一事实来源，避免多端漂移）
   - 主进程 `initColorMode()` 启动时把 store 的 `colorMode` 设置（'dark'|'light'|'system'，'system' 经 `nativeTheme.shouldUseDarkColors` 解析为具体主题）写入 cookie（10 天过期）
   - **生产 FOUC 防护**：主进程 Koa `server/send/index.ts` serve HTML 时用 cheerio 注入 `<html class>` + `color-scheme`（页面有 `data-color-mode-forced` 属性则优先，否则用 `getColorModel()`）
   - **开发 FOUC 防护**：Nitro `server/plugins/html-transform.ts` 读 cookie 注入 class
-  - **页面级强制主题**：`plugins/color-mode.server.ts` 把 `definePageMeta({ colorMode })` 注入为 html 的 `data-color-mode-forced` 属性（如 login.vue 强制暗色）
-  - **客户端**：`composables/useColorMode.ts` 读写 cookie（`useCookie`）、`toggleMode()` 同步 `<html>` class + color-scheme 并 `setSetting('colorMode')` 持久化；`SwitchColorMode.vue`（View Transitions 圆形扩散）与 `float.vue`（Logo 配色）使用
+  - **页面级强制主题**：`plugins/color-mode.server.ts` 把 `definePageMeta({ colorMode })` 注入为 html 的 `data-color-mode-forced` 属性（如 login.vue 强制浅色）
+  - **客户端**：`composables/useColorMode.ts` 读写 cookie（`useCookie`）、`toggleMode()` 同步 `<html>` class + color-scheme 并 `setSetting('colorMode')` 持久化；`SwitchColorMode.vue`（View Transitions 圆形扩散）与 `float.vue`（Logo 配色）使用；`set-setting:colorMode` 变更时主进程同步主窗口背景色（on.ts）
 - **Pinia** — 状态管理：`stores/app.ts`（searchActive + showNavbarLeftContent 派生）、`stores/user.ts`（token/info/updateUserInfo，IPC 同步）
 - **VueUse** — 组合式工具集（useElementSize、useLocalStorage、onClickOutside 等）
-- **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（21 个 svg：home-2-bold、videocamera-add-bold、photo、cup-star-bold-duotone、cloud-check-broken、settings-line-duotone、settings-bold-duotone、shield-user-bold、bag-heart-bold-duotone、user-outlined、lock-outlined、eye/eye-off、minus、window-close、full-screen、restore、moon/sun、search、logo-base）；lucide 前缀用于通用图标
+- **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（24 个 svg：home-2-bold、videocamera-add-bold、photo、cup-star-bold-duotone、cloud-check-broken、settings-line-duotone、settings-bold-duotone、shield-user-bold、bag-heart-bold-duotone、user-outlined、lock-outlined、eye/eye-off、minus、window-close、full-screen、restore、moon/sun、search、logo-base、add-square-bold、plus-outlined、reload-outlined）；lucide 前缀用于通用图标
 - 请求封装：`plugins/request.ts` 提供 `$request`（$fetch 实例），按 `AMY_MODE` 决定 baseURL（`mock` → `/mock/api`，否则 `/api`）；400 响应抛出 `createError`；`composables/useRequest.ts` 提供 `$request`/`useRequest` 封装
 - **Mock 模式**（`pnpm dev:mock`，`.env.mock`）：请求走 Nitro `server/routes/mock/` 模拟接口，无需启动后端
 - 应用设置：`composables/useSettings(key)` 通过 `window.electronAPI.getSetting/setSetting` 读写主进程 electron-store（'amy-setting'），watch 变化自动回写；键类型由 `@amy/shared` 的 `AppSettings` + `Flatten` 推导（login/proxy/colorMode/hideHomeWindowOrExit/appRunSettings.showFloatWindow）
-- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent、Search），默认布局由四者组合；侧边栏菜单（home/film/photograph/artist）以页面 `workspace` meta 驱动高亮，`sidebarMode` 支持毛玻璃（frosted → apple-glass）/沉浸式；Navbar 含用户头像 + 最小化/最大化还原/关闭 三窗口按钮（MaxSize 监听 `window-size-state` 推送切换图标）；Search 搜索框点击展开居中，经 `appStore.searchActive` 联动导航栏左侧标题显隐
-- 悬浮窗（`pages/float.vue`）：折叠圆形 Logo 按钮 + 呼吸光晕，展开菜单（搜索/笔记/任务/设置），基于 `set-ignore-mouse-events` 实现鼠标穿透，拖拽移动窗口并持久化位置
-- 页面级元数据（`definePageMeta`）：`workspace`（'home'|'film'|'photograph'|'artist'）、`colorMode`、`sidebarMode`（'immersive'|'default'|'frosted'）、`immersiveSidebar`、`dialog`（DialogMeta）、`requiresAuth`
+- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent、Search、TitleWrap、ListWrap），默认布局由四者组合；侧边栏菜单（home/film/photograph/artist）以页面 `workspace` meta 驱动高亮，`sidebarMode` 支持毛玻璃（frosted → apple-glass）/沉浸式/默认；侧边栏**独立主题色** `--ui-bg-sidebar`（Tailwind `bg-sidebar`）；`h-main-content` utility（`calc(100vh - var(--navbar-height))`）作为主内容高度约定；Navbar 含用户头像 + 最小化/最大化还原/关闭 三窗口按钮（MaxSize 监听 `window-size-state` 推送切换图标）；Search 搜索框点击展开居中，经 `appStore.searchActive` 联动导航栏左侧标题显隐（TitleWrap 经 `showNavbarLeftContent` + FadeTransition 控制显隐）
+- 列表组件：`ListWrap.vue`（泛型 T）自适应网格 —— 按容器宽 + itemMinWidth/sideWidth/gapX 计算每行列数，loading 时渲染骨架占位（slot `item` 接收 `{ item, loading }`）
+- 布局标题：`TitleWrap.vue`（slot 内容包一层 fade 显隐，跟随导航栏左侧标题区）
+- **设置弹窗**：`pages/settings.vue`（dialog 布局）三分区菜单切换 `setting/` 组件 —— 账户设置 `UserProfile.vue`（表单 + 校验 + update-info）、通用设置 `Common.vue`（主题模式 a-segmented、悬浮窗开关、关闭主窗口行为 hide/exit、网络代理、登录偏好）、关于 `About.vue`（get-app-version 显示版本）；`dialog/Header.vue` 标题/副标题 + 最小化/关闭（minSizeAble、customCloseWindowFn 可配置），`dialog/Footer.vue` 底部操作区（取消/确认 + teleport 到 `#dialog-footer-wrapper`，confirmFn 返回结果经 closeDialog 回传）；弹窗标题/能力经 `definePageMeta({ dialog })` 声明
+- 悬浮窗（`pages/float.vue`）：折叠圆形 Logo 按钮 + 呼吸光晕，展开菜单（搜索/笔记/任务/设置），基于 `set-ignore-mouse-events` 实现鼠标穿透，拖拽移动窗口并持久化位置；登录成功后按 `appRunSettings.showFloatWindow` 创建，通用设置里的开关经 `open-float-window` / `close-float-window` IPC 实时显隐（createFloatWindow 单例守卫）
+- 页面级元数据（`definePageMeta`）：`workspace`（'home'|'film'|'photograph'|'artist'|'cloud'）、`colorMode`、`sidebarMode`（'immersive'|'default'|'frosted'）、`immersiveSidebar`、`dialog`（DialogMeta: title/subtitle/minSizeAble/customCloseWindowFn）、`requiresAuth`
 - 字体策略：正文用系统安装的 `PingFangSC`（Squirrel 安装时注册，见主进程字体安装体系）；仅标题字体 Orbitron 内嵌 woff2（fonts.css）
 
 ### Testing
@@ -326,6 +338,7 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - **Do not manually edit** `packages/renderer-process/.nuxt/`、`.output/` — auto-generated by Nuxt（已 .gitignore 不入库）
 - **Do not manually edit** `packages/main-process/out/`、`.vite/`、`types/define.d.ts`、`types/main-process-autoimport.d.ts`、`.eslintrc-auto-import.json` — 构建/插件自动生成（`types/define.d.ts`、`*autoimport.d.ts` 已 .gitignore 不入库；`.eslintrc-auto-import.json` 仍被追踪）
 - `*.mts` files are TypeScript modules (ESM) — used for ESLint config and similar
+- **AGENTS.md 与 CLAUDE.md 内容保持一致** — AGENTS.md 是给其他 agent（Codex 等）读取的项目说明，为 CLAUDE.md 的镜像，改 CLAUDE.md 后需同步 AGENTS.md
 - Type declaration files in `types/**/*.d.ts` per package
 - Assets 分布：`packages/shared/src/assets/`（icon / fonts / koffi scripts，打包 extraResource）、`packages/renderer-process/src/assets/`（css / icons / fonts-Orbitron）
 - Renderer shared types (`packages/renderer-process/shared/`) — Nuxt 类型声明扩展（electronAPI、PageMeta），不参与构建产物

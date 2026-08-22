@@ -19,7 +19,7 @@ declare module '#app' {
   interface PageMeta {
     colorMode?: 'light' | 'dark';
     immersiveSidebar?: boolean;
-    workspace?: 'artist' | 'film' | 'home' | 'clound' | 'photograph';
+    workspace?: 'artist' | 'film' | 'home' | 'cloud' | 'photograph';
     dialog?: DialogMeta;
     sidebarMode?: 'immersive' | 'default' | 'frosted';
   }
