@@ -44,34 +44,70 @@ async function createArtist() {
         </div>
       </div>
 
-      <AmyScrollbar v-if="artistList.length > 0 || laoding" view-class="px-4">
-        <div class="w-full h-fit">
-          <p class="text-muted pb-5">番剧</p>
+      <AmyScrollbar
+        v-if="artistList.length > 0 || laoding"
+        view-class="px-4 flex flex-col gap-y-10"
+      >
+        <div v-for="i in artistList" :key="i.category.id" class="w-full h-fit">
+          <div class="pb-8">
+            <a-skeleton
+              :loading="laoding"
+              :paragraph="false"
+              active
+              :styles="{
+                title: {
+                  width: '66px',
+                },
+              }"
+            >
+              <p class="text-muted">{{ i.category.title }}</p>
+            </a-skeleton>
+          </div>
 
           <AmyListWrap
-            :item-min-width="80"
+            :item-min-width="70"
             :side-width="16"
             :gap-x="36"
             :gap-y="8"
-            :list="[]"
+            :list="i.list"
             :loading="laoding"
-            :loading-col-number="1"
+            :loading-row-number="1"
           >
             <template #item="{ item, loading: l }">
-              <ASkeletonAvatar
+              <a-skeleton
+                :loading="l"
                 :paragraph="false"
+                :avatar="{ shape: 'circle' }"
+                active
                 :styles="{
-                  root: {
-                    width: '100%',
-                  },
-                  content: {
+                  avatar: {
                     width: '100%',
                     height: 'auto',
                     'aspect-ratio': 1,
                     display: 'block',
                   },
+                  header: {
+                    padding: 0,
+                  },
                 }"
-              ></ASkeletonAvatar>
+                :title="false"
+              >
+                <AAvatar class="w-full" shape="circle" :src="item.avatar" />
+              </a-skeleton>
+
+              <a-skeleton
+                class="mt-3"
+                active
+                :loading="l"
+                :paragraph="false"
+                :styles="{
+                  title: {
+                    width: '100%',
+                  },
+                }"
+              >
+                <p>{{ item.name }}</p>
+              </a-skeleton>
             </template>
           </AmyListWrap>
         </div>
