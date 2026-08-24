@@ -12,7 +12,11 @@
       "import": "./src/utils/color-mode.ts",
       "types": "./src/utils/color-mode.ts"
     },
-    "./favicon.ico": "./src/assets/icon/favicon.ico"
+    "./favicon.ico": "./src/assets/icon/favicon.ico",
+    "./types": {
+      "import": "./src/types/index.ts",
+      "types": "./src/types/index.ts"
+    }
   },
   "scripts": {
     "test": "vitest run",

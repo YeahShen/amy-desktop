@@ -8,6 +8,7 @@ const props = withDefaults(
     cancelBtnText?: string;
     confirmBtnText?: string;
     confirmFn?: () => Promise<any>;
+    hidErrorMessage?: boolean;
   }>(),
   {
     cancelBtnText: '取消',
@@ -27,7 +28,7 @@ async function comfirm() {
     const result = await props.confirmFn();
     close(result);
   } catch (e: any) {
-    message.error(e);
+    if (!props.hidErrorMessage) message.error(e);
   } finally {
     loading.value = false;
   }
