@@ -1,13 +1,14 @@
 <script setup lang="tsx" generic="T">
 import { useElementSize } from '@vueuse/core';
 
-const { sideWidth, gapX, gapY, itemMinWidth, loading, list } = defineProps<{
+const { sideWidth, gapX, gapY, itemMinWidth, loading, list, loadingColNumber } = defineProps<{
   itemMinWidth: number;
   sideWidth: number;
   gapX: number;
   gapY: number;
   list: T[];
   loading: boolean;
+  loadingColNumber: number;
 }>();
 
 const wrapRef = useTemplateRef('wrap');
@@ -50,7 +51,7 @@ const warpStyle = computed(() => {
 
 const renderList = computed<T[]>(() => {
   if (loading) {
-    return Array.from({ length: 10 * rowItemNumber.value }).fill({}) as T[];
+    return Array.from({ length: loadingColNumber * rowItemNumber.value }).fill({}) as T[];
   }
   return list;
 });

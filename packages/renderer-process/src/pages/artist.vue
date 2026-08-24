@@ -1,9 +1,20 @@
 <script setup lang="ts">
+import type { ArtistCategory, Artist } from '@amy/shared/types';
+
 definePageMeta({
   workspace: 'artist',
 });
 
+type ArtistByCate = {
+  category: ArtistCategory;
+  list: Artist[];
+};
+
 const { isDark } = useColorMode();
+
+const laoding = ref(true);
+
+const artistList = ref<ArtistByCate[]>([]);
 
 async function createArtist() {
   await openDialog('createArtist', { width: 600, height: 500 }, true);
@@ -33,13 +44,45 @@ async function createArtist() {
         </div>
       </div>
 
-      <!-- <AmyScrollbar view-class="px-4">
-        <p>cds</p>
-      </AmyScrollbar> -->
+      <AmyScrollbar v-if="artistList.length > 0 || laoding" view-class="px-4">
+        <div class="w-full h-fit">
+          <p class="text-muted pb-5">番剧</p>
 
-      <div class="w-full h-full flex items-center justify-center relative bottom-20 flex-col">
-        <AmyLogo :color="isDark ? '#16191d' : '#f0f0f0'" size="130px" :animation="false" />
-        <p :style="{ color: isDark ? '#16191d' : '#f0f0f0' }">EMPTY</p>
+          <AmyListWrap
+            :item-min-width="80"
+            :side-width="16"
+            :gap-x="36"
+            :gap-y="8"
+            :list="[]"
+            :loading="laoding"
+            :loading-col-number="1"
+          >
+            <template #item="{ item, loading: l }">
+              <ASkeletonAvatar
+                :paragraph="false"
+                :styles="{
+                  root: {
+                    width: '100%',
+                  },
+                  content: {
+                    width: '100%',
+                    height: 'auto',
+                    'aspect-ratio': 1,
+                    display: 'block',
+                  },
+                }"
+              ></ASkeletonAvatar>
+            </template>
+          </AmyListWrap>
+        </div>
+      </AmyScrollbar>
+
+      <div
+        v-else
+        class="w-full h-full flex items-center justify-center relative bottom-20 flex-col"
+      >
+        <AmyLogo :color="isDark ? '#343334' : '#f0f0f0'" size="130px" :animation="false" />
+        <p :style="{ color: isDark ? '#343334' : '#f0f0f0' }">EMPTY</p>
       </div>
     </div>
   </div>

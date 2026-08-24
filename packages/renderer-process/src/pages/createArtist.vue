@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import type { ArtistCategory } from '@amy/shared/types';
 
 definePageMeta({
@@ -12,9 +12,31 @@ const formRef = useTemplateRef('formRef');
 
 const form = reactive({
   name: '',
-  category: null,
+  category: '',
   description: '',
-  avatarFile: null,
+  avatarFile: '',
+});
+
+const categoryEntity = ref<ArtistCategory>();
+
+const category = computed({
+  get() {
+    return form.category;
+  },
+  set(key: string) {
+    const item = categoryList.value.find((i) => i.title === key);
+
+    if (item) {
+      form.category = item.title;
+      categoryEntity.value = item;
+    } else {
+      form.category = key;
+      categoryEntity.value = {
+        id: 0,
+        title: key,
+      };
+    }
+  },
 });
 
 const categoryList = ref<ArtistCategory[]>([]);
@@ -24,20 +46,28 @@ onMounted(async () => {
 });
 
 async function confirm() {
-  try {
-    const values = await formRef.value?.validateFields?.();
-    console.log('Success:', values);
-  } catch (errorInfo) {
-    console.log('Failed:', errorInfo);
-
-    throw new Error(errorInfo);
+  // @ts-ignore
+  await formRef.value?.validateFields?.();
+  const fd = new FormData();
+  fd.append('name', form.name);
+  fd.append('description', form.description + '');
+  fd.append('avatarFile', form.avatarFile as string);
+  if (categoryEntity.value?.id) {
+    fd.append('category.id', categoryEntity.value?.id + '');
   }
+
+  fd.append('category.title', categoryEntity.value?.title + '');
+
+  await $request('/artist/add', {
+    method: 'POST',
+    body: fd,
+  });
 }
 </script>
 
 <template>
   <div class="w-full h-full px-4">
-    <AForm ref="formRef" :model="form">
+    <AForm ref="formRef" :model="form" :label-col="{ span: 2 }">
       <AFormItem label="名称" name="name" :rules="[{ required: true, message: '名称不能为空' }]">
         <AInput v-model:value="form.name" />
       </AFormItem>
@@ -48,8 +78,8 @@ async function confirm() {
         :rules="[{ required: true, message: '类别不能为空' }]"
       >
         <a-auto-complete
-          v-model:value="form.category"
-          :options="categoryList.map((item) => ({ label: item.title, value: item.id }))"
+          v-model:value="category"
+          :options="categoryList.map((item) => ({ value: item.title }))"
         />
       </AFormItem>
 
@@ -71,4 +101,3 @@ async function confirm() {
 </template>
 
 <style lang="scss"></style>
-0p

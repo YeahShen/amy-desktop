@@ -38,7 +38,7 @@ function removeImg() {
 
 <template>
   <div
-    class="w-30 h-30 border border-dashed rounded-xl border-muted flex items-center justify-center cursor-pointer hover:border-primary-border-hover hover:text-primary text-muted overflow-hidden px-0.5 py-0.5 relative"
+    class="w-30 h-30 border border-dashed rounded-xl border-muted flex items-center justify-center cursor-pointer hover:border-primary-border-hover hover:text-primary text-muted overflow-hidden px-0.5 py-0.5 relative bg-(--ant-color-bg-container)"
   >
     <div v-if="!previewImg" class="flex items-center w-full h-full justify-center" @click="addImg">
       <NuxtIcon name="amy:plus-outlined" />

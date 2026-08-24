@@ -7,7 +7,7 @@ const { height } = useElementSize(dialogFooterRef);
 </script>
 
 <template>
-  <div class="w-full h-full dialog-wrap flex flex-col">
+  <div class="w-full h-full dialog-wrap flex flex-col bg-(--ui-bg)">
     <DialogHeader />
 
     <div class="w-full relative" :style="{ height: `calc(100% - 64px - ${height}px)` }">
