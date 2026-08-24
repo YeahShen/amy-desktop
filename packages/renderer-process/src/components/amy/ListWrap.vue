@@ -1,7 +1,16 @@
 <script setup lang="ts" generic="T">
 import { useElementSize } from '@vueuse/core';
 
-const { sideWidth, gapX, gapY, itemMinWidth, loading, list, loadingRowNumber } = defineProps<{
+const {
+  sideWidth,
+  gapX,
+  gapY,
+  itemMinWidth,
+  loading,
+  list,
+  loadingRowNumber,
+  itemClasses = '',
+} = defineProps<{
   itemMinWidth: number;
   sideWidth: number;
   gapX: number;
@@ -10,6 +19,7 @@ const { sideWidth, gapX, gapY, itemMinWidth, loading, list, loadingRowNumber } =
   loading: boolean;
   /** 加载时骨架占用的行数（每行按实际列数渲染） */
   loadingRowNumber: number;
+  itemClasses?: string;
 }>();
 
 const wrapRef = useTemplateRef('wrap');
@@ -55,7 +65,12 @@ const renderList = computed<T[]>(() => {
 <template>
   <div ref="wrap" class="w-full h-fit">
     <div :style="gridStyle" class="grid">
-      <div v-for="(i, idx) in renderList" :key="idx" @click="!loading && emits('select', i)">
+      <div
+        v-for="(i, idx) in renderList"
+        :key="idx"
+        :class="itemClasses"
+        @click="!loading && emits('select', i)"
+      >
         <div w-full h-fit>
           <slot name="item" :item="i" :loading="loading"></slot>
         </div>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { ArtistCategory, Artist } from '@amy/shared/types';
+import type { Artist } from '@amy/shared/types';
 
 definePageMeta({
   workspace: 'artist',
 });
 
 type ArtistByCate = {
-  category: ArtistCategory;
+  id: number;
+  title: string;
   list: Artist[];
 };
 
@@ -19,7 +20,8 @@ const artistList = ref<ArtistByCate[]>([]);
 const renderList = computed<ArtistByCate[]>(() => {
   if (!laoding.value) return artistList.value;
   return new Array(10).fill(0).map((_i, idx) => ({
-    category: { id: idx, title: '' },
+    id: idx,
+    title: '',
     list: [],
   }));
 });
@@ -67,7 +69,7 @@ onMounted(async () => {
         view-class="px-4 flex flex-col gap-y-10"
         :disabled="laoding"
       >
-        <div v-for="(i, idx) in renderList" :key="i.category.id" class="w-full h-fit">
+        <div v-for="(i, idx) in renderList" :key="i.id" class="w-full h-fit">
           <div class="pb-8">
             <a-skeleton
               :loading="laoding"
@@ -79,18 +81,19 @@ onMounted(async () => {
                 },
               }"
             >
-              <p class="text-muted">{{ i.category.title }}</p>
+              <p class="text-muted">{{ i.title }}</p>
             </a-skeleton>
           </div>
 
           <AmyListWrap
-            :item-min-width="65"
+            :item-min-width="80"
             :side-width="16"
             :gap-x="36"
             :gap-y="20"
             :list="i.list"
             :loading="laoding"
             :loading-row-number="idx + 1"
+            item-classes="cursor-pointer hover:text-primary"
             @select="select"
           >
             <template #item="{ item, loading: l }">
