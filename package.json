@@ -1,6 +1,6 @@
 {
   "name": "amy-desktop",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "private": true,
   "description": "AMY Desktop - pnpm monorepo",
   "scripts": {
