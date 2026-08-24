@@ -15,6 +15,10 @@ const { sideWidth, gapX, gapY, itemMinWidth, loading, list, loadingRowNumber } =
 const wrapRef = useTemplateRef('wrap');
 const { width } = useElementSize(wrapRef);
 
+const emits = defineEmits<{
+  select: [item: T];
+}>();
+
 /**
  * 一行能容纳的最大列数，解不等式：
  *   n * itemMinWidth + (n - 1) * gapX + 2 * sideWidth <= width
@@ -51,7 +55,7 @@ const renderList = computed<T[]>(() => {
 <template>
   <div ref="wrap" class="w-full h-fit">
     <div :style="gridStyle" class="grid">
-      <div v-for="(i, idx) in renderList" :key="idx">
+      <div v-for="(i, idx) in renderList" :key="idx" @click="!loading && emits('select', i)">
         <div w-full h-fit>
           <slot name="item" :item="i" :loading="loading"></slot>
         </div>

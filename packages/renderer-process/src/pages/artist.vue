@@ -16,9 +16,27 @@ const laoding = ref(true);
 
 const artistList = ref<ArtistByCate[]>([]);
 
+const renderList = computed<ArtistByCate[]>(() => {
+  if (!laoding.value) return artistList.value;
+  return new Array(10).fill(0).map((_i, idx) => ({
+    category: { id: idx, title: '' },
+    list: [],
+  }));
+});
+
 async function createArtist() {
   await openDialog('createArtist', { width: 600, height: 500 }, true);
 }
+
+async function select(artist: Artist) {
+  console.log(artist);
+}
+
+onMounted(async () => {
+  laoding.value = true;
+  artistList.value = await $request<ArtistByCate[]>('/artist/list');
+  laoding.value = false;
+});
 </script>
 
 <template>
@@ -45,10 +63,11 @@ async function createArtist() {
       </div>
 
       <AmyScrollbar
-        v-if="artistList.length > 0 || laoding"
+        v-if="renderList.length > 0 || laoding"
         view-class="px-4 flex flex-col gap-y-10"
+        :disabled="laoding"
       >
-        <div v-for="i in artistList" :key="i.category.id" class="w-full h-fit">
+        <div v-for="(i, idx) in renderList" :key="i.category.id" class="w-full h-fit">
           <div class="pb-8">
             <a-skeleton
               :loading="laoding"
@@ -56,7 +75,7 @@ async function createArtist() {
               active
               :styles="{
                 title: {
-                  width: '66px',
+                  width: '120px',
                 },
               }"
             >
@@ -65,13 +84,14 @@ async function createArtist() {
           </div>
 
           <AmyListWrap
-            :item-min-width="70"
+            :item-min-width="65"
             :side-width="16"
             :gap-x="36"
-            :gap-y="8"
+            :gap-y="20"
             :list="i.list"
             :loading="laoding"
-            :loading-row-number="1"
+            :loading-row-number="idx + 1"
+            @select="select"
           >
             <template #item="{ item, loading: l }">
               <a-skeleton
@@ -92,22 +112,27 @@ async function createArtist() {
                 }"
                 :title="false"
               >
-                <AAvatar class="w-full" shape="circle" :src="item.avatar" />
+                <AAvatar
+                  shape="circle"
+                  :src="item.avatar"
+                  :style="{ width: '100%', height: 'auto', 'aspect-ratio': 1 }"
+                />
               </a-skeleton>
 
-              <a-skeleton
-                class="mt-3"
-                active
-                :loading="l"
-                :paragraph="false"
-                :styles="{
-                  title: {
-                    width: '100%',
-                  },
-                }"
-              >
-                <p>{{ item.name }}</p>
-              </a-skeleton>
+              <div class="mt-3 w-full">
+                <a-skeleton
+                  active
+                  :loading="l"
+                  :paragraph="false"
+                  :styles="{
+                    title: {
+                      width: '100%',
+                    },
+                  }"
+                >
+                  <p class="w-full text-center">{{ item.name }}</p>
+                </a-skeleton>
+              </div>
             </template>
           </AmyListWrap>
         </div>
