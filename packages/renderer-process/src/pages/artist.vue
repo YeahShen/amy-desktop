@@ -28,6 +28,7 @@ const renderList = computed<ArtistByCate[]>(() => {
 
 async function createArtist() {
   await openDialog('createArtist', { width: 600, height: 500 }, true);
+  artistList.value = await $request<ArtistByCate[]>('/artist/list');
 }
 
 async function select(artist: Artist) {
