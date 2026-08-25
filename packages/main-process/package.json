@@ -8,7 +8,8 @@
     "dev:mock": "cross-env NODE_ENV=mock electron-forge start",
     "make": "cross-env NODE_ENV=production electron-forge make",
     "package": "cross-env NODE_ENV=production electron-forge package",
-    "publish": "cross-env NODE_ENV=production electron-forge publish"
+    "publish": "cross-env NODE_ENV=production electron-forge publish",
+    "postinstall": "electron-rebuild"
   },
   "keywords": [],
   "author": {
@@ -45,6 +46,7 @@
     "dotenv": "^17.4.2",
     "electron": "43.1.1",
     "electron-log": "^5.4.4",
+    "electron-rebuild": "^3.2.9",
     "electron-store": "^11.0.2",
     "form-data": "^4.0.6",
     "fs-extra": "^11.3.6",
@@ -64,6 +66,7 @@
     "vitest": "^2.1.9"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "electron-squirrel-startup": "^1.0.1",
+    "sqlite3": "^6.0.1"
   }
 }

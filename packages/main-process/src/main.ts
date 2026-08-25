@@ -7,6 +7,7 @@ import { isLogin } from './stores/auth';
 import './ipc-event';
 
 import { enableCompileCache } from 'node:module';
+import { initDB } from './utils/sqlite-db';
 
 enableCompileCache();
 
@@ -45,6 +46,8 @@ if (!gotTheLock) {
 
 app.whenReady().then(async () => {
   const squirreling = await handleSquirrelEvent();
+
+  initDB();
 
   if (squirreling) {
     return;

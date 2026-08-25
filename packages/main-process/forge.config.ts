@@ -49,6 +49,7 @@ const config: ForgeConfig = {
     ],
     extraResource: [
       assetsPath('scripts/koffi'),
+      assetsPath('scripts/sqlite3'),
       assetsPath('scripts/@koromix'),
       assetsPath('icon'),
       assetsPath('fonts'),

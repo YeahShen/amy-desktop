@@ -41,5 +41,13 @@ export default ({ mode }: ConfigEnv) => {
         },
       },
     ],
+    build: {
+      rollupOptions: {
+        // sqlite3 是原生模块（含 node_sqlite3.node 二进制），不能被 Vite 内联进 bundle，
+        // 否则 @rollup/plugin-commonjs 会改写其动态 require(build/node_sqlite3.node) 导致加载失败。
+        // 标记为 external 后运行时直接 require('sqlite3')，从 node_modules 解析（打包态由 auto-unpack-natives 解包）。
+        external: ['sqlite3'],
+      },
+    },
   });
 };
