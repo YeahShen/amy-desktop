@@ -12,7 +12,10 @@ export async function initDB() {
       // sqlite3 为 CJS 原生模块，仅能通过 require 加载；打包后经 extraResource 分发到 resources/sqlite3
       const modulePath = app.isPackaged
         ? path.resolve(app.getAppPath(), '..', 'sqlite3/lib/sqlite3.js')
-        : path.resolve(app.getAppPath(), '../shared/src/assets/scripts/sqlite3/lib/sqlite3.js');
+        : path.resolve(app.getAppPath(), 'resource/sqlite3/lib/sqlite3.js');
+
+      console.log(modulePath);
+
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       resolve(require(modulePath));
     } catch (err) {

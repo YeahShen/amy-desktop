@@ -24,6 +24,10 @@ const assetsPath = (_path: string) => {
   return path.resolve(process.cwd(), '../shared/src/assets', _path);
 };
 
+const resourcePath = (_path: string) => {
+  return path.resolve(process.cwd(), 'resource', _path);
+};
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
@@ -48,9 +52,9 @@ const config: ForgeConfig = {
       ]),
     ],
     extraResource: [
-      assetsPath('scripts/koffi'),
-      assetsPath('scripts/sqlite3'),
-      assetsPath('scripts/@koromix'),
+      resourcePath('koffi'),
+      resourcePath('sqlite3'),
+      resourcePath('@koromix'),
       assetsPath('icon'),
       assetsPath('fonts'),
       path.resolve(process.cwd(), '..', 'renderer-process/.output/public'),

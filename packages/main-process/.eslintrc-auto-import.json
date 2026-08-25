@@ -25,6 +25,7 @@
     "debouncedStorePositions": "readonly",
     "fullScreen": "readonly",
     "getColorModel": "readonly",
+    "getDB": "readonly",
     "getFileType": "readonly",
     "getFloatWindow": "readonly",
     "getHomeWindow": "readonly",
