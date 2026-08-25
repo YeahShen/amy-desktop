@@ -13,6 +13,7 @@ export type TrackedPromise<T> = {
   getReason: () => any;
   getExecutor: () => TrackedPromiseExecutor<T>;
   getUid: () => string;
+  cancel: () => any;
 };
 
 export function createTrackedPromise<T>(executor: TrackedPromiseExecutor<T>): TrackedPromise<T> {
@@ -27,8 +28,15 @@ export function createTrackedPromise<T>(executor: TrackedPromiseExecutor<T>): Tr
 
   executor.prototype._uid = executor.prototype._uid || uuidv4();
 
+  const controller = new AbortController();
+  const signal = controller.signal;
+
   const promise = new Promise<T>((resolve, reject) => {
     try {
+      signal.addEventListener('abort', () => {
+        reject('cancel');
+      });
+
       executor(resolve, reject);
     } catch (e) {
       reject(e);
@@ -54,5 +62,6 @@ export function createTrackedPromise<T>(executor: TrackedPromiseExecutor<T>): Tr
     getReason: () => reason,
     getExecutor: () => executor,
     getUid: () => executor.prototype._uid,
+    cancel: () => controller.abort(),
   };
 }

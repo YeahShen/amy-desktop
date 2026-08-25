@@ -24,6 +24,12 @@ const schema: Schema<AppSettings> = {
       showFloatWindow: { type: 'boolean', default: false },
     },
   },
+  uploadHugeFile: {
+    type: 'object',
+    properties: {
+      sameTimeUploadCount: { type: 'number', default: 5 },
+    },
+  },
 };
 
 const store = new Store<AppSettings>({ name: 'amy-setting', schema });

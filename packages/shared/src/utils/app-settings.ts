@@ -27,6 +27,9 @@ export type AppSettings = {
   colorMode: ColorMode;
   hideHomeWindowOrExit: HideHomeWindowOrExit;
   appRunSettings: AppRunSettings;
+  uploadHugeFile: {
+    sameTimeUploadCount: number;
+  };
 };
 
 type AppSettingGetter = <T extends keyof Flatten<AppSettings>>(
