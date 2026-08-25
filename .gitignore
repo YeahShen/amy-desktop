@@ -46,7 +46,7 @@ output/
 packages/renderer-process__old/
 
 # vendored sqlite3 原生资源（extraResource 分发，需入库：napi 预编译二进制 + bindings 依赖）
-!packages/shared/src/assets/scripts/sqlite3/build/
-!packages/shared/src/assets/scripts/sqlite3/build/**
-!packages/shared/src/assets/scripts/sqlite3/node_modules/
-!packages/shared/src/assets/scripts/sqlite3/node_modules/**
+!packages/main-process/resource/sqlite3/build/
+!packages/main-process/resource/sqlite3/build/**
+!packages/main-process/resource/sqlite3/node_modules/
+!packages/main-process/resource/sqlite3/node_modules/**
