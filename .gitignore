@@ -44,3 +44,9 @@ out/
 output/
 # 重构备份目录（遗留，勿提交）
 packages/renderer-process__old/
+
+# vendored sqlite3 原生资源（extraResource 分发，需入库：napi 预编译二进制 + bindings 依赖）
+!packages/shared/src/assets/scripts/sqlite3/build/
+!packages/shared/src/assets/scripts/sqlite3/build/**
+!packages/shared/src/assets/scripts/sqlite3/node_modules/
+!packages/shared/src/assets/scripts/sqlite3/node_modules/**
