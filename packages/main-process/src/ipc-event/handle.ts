@@ -4,6 +4,7 @@ import { Bounding } from '@amy/shared';
 
 import { v4 } from 'uuid';
 import { createDialogWindow } from '../windows/dialog';
+import { deleteTask, getTasks, pause, startTask } from '../upload';
 
 ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -67,3 +68,20 @@ ipcMain.handle(
     });
   },
 );
+
+// huge file upload
+ipcMain.handle(HANDLE_EVENT.PAUSE_UPLOAD_TASK, (_e, id) => {
+  return pause(id);
+});
+
+ipcMain.handle(HANDLE_EVENT.DELETE_UPLOAD_TASK, (_e, id) => {
+  return deleteTask(id);
+});
+
+ipcMain.handle(HANDLE_EVENT.START_UPLOAD_TASK, (_e, id) => {
+  return startTask(id);
+});
+
+ipcMain.handle(HANDLE_EVENT.GET_UPLOAD_TASKS, (_e, type) => {
+  return getTasks(type);
+});

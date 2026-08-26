@@ -16,6 +16,9 @@ export enum ON_EVENT {
 
   OPEN_FLOAT_WINDOW = 'open-float-window',
   CLOSE_FLOAT_WINDOW = 'close-float-window',
+
+  // huge file upload
+  ADD_UPLOAD_TASK = 'add-upload-task',
 }
 
 export enum HANDLE_EVENT {
@@ -27,12 +30,20 @@ export enum HANDLE_EVENT {
 
   GET_USER_DETAIL = 'get-user-detail',
   GET_APP_VERSION = 'get-app-version',
+
+  // huge file upload
+  PAUSE_UPLOAD_TASK = 'pause-upload-task',
+  DELETE_UPLOAD_TASK = 'delete-upload-task',
+  START_UPLOAD_TASK = 'start-upload-task',
+  GET_UPLOAD_TASKS = 'get-upload-tasks',
 }
 
 export enum SEND_EVENT {
   WINDOW_SIZE_STATE = 'window-size-state',
   AYNC_UPLOAD_ITEM = 'sync-upload-item',
   REPORT_UPLOAD_ERROR = 'report-upload-error',
+
+  ADD_UPLOAD_TASK_ERROR = 'add-upload-task-error',
 }
 
 export type OnEventChannels = `${ON_EVENT}`;

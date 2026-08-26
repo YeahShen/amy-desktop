@@ -48,8 +48,6 @@ if (!gotTheLock) {
 app.whenReady().then(async () => {
   const squirreling = await handleSquirrelEvent();
 
-  await initDB();
-
   if (squirreling) {
     return;
   }
@@ -57,6 +55,8 @@ app.whenReady().then(async () => {
   if (!gotTheLock) {
     return;
   }
+
+  await initDB();
 
   await initColorMode();
 

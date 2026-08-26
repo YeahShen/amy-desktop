@@ -37,7 +37,12 @@ export class Task {
   constructor(options: NonNullable<UploadTaskOptions>) {
     this.option = options;
     this._status = options.status;
-    this.uploadedChunk = new Set(options.uploadedChunk as number[]);
+
+    if (Array.isArray(options.uploadedChunk)) {
+      this.uploadedChunk = new Set(options.uploadedChunk as number[]);
+    } else {
+      this.uploadedChunk = new Set(options.uploadedChunk.split(',').map((i) => Number(i)));
+    }
 
     const { getChunk, totalChunk } = fileChunk(options.filePath, Number(FILE_UPLOAD_CHUNK_SIZE));
     this.getChunkFn = getChunk;
@@ -70,12 +75,16 @@ export class Task {
     });
   }
 
+  on<K extends keyof TaskEvent>(event: K, fn: NonNullable<TaskEvent[K]>) {
+    this.events[event] = fn;
+  }
+
   get id() {
     return this.option.id;
   }
 
-  on<K extends keyof TaskEvent>(event: K, fn: NonNullable<TaskEvent[K]>) {
-    this.events[event] = fn;
+  get status() {
+    return this._status;
   }
 
   set status(value: UploadStatus) {
@@ -139,15 +148,16 @@ export class Task {
   }
 
   private async uploadFinish() {
+    if (this._status !== 'uploading') return;
+
     try {
       const { data } = await authAxios.get<{ loseChunk: number[] }>('/api/upload/check-chunk', {
         params: { id: this.option.id },
       });
 
-      if (data.loseChunk.length > 0) {
-        data.loseChunk.forEach((i) => this.addTask(i));
-        this.scheduler.startScheduler();
-        this.finishRetry = 0; // 有新任务，重置重试计数
+      if (data.loseChunk.length > 0 && this._status === 'uploading') {
+        this._status = 'error';
+        this.events['error']?.(this.getOption(), '上传失败！');
         return;
       }
 

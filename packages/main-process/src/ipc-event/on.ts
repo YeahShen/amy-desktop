@@ -3,6 +3,7 @@ import { debouncedStorePositions } from '../windows/float';
 import { ON_EVENT } from './channels';
 import { User } from '@amy/shared';
 import { setAuthenticate } from '../stores/auth';
+import { addTask } from '../upload';
 
 ipcMain.on(ON_EVENT.OPEN_DEV_TOOLS, (_e) =>
   BrowserWindow.fromWebContents(_e.sender)?.webContents.openDevTools({ mode: 'detach' }),
@@ -89,4 +90,8 @@ ipcMain.on(ON_EVENT.CLOSE_FLOAT_WINDOW, () => {
   if (win) {
     win.close();
   }
+});
+
+ipcMain.on(ON_EVENT.ADD_UPLOAD_TASK, (_e, options) => {
+  addTask(options, 'wait');
 });

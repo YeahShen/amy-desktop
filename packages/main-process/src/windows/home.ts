@@ -1,5 +1,10 @@
 import { type BrowserWindow, app } from 'electron';
-import { addBroadcastWindows, initRecordUploadTask, removeBroadcastWindows } from '../upload';
+import {
+  addBroadcastWindows,
+  emptyFinishTasks,
+  initRecordUploadTask,
+  removeBroadcastWindows,
+} from '../upload';
 import { v4 } from 'uuid';
 import { closeSSEConnect, createSSEConnector } from '../server/sse';
 
@@ -38,6 +43,7 @@ export async function createHomeWindow() {
   win.on('close', () => {
     removeBroadcastWindows(id);
     closeSSEConnect();
+    emptyFinishTasks();
     app.quit();
   });
 

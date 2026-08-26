@@ -3,8 +3,10 @@ import { Task } from './task';
 import { getUploadTask, deleteTask as dt, insertTask, updateTask } from './record';
 import { BrowserWindow } from 'electron';
 
+import fs from 'node:fs';
+
 const tasks = new Map<string, Task>();
-const finishTasks: UploadTaskOptions[] = [];
+let finishTasks: UploadTaskOptions[] = [];
 const broadcastWindows = new Map<string, BrowserWindow>();
 
 export function addBroadcastWindows(id: string, w: BrowserWindow) {
@@ -13,6 +15,10 @@ export function addBroadcastWindows(id: string, w: BrowserWindow) {
 
 export function removeBroadcastWindows(id: string) {
   broadcastWindows.delete(id);
+}
+
+export function emptyFinishTasks() {
+  finishTasks = [];
 }
 
 export async function initRecordUploadTask() {
@@ -32,6 +38,15 @@ export async function initRecordUploadTask() {
 }
 
 export function addTask(options: UploadTaskOptions, status: UploadStatus) {
+  const fileExist = fs.existsSync(options.filePath);
+
+  if (!fileExist) {
+    Array.from(broadcastWindows).forEach(([_k, win]) => {
+      win.webContents.send(SEND_EVENT.ADD_UPLOAD_TASK_ERROR, { message: '文件不存在！' });
+    });
+    return;
+  }
+
   const task = new Task({ ...options, status });
 
   task.on('error', (t) => {
@@ -52,11 +67,14 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus) {
 
   task.on('status', async (id, status) => {
     if (status === 'finish') {
-      updateTask(id, { status, finishTime: new Date().getTime() });
+      const finishTime = new Date().getTime();
+
+      updateTask(id, { status, finishTime: finishTime });
 
       const task = tasks.get(id);
+
       if (task) {
-        finishTasks.push(task.getOption());
+        finishTasks.push({ ...task.getOption(), finishTime: finishTime });
         tasks.delete(id);
       }
 
@@ -65,16 +83,22 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus) {
         .map(([_key, task]) => task);
       const doingCount = getDodingCount();
 
-      const idleCount = (await getSetting('uploadHugeFile.sameTimeUploadCount')) - doingCount;
+      const idleCount =
+        ((await getSetting('uploadHugeFile.sameTimeUploadCount')) || 5) - doingCount;
       if (idleCount > 0 && waitingTask.length > 0) {
         waitingTask.splice(0, idleCount).forEach((task) => task.start());
       }
     }
   });
 
+  const old = tasks.get(options.id);
+  if (old) {
+    old.destroy();
+  }
+
   tasks.set(options.id, task);
 
-  startTask(task.id);
+  if (status === 'wait') startTask(task.id);
 
   insertTask(task.getOption());
 }
@@ -93,18 +117,31 @@ export function deleteTask(id: string) {
   dt(id);
 }
 
-export async function startTask(id: string) {
-  const doingCount = getDodingCount();
+export function getTasks(type: 'finish' | 'x') {
+  if (type === 'finish') {
+    return finishTasks;
+  } else {
+    return Array.from(tasks).map(([_, __]) => __.getOption());
+  }
+}
 
-  if (doingCount < (await getSetting('uploadHugeFile.sameTimeUploadCount'))) {
-    const task = tasks.get(id);
+export async function startTask(id: string) {
+  const maxCount = (await getSetting('uploadHugeFile.sameTimeUploadCount')) || 5;
+
+  const doingCount = getDodingCount();
+  const task = tasks.get(id);
+
+  if (task?.status === 'uploading') return;
+
+  if (doingCount < maxCount) {
     task?.start();
   } else {
-    const task = tasks.get(id);
     if (task) {
       task.status = 'wait';
     }
   }
+
+  return task?.getOption().status;
 }
 
 export async function syncTaskStatus(data: { status: UploadStatus; id: string; rate: number }) {

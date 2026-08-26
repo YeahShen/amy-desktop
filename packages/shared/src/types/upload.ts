@@ -1,5 +1,13 @@
 export type UploadStatus =
-  'pause' | 'uploading' | 'wait' | 'finish' | 'conversion' | 'transcoding' | 'merge';
+  | 'pause'
+  | 'uploading'
+  | 'wait'
+  | 'finish'
+  | 'conversion'
+  | 'transcoding'
+  | 'merge'
+  | 'delete'
+  | 'error';
 export type ListenerType = 'status' | 'progress';
 
 export interface UploadTaskOptions {
