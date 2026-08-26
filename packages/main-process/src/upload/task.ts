@@ -36,7 +36,7 @@ export class Task {
   constructor(options: NonNullable<UploadTaskOptions>) {
     this.option = options;
     this._status = options.status;
-    this.uploadedChunk = new Set(options.uploadedChunk);
+    this.uploadedChunk = new Set(options.uploadedChunk as number[]);
 
     const { getChunk, totalChunk } = fileChunk(options.filePath, Number(FILE_UPLOAD_CHUNK_SIZE));
     this.getChunkFn = getChunk;
@@ -122,6 +122,7 @@ export class Task {
   }
 
   start() {
+    this.status = 'uploading';
     this.scheduler.startScheduler();
   }
 

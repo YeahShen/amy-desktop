@@ -1,4 +1,5 @@
 import { type BrowserWindow, app } from 'electron';
+import { initRecordUploadTask } from '../upload';
 
 let homeWindow: BrowserWindow | null = null;
 
@@ -22,7 +23,7 @@ export async function createHomeWindow() {
   win.loadURL(buildWindowUrl('home'));
 
   win.once('ready-to-show', () => {
-    // initTasks(loadTaskList());
+    initRecordUploadTask();
     win?.show();
   });
 

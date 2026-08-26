@@ -1,4 +1,5 @@
-export type UploadStatus = 'pause' | 'uploading' | 'wait' | 'finish' | 'conversion' | 'transcoding';
+export type UploadStatus =
+  'pause' | 'uploading' | 'wait' | 'finish' | 'conversion' | 'transcoding' | 'merge';
 export type ListenerType = 'status' | 'progress';
 
 export interface UploadTaskOptions {
@@ -10,8 +11,8 @@ export interface UploadTaskOptions {
   createdTime: number;
   finishTime: number;
   status: UploadStatus;
-  author: string;
-  uploadedChunk: number[];
+  author: number;
+  uploadedChunk: number[] | string;
 
   transcodingPercentage?: number;
   uploadedPercent?: number;
