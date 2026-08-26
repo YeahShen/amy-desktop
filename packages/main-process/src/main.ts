@@ -8,6 +8,7 @@ import './ipc-event';
 
 import { enableCompileCache } from 'node:module';
 import { initDB } from './utils/sqlite-db';
+import { closeSSEConnect } from './server/sse';
 
 enableCompileCache();
 
@@ -47,7 +48,7 @@ if (!gotTheLock) {
 app.whenReady().then(async () => {
   const squirreling = await handleSquirrelEvent();
 
-  initDB();
+  await initDB();
 
   if (squirreling) {
     return;
@@ -85,4 +86,7 @@ app.whenReady().then(async () => {
   createLoginWindow();
 });
 
-app.on('window-all-closed', app.quit);
+app.on('window-all-closed', () => {
+  closeSSEConnect();
+  app.quit();
+});

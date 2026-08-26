@@ -1,13 +1,18 @@
 import { type BrowserWindow, app } from 'electron';
-import { initRecordUploadTask } from '../upload';
+import { addBroadcastWindows, initRecordUploadTask, removeBroadcastWindows } from '../upload';
+import { v4 } from 'uuid';
+import { closeSSEConnect, createSSEConnector } from '../server/sse';
 
 let homeWindow: BrowserWindow | null = null;
+let id: string;
 
 export async function createHomeWindow() {
   const dark = await isDark();
 
   // 仅登录成功（HomeWindow 创建）后才启动系统托盘
   createTray();
+
+  id = v4();
 
   const win = (homeWindow = createFrameWindow({
     width: getRuntimeConfigItem('homeSize.width'),
@@ -23,11 +28,18 @@ export async function createHomeWindow() {
   win.loadURL(buildWindowUrl('home'));
 
   win.once('ready-to-show', () => {
-    initRecordUploadTask();
     win?.show();
+
+    addBroadcastWindows(id, win);
+    initRecordUploadTask();
+    createSSEConnector();
   });
 
-  win.on('close', () => app.quit());
+  win.on('close', () => {
+    removeBroadcastWindows(id);
+    closeSSEConnect();
+    app.quit();
+  });
 
   win.on('maximize', () => {
     win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, true);

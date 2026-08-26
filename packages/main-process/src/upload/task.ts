@@ -12,6 +12,7 @@ type TaskEvent = {
   progress?: (task: UploadTaskOptions, rate: number) => void;
   record?: (task: UploadTaskOptions) => void;
   error?: (task: UploadTaskOptions, message: string) => void;
+  status?: (id: string, status: UploadStatus) => void;
 };
 
 export class Task {
@@ -49,7 +50,11 @@ export class Task {
     this.scheduler.on('successTask', (result) => {
       if (result) {
         this.uploadedChunk.add(result.chunkIndex);
-        this.events['record']?.({ ...this.option, uploadedChunk: [...this.uploadedChunk] });
+        this.events['record']?.({
+          ...this.option,
+          uploadedChunk: [...this.uploadedChunk],
+          status: this._status,
+        });
       }
     });
 
@@ -83,10 +88,17 @@ export class Task {
       this.scheduler.destroy();
       this.clearFinishTimer();
     }
+
+    this.events['status']?.(this.id, value);
   }
 
   pause() {
     this.status = 'pause';
+  }
+
+  destroy() {
+    this.status = 'pause';
+    this.scheduler.destroy();
   }
 
   private clearFinishTimer() {
@@ -171,5 +183,9 @@ export class Task {
       { ...this.option, status: this._status, uploadedChunk: [...this.uploadedChunk] },
       progress,
     );
+  }
+
+  getOption() {
+    return { ...this.option, status: this._status, uploadedChunk: [...this.uploadedChunk] };
   }
 }

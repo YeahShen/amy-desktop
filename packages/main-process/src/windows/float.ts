@@ -1,12 +1,17 @@
 import { BrowserWindow, screen } from 'electron';
 import path from 'node:path';
+import { v4 } from 'uuid';
 
 import { debounce } from 'lodash-es';
+import { addBroadcastWindows, removeBroadcastWindows } from '../upload';
 
 let floatWindow: BrowserWindow | null = null;
+let id: string;
 
 export function createFloatWindow() {
   if (floatWindow != null) return;
+
+  id = v4();
 
   const { width: screenWidth, height: screenHeight } = screen.getPrimaryDisplay().workAreaSize;
 
@@ -38,10 +43,13 @@ export function createFloatWindow() {
   win.loadURL(buildWindowUrl('float'));
 
   win.once('ready-to-show', () => {
+    addBroadcastWindows(id, win);
     win?.show();
   });
 
   win.once('closed', () => {
+    removeBroadcastWindows(id);
+
     win.destroy();
     floatWindow = null;
   });

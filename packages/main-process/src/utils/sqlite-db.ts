@@ -51,7 +51,7 @@ export async function initDB() {
   finishTime INTEGER,
   status TEXT,
   author INTEGER,
-  uploadedChunk TEXT
+  uploadedChunk TEXT,
   deleted INTEGER
 )`);
 }

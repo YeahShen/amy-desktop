@@ -31,6 +31,8 @@ export enum HANDLE_EVENT {
 
 export enum SEND_EVENT {
   WINDOW_SIZE_STATE = 'window-size-state',
+  AYNC_UPLOAD_ITEM = 'sync-upload-item',
+  REPORT_UPLOAD_ERROR = 'report-upload-error',
 }
 
 export type OnEventChannels = `${ON_EVENT}`;
