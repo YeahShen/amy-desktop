@@ -44,7 +44,7 @@ const menuItems = [
 
       if (file) {
         const path = window.electronAPI.getPathForFile(file);
-        openDialog('createVideoUpload', { width: 800, height: 600 }, false, { filePath: path });
+        openDialog('createVideoUpload', { width: 750, height: 600 }, false, { filePath: path });
         showMenu.value = false;
       }
     },

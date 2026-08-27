@@ -12,11 +12,16 @@ export type Artist = {
 };
 
 export type VideoTag = {
-  id: number;
+  id: number | string;
   title: string;
 };
 
 export type VideoType = {
   id: number;
   title: string;
+};
+
+export type VideoPublisher = {
+  id: string | number;
+  name: string;
 };

@@ -2,6 +2,9 @@ import type { IpcRendererEvent } from 'electron';
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { HandleEventChannels, OnEventChannels, SendEventChannels } from '../ipc-event/channels';
 
+import fs from 'node:fs';
+import path from 'node:path';
+
 contextBridge.exposeInMainWorld('electronAPI', {
   send(channel: OnEventChannels, ...args: any[]) {
     ipcRenderer.send(channel, ...args);
@@ -31,8 +34,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.send(`close_dialog:${id}`, result);
   },
 
-  // parseFilePath: (fPath: string) => {
-  //   const size = fs.statSync(fPath).size;
-  //   return { ...path.parse(fPath), size, path: fPath, chunkSize: UPLOAD_CHUNK_SIZE };
-  // },
+  parseFilePath: (fPath: string) => {
+    const size = fs.statSync(fPath).size;
+    return { ...path.parse(fPath), size, path: fPath };
+  },
 });

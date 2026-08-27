@@ -60,15 +60,15 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
-  fullScreen().then(({ check }) => {
-    setInterval(async () => {
-      if (await check()) {
-        getFloatWindow()?.hide();
-      } else {
-        getFloatWindow()?.show();
-      }
-    }, 1000);
-  });
+  // fullScreen().then(({ check }) => {
+  //   setInterval(async () => {
+  //     if (await check()) {
+  //       getFloatWindow()?.hide();
+  //     } else {
+  //       getFloatWindow()?.show();
+  //     }
+  //   }, 1000);
+  // });
 
   if (app.isPackaged) {
     createServer();
