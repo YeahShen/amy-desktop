@@ -10,14 +10,18 @@ type Message = {
 };
 
 export function createSSEConnector() {
-  stream = axiosEventSource(authAxios, 'events', {
+  stream = axiosEventSource(authAxios, '/api/events/subscribe', {
     onopen: () => {
       log.info('SSE 连接已打开');
     },
     onerror: (event) => {
-      log.info('SSE 错误:', event.error);
+      log.error('SSE 错误:', event.error);
     },
-    // 重连策略[reference:10]
+    // 关闭 authAxios 的 60s 绝对超时：SSE 流无限长，axios fetch adapter 的
+    // 超时 timer 只在流结束时才清除，不置 0 会每 60s 强制 abort 一次连接
+    // （重连间隙中转码等状态事件会丢失）。
+    timeout: 0,
+    // 重连策略
     reconnect: {
       initialDelayMs: 1_000,
       maxDelayMs: 30_000,

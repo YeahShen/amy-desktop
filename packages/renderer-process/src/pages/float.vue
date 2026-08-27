@@ -21,6 +21,8 @@ const showMenu = ref(false);
 const showGlow = ref(true); // 呼吸光晕开关
 const wrapRef = useTemplateRef<HTMLDivElement>('wrapRef');
 
+const type = ref('video');
+
 const screenRect = ref<{ primary?: { width: number; height: number } }>({});
 const windowPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -33,10 +35,8 @@ const { colorMode } = useColorMode();
 
 // 菜单项定义
 const menuItems = [
-  { icon: 'i-lucide-search', label: '搜索' },
-  { icon: 'i-lucide-pencil', label: '笔记' },
-  { icon: 'i-lucide-clipboard-list', label: '任务' },
-  { icon: 'i-lucide-settings', label: '设置' },
+  { icon: 'amy:chat-round-video-line-duotone', label: '上传视频', type: 'video', select: () => {} },
+  { icon: 'amy:video-library-broken', label: '上传视频至合集', type: 'video', select: () => {} },
 ];
 
 const positionStyle = computed(() => {
@@ -51,12 +51,12 @@ const positionStyle = computed(() => {
 
       if (uleft > width && utop > height) {
         position.top = pointObj.br.y - 200;
-        position.left = pointObj.br.x - 130;
+        position.left = pointObj.br.x - 140;
       }
 
       if (uleft > width && utop <= height) {
         position.top = pointObj.tr.y;
-        position.left = pointObj.tr.x - 130;
+        position.left = pointObj.tr.x - 140;
       }
 
       if (uleft <= width && utop > height) {
@@ -68,8 +68,8 @@ const positionStyle = computed(() => {
     return {
       top: `${position.top}px`,
       left: `${position.left}px`,
-      width: '130px',
-      height: '200px',
+      width: '140px',
+      height: '118px',
       borderRadius: '16px',
     };
   }
@@ -145,15 +145,6 @@ function handleDrop(e: DragEvent) {
   e.preventDefault();
   showMenu.value = true;
 }
-
-function toggleMenu() {
-  showMenu.value = !showMenu.value;
-}
-
-function onMenuItemClick(item: (typeof menuItems)[number]) {
-  console.log('Menu item clicked:', item.label);
-  showMenu.value = false; // 点击菜单项后关闭菜单
-}
 </script>
 
 <template>
@@ -162,9 +153,9 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
     <ClientOnly>
       <div
         ref="wrapRef"
-        class="float-window-wrap glass-floating-window absolute cursor-pointer select-none"
+        class="float-window-wrap glass-floating-window absolute cursor-pointer select-none h-fit"
         :style="{ ...positionStyle }"
-        :class="{ 'is-expanded': showMenu }"
+        :class="{ 'is-expanded bg-white!': showMenu }"
       >
         <!-- ========== 折叠态：圆形悬浮按钮 ========== -->
         <div
@@ -184,33 +175,28 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
         </div>
 
         <!-- ========== 展开态：菜单面板 ========== -->
-        <div v-else class="expanded-content flex flex-col h-full">
-          <!-- 头部 -->
-          <div class="menu-header flex items-center justify-between shrink-0">
-            <span class="menu-title">AMY</span>
-            <button
-              class="menu-close-btn flex items-center justify-center"
-              @click.stop="toggleMenu"
-            >
-              <span class="i-lucide-x close-icon"></span>
-            </button>
-          </div>
-
-          <!-- 分隔线 -->
-          <div class="menu-divider shrink-0"></div>
-
+        <div v-else class="flex flex-col h-full py-1 px-1">
           <!-- 菜单项列表 -->
-          <div class="menu-body flex-1 overflow-hidden">
+          <template v-for="item in menuItems" :key="item.label">
             <button
-              v-for="item in menuItems"
-              :key="item.label"
-              class="menu-item flex items-center gap-2"
-              @click="onMenuItemClick(item)"
+              v-if="item.type === type"
+              class="menu-item flex items-center gap-2 px-2 py-2 hover:bg-primary-bg-hover/30! hover:text-primary!"
+              @click="item.select()"
             >
-              <span :class="[item.icon, 'menu-item-icon']"></span>
+              <NuxtIcon :name="item.icon" />
               <span class="menu-item-label">{{ item.label }}</span>
             </button>
-          </div>
+          </template>
+
+          <a-divider class="my-0!" />
+
+          <button
+            class="menu-item flex items-center gap-2 px-2 py-2 text-error hover:bg-error-bg-hover/30!"
+            @click="showMenu = false"
+          >
+            <NuxtIcon name="amy:trash-bin-minimalistic-line-duotone" size="16" />
+            <span class="menu-item-label">取消</span>
+          </button>
         </div>
       </div>
     </ClientOnly>
@@ -349,10 +335,6 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
 /* ============================================
    展开态：菜单面板
    ============================================ */
-.expanded-content {
-  padding: 8px 0;
-}
-
 /* 头部 */
 .menu-header {
   padding: 4px 12px 2px 14px;
@@ -407,7 +389,6 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
 .menu-body {
   display: flex;
   flex-direction: column;
-  padding: 4px 6px;
   gap: 2px;
 }
 
@@ -416,21 +397,11 @@ function onMenuItemClick(item: (typeof menuItems)[number]) {
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 7px 10px;
   border-radius: 10px;
   background: transparent;
   border: none;
   cursor: pointer;
   transition: background 0.15s ease;
-  color: rgba(0, 0, 0, 0.65);
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.06);
-  }
-
-  &:active {
-    background: rgba(0, 0, 0, 0.04);
-  }
 
   .menu-item-icon {
     font-size: 17px;

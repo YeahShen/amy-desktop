@@ -37,7 +37,8 @@ export async function createHomeWindow() {
 
     addBroadcastWindows(id, win);
     initRecordUploadTask();
-    createSSEConnector();
+
+    if (MODE !== 'mock') createSSEConnector();
   });
 
   win.on('close', () => {
