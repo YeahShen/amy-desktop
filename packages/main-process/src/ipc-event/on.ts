@@ -95,3 +95,14 @@ ipcMain.on(ON_EVENT.CLOSE_FLOAT_WINDOW, () => {
 ipcMain.on(ON_EVENT.ADD_UPLOAD_TASK, (_e, options) => {
   addTask(options, 'wait');
 });
+
+ipcMain.on(ON_EVENT.OPEN_MAIN_WINDOW, () => {
+  const home = getHomeWindow();
+  if (home) {
+    if (home.isMinimized()) {
+      home.restore();
+    }
+    home.show();
+    home.focus();
+  }
+});

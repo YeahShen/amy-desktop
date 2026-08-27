@@ -21,7 +21,8 @@ const showMenu = ref(false);
 const showGlow = ref(true); // 呼吸光晕开关
 const wrapRef = useTemplateRef<HTMLDivElement>('wrapRef');
 
-const type = ref('video');
+const files = ref<FileList>();
+const menuHeigth = ref(150);
 
 const screenRect = ref<{ primary?: { width: number; height: number } }>({});
 const windowPosition = ref<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -35,8 +36,33 @@ const { colorMode } = useColorMode();
 
 // 菜单项定义
 const menuItems = [
-  { icon: 'amy:chat-round-video-line-duotone', label: '上传视频', type: 'video', select: () => {} },
-  { icon: 'amy:video-library-broken', label: '上传视频至合集', type: 'video', select: () => {} },
+  {
+    icon: 'amy:chat-round-video-line-duotone',
+    label: '上传视频',
+    select: () => {
+      const file = files.value?.[0];
+
+      if (file) {
+        const path = window.electronAPI.getPathForFile(file);
+        openDialog('createVideoUpload', { width: 800, height: 600 }, false, { filePath: path });
+        showMenu.value = false;
+      }
+    },
+  },
+  {
+    icon: 'amy:video-library-broken',
+    label: '上传视频至合集',
+    select: () => {
+      showMenu.value = false;
+    },
+  },
+  {
+    icon: 'amy:chat-round-video-line-duotone',
+    label: '上传至相册',
+    select: () => {
+      showMenu.value = false;
+    },
+  },
 ];
 
 const positionStyle = computed(() => {
@@ -47,10 +73,10 @@ const positionStyle = computed(() => {
       const { width, height } = screenRect.value.primary;
 
       const uleft = windowPosition.value.x + 250 + 65 + 50;
-      const utop = windowPosition.value.y + 250 + 65 + 100;
+      const utop = windowPosition.value.y + menuHeigth.value + 65 + 100;
 
       if (uleft > width && utop > height) {
-        position.top = pointObj.br.y - 200;
+        position.top = pointObj.br.y - menuHeigth.value;
         position.left = pointObj.br.x - 140;
       }
 
@@ -60,7 +86,7 @@ const positionStyle = computed(() => {
       }
 
       if (uleft <= width && utop > height) {
-        position.top = pointObj.bl.y - 200;
+        position.top = pointObj.bl.y - menuHeigth.value;
         position.left = pointObj.bl.x;
       }
     }
@@ -69,7 +95,7 @@ const positionStyle = computed(() => {
       top: `${position.top}px`,
       left: `${position.left}px`,
       width: '140px',
-      height: '118px',
+      height: menuHeigth.value + 'px',
       borderRadius: '16px',
     };
   }
@@ -143,7 +169,17 @@ function handleMouseMove(e: MouseEvent) {
 
 function handleDrop(e: DragEvent) {
   e.preventDefault();
-  showMenu.value = true;
+
+  const f = e.dataTransfer?.files; // 获取文件列表
+
+  if (f) {
+    files.value = f;
+    showMenu.value = true;
+  }
+}
+
+function openHome() {
+  window.electronAPI.send('open-main-window');
 }
 </script>
 
@@ -155,7 +191,8 @@ function handleDrop(e: DragEvent) {
         ref="wrapRef"
         class="float-window-wrap glass-floating-window absolute cursor-pointer select-none h-fit"
         :style="{ ...positionStyle }"
-        :class="{ 'is-expanded bg-white!': showMenu }"
+        :class="{ 'is-expanded bg-white! dark:bg-[#1a1a1a]!': showMenu }"
+        @dblclick="openHome"
       >
         <!-- ========== 折叠态：圆形悬浮按钮 ========== -->
         <div
@@ -179,8 +216,7 @@ function handleDrop(e: DragEvent) {
           <!-- 菜单项列表 -->
           <template v-for="item in menuItems" :key="item.label">
             <button
-              v-if="item.type === type"
-              class="menu-item flex items-center gap-2 px-2 py-2 hover:bg-primary-bg-hover/30! hover:text-primary!"
+              class="menu-item flex items-center gap-2 px-2 py-2 hover:bg-primary-bg-hover/30! hover:text-primary! text-default!"
               @click="item.select()"
             >
               <NuxtIcon :name="item.icon" />
@@ -188,10 +224,10 @@ function handleDrop(e: DragEvent) {
             </button>
           </template>
 
-          <a-divider class="my-0!" />
+          <a-divider class="my-px!" />
 
           <button
-            class="menu-item flex items-center gap-2 px-2 py-2 text-error hover:bg-error-bg-hover/30!"
+            class="menu-item flex items-center gap-2 px-2 py-2 text-error! hover:bg-error-bg-hover/30!"
             @click="showMenu = false"
           >
             <NuxtIcon name="amy:trash-bin-minimalistic-line-duotone" size="16" />

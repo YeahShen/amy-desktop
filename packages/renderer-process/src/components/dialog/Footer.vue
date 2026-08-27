@@ -28,6 +28,8 @@ async function comfirm() {
     const result = await props.confirmFn();
     close(result);
   } catch (e: any) {
+    console.log(e);
+
     if (!props.hidErrorMessage) message.error(e);
   } finally {
     loading.value = false;

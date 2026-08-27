@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FormInstance } from 'antdv-next';
 import type { ArtistCategory } from '@amy/shared/types';
 
 definePageMeta({
@@ -8,7 +9,7 @@ definePageMeta({
   },
 });
 
-const formRef = useTemplateRef('formRef');
+const formRef = useTemplateRef<FormInstance>('formRef');
 
 const form = reactive({
   name: '',
@@ -46,8 +47,7 @@ onMounted(async () => {
 });
 
 async function confirm() {
-  // @ts-ignore
-  await formRef.value?.validateFields?.();
+  await formRef.value?.validateFields();
   const fd = new FormData();
   fd.append('name', form.name);
   fd.append('description', form.description + '');

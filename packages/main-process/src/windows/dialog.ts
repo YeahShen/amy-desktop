@@ -13,7 +13,7 @@ export function createDialogWindow(
 
   const { width, height } = bounding;
 
-  if (parent) {
+  if (parent && withTopWindow) {
     const bounds = parent?.getBounds() as Rectangle;
 
     x = withTopWindow ? undefined : bounds.x + parent.getBounds().width / 2 - width / 2;

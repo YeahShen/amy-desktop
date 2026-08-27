@@ -5,6 +5,8 @@ export enum ON_EVENT {
   SET_IGNORE_MOUSE_EVENTS = 'set-ignore-mouse-events',
   SET_WINDOW_POSITIONS = 'set-window-position',
 
+  OPEN_MAIN_WINDOW = 'open-main-window',
+
   CLOSE_WINDOW = 'close-window',
   HID_WINDOW = 'hid-window',
   MIN_WINDOW = 'min-window',

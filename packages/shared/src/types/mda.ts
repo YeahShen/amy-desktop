@@ -10,3 +10,13 @@ export type Artist = {
   avatar: string;
   categoryId: number;
 };
+
+export type VideoTag = {
+  id: number;
+  title: string;
+};
+
+export type VideoType = {
+  id: number;
+  title: string;
+};
