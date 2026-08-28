@@ -1,7 +1,7 @@
 <script setup lang="tsx">
-withDefaults(
+const props = withDefaults(
   defineProps<{
-    processImageFn?: (file: File) => Promise<any>;
+    processImageFn?: (file: string) => Promise<any>;
     wrapClasses?: string;
   }>(),
   {
@@ -25,6 +25,8 @@ async function addImg() {
 
     if (file) {
       const reader = new FileReader();
+
+      props.processImageFn?.(window.electronAPI.getPathForFile(file));
 
       reader.onload = function (e) {
         previewImg.value = e?.target?.result;

@@ -1,5 +1,7 @@
 import type { Flatten, AppSettings } from '@amy/shared';
 
+import type { ParsedPath } from 'node:path';
+
 import type {
   HandleEventChannels,
   OnEventChannels,

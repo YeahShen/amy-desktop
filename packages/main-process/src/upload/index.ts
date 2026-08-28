@@ -47,7 +47,7 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus) {
     return;
   }
 
-  const task = new Task({ ...options, status });
+  const task = new Task({ ...options, status, chunkSize: Number(FILE_UPLOAD_CHUNK_SIZE) });
 
   task.on('error', (t) => {
     Array.from(broadcastWindows).forEach(([_k, win]) => {

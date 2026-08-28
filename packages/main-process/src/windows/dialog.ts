@@ -2,7 +2,7 @@ import { Bounding } from '@amy/shared';
 import { BrowserWindow, Rectangle } from 'electron';
 import qs from 'qs';
 
-export function createDialogWindow(
+export async function createDialogWindow(
   bounding: Bounding,
   name: string,
   args: Record<string, string>,
@@ -12,6 +12,8 @@ export function createDialogWindow(
   let x, y;
 
   const { width, height } = bounding;
+
+  const dark = await isDark();
 
   if (parent && withTopWindow) {
     const bounds = parent?.getBounds() as Rectangle;
@@ -27,6 +29,7 @@ export function createDialogWindow(
     y,
     parent: withTopWindow ? parent : undefined,
     modal: true,
+    backgroundColor: dark ? '#17181a' : '#fff',
   });
 
   win.loadURL(buildWindowUrl(name + '?' + qs.stringify(args)));

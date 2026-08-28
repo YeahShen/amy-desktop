@@ -23,10 +23,11 @@ const form = reactive({
   description: '',
   serialNumber: '',
   type: '',
-  poster: null,
+  poster: null as File | null,
   actors: [],
-  publisher: null,
-  tags: [],
+  publisher: null as string | null,
+  tags: [] as string[],
+  size: 0,
   fileExt: '',
   filePath: route.query.filePath as string,
 });
@@ -48,9 +49,10 @@ onMounted(() => {
     artists.value = res;
   });
 
-  const { name, ext } = window.electronAPI.parseFilePath(route.query.filePath as string);
+  const { name, ext, size } = window.electronAPI.parseFilePath(route.query.filePath as string);
   form.title = name;
   form.fileExt = ext;
+  form.size = size;
 });
 
 const newTagName = ref('');
@@ -77,6 +79,48 @@ function addPublisher(e: MouseEvent) {
 
 async function commit() {
   await formRef.value?.validateFields();
+
+  const fd = new FormData();
+  fd.append('title', form.title);
+  fd.append('description', form.description);
+  fd.append('serialNumber', form.serialNumber);
+  fd.append('type.id', form.type);
+  fd.append('poster', form.poster as Blob);
+  fd.append('fileExt', form.fileExt);
+
+  form.actors.forEach((id, index) => {
+    fd.append(`artist[${index}].id`, id);
+  });
+
+  if (form.publisher?.startsWith('$$')) {
+    fd.append(
+      `publisher.name`,
+      publisher.value.find((p) => p.id === form.publisher)?.name as string,
+    );
+  } else {
+    fd.append('publisher.id', form.publisher as string);
+  }
+
+  form.tags.forEach((t, index) => {
+    if (!t.startsWith('$$')) {
+      fd.append(`tag[${index}].id`, t);
+    }
+    fd.append(`tag[${index}].title`, tags.value.find((i) => i.id === t)?.title as string);
+  });
+
+  const { id } = await $request<{ id: string }>('/video/createUploadTask', {
+    method: 'POST',
+    body: fd,
+  });
+
+  window.electronAPI.send('add-upload-task', {
+    id: id,
+    title: form.title,
+    filePath: form.filePath,
+    size: form.size,
+    createdTime: new Date().getTime(),
+    author: form.actors.join(','),
+  });
 }
 </script>
 
