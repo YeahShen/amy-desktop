@@ -13,6 +13,11 @@ const [api, ContextHolder] = notification.useNotification({
   // duration: false,
 });
 
+/** 判断消息是否为 HTML 结构文本（含任意标签即视为 HTML → innerHTML 渲染；否则按纯文本转义输出） */
+function isHtml(value: string): boolean {
+  return /<\/?[a-z][a-z0-9]*\b[^>]*>/i.test(value);
+}
+
 onMounted(() => {
   window.electronAPI.on(
     'notify-message',
@@ -29,15 +34,9 @@ async function openNotification(
   api[type]({
     title: `AMY STATION`,
     description: h(
-      defineComponent(() => {
-        return () => (
-          <>
-            <div class="pt-1 pb-2">
-              <p>{message}</p>
-            </div>
-          </>
-        );
-      }),
+      'div',
+      { class: 'pt-1 pb-2' },
+      isHtml(message) ? h('p', { innerHTML: message }) : h('p', null, message),
     ),
     styles: {
       icon: {
