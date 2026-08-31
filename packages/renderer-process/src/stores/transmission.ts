@@ -11,6 +11,11 @@ export const useTransmissionStore = defineStore('transmissionStore', () => {
     });
 
     window.electronAPI.on<any>('sync-upload-item', (item, rate) => {
+      if (item.status === 'finish') {
+        delete uploadTasks[item.id];
+        return;
+      }
+
       uploadTasks[item.id] = {
         ...item,
         progressRate: rate,

@@ -95,6 +95,16 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus, newTas
       if (idleCount > 0 && waitingTask.length > 0) {
         waitingTask.splice(0, idleCount).forEach((task) => task.start());
       }
+
+      getNotificationWindow()?.webContents.send(SEND_EVENT.NOTIFY_MESSAGE, {
+        type: 'success',
+        message: `
+          <div>
+            <p class="text-primary-active">上传任务: ${task?.getOption().title}</p>
+            <p>上传成功<p/>
+          </div>
+        `,
+      });
     }
   });
 

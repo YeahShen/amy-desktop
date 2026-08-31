@@ -123,6 +123,13 @@ async function commit() {
     createdTime: new Date().getTime(),
     author: form.actors.join(','),
   });
+
+  useNotification().info(
+    `<div>
+     <p class="text-primary-active">上传任务: ${form.title}</p>
+     <p>已添加<p/>
+    </div>`,
+  );
 }
 </script>
 
