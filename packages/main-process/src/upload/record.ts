@@ -8,7 +8,15 @@ function serializeUploadedChunk(uploadedChunk: UploadTaskOptions['uploadedChunk'
 // 可更新的列（对应 upload_task 表非主键、非 deleted 字段）
 type UpdatableTaskOptions = Pick<
   UploadTaskOptions,
-  'title' | 'filePath' | 'size' | 'chunkSize' | 'createdTime' | 'finishTime' | 'status' | 'author' | 'uploadedChunk'
+  | 'title'
+  | 'filePath'
+  | 'size'
+  | 'chunkSize'
+  | 'createdTime'
+  | 'finishTime'
+  | 'status'
+  | 'author'
+  | 'uploadedChunk'
 >;
 
 export function getUploadTask() {
@@ -20,7 +28,6 @@ export function getUploadTask() {
         console.error('查询失败:', err.message);
         reject();
       } else {
-        console.log('查询结果:', rows);
         resolve(rows);
       }
     });

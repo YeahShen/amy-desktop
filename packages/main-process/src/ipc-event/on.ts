@@ -93,7 +93,7 @@ ipcMain.on(ON_EVENT.CLOSE_FLOAT_WINDOW, () => {
 });
 
 ipcMain.on(ON_EVENT.ADD_UPLOAD_TASK, (_e, options) => {
-  addTask(options, 'wait');
+  addTask(options, 'wait', true);
 });
 
 ipcMain.on(ON_EVENT.OPEN_MAIN_WINDOW, () => {

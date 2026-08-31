@@ -13,7 +13,7 @@ const userStore = useUserStore();
 </script>
 
 <template>
-  <div class="w-full navbar drag flex justify-end px-4 z-9999 absolute">
+  <div class="w-full navbar drag flex justify-end px-4 z-10 absolute">
     <LayoutSearch />
 
     <div class="w-fit h-full flex items-center">

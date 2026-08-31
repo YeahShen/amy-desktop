@@ -1,5 +1,6 @@
 <script setup lang="tsx">
 const route = useRoute();
+const appStore = useAppStore();
 
 type MenuItem = {
   icon: string;
@@ -51,6 +52,14 @@ const sideMode = computed(() => {
   }
   return 'bg-sidebar';
 });
+
+function openUpload() {
+  appStore.drawer = {
+    open: true,
+    component: 'cloud',
+    title: '传输',
+  };
+}
 </script>
 
 <template>
@@ -78,7 +87,7 @@ const sideMode = computed(() => {
       <div id="sidebar-bottom-menu" class="flex flex-col pb-4 gap-y-2">
         <AmySwitchColorMode class="no-drag" />
 
-        <button class="b-icon no-drag">
+        <button class="b-icon no-drag" @click="openUpload">
           <NuxtIcon name="amy:cloud-check-broken" size="20" />
         </button>
 

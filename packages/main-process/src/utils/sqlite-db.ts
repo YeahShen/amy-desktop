@@ -26,8 +26,6 @@ export async function initDB() {
 
   const dbPath = path.join(app.getPath('userData'), 'data.db');
 
-  console.log(dbPath);
-
   await new Promise((resolve, reject) => {
     // 2. 创建数据库连接
     db = new sqlite3.Database(dbPath, (err) => {

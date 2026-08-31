@@ -37,7 +37,7 @@ export async function initRecordUploadTask() {
   }
 }
 
-export function addTask(options: UploadTaskOptions, status: UploadStatus) {
+export function addTask(options: UploadTaskOptions, status: UploadStatus, newTask = false) {
   const fileExist = fs.existsSync(options.filePath);
 
   if (!fileExist) {
@@ -47,7 +47,14 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus) {
     return;
   }
 
-  const task = new Task({ ...options, status, chunkSize: Number(FILE_UPLOAD_CHUNK_SIZE) });
+  const uploadedChunk = options.uploadedChunk ?? [];
+
+  const task = new Task({
+    ...options,
+    status,
+    chunkSize: Number(FILE_UPLOAD_CHUNK_SIZE),
+    uploadedChunk,
+  });
 
   task.on('error', (t) => {
     Array.from(broadcastWindows).forEach(([_k, win]) => {
@@ -100,12 +107,13 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus) {
 
   if (status === 'wait') startTask(task.id);
 
-  insertTask(task.getOption());
+  if (newTask) insertTask(task.getOption());
 }
 
 export function pause(id: string) {
   const task = tasks.get(id);
   task?.pause();
+  return;
 }
 
 export function deleteTask(id: string) {

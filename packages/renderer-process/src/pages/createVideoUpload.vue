@@ -92,7 +92,9 @@ async function commit() {
     fd.append(`artist[${index}].id`, id);
   });
 
-  if (form.publisher?.startsWith('$$')) {
+  console.log(form);
+
+  if ((`${form.publisher}` || '').startsWith('$$')) {
     fd.append(
       `publisher.name`,
       publisher.value.find((p) => p.id === form.publisher)?.name as string,
@@ -102,13 +104,13 @@ async function commit() {
   }
 
   form.tags.forEach((t, index) => {
-    if (!t.startsWith('$$')) {
+    if (!`${t}`.startsWith('$$')) {
       fd.append(`tag[${index}].id`, t);
     }
     fd.append(`tag[${index}].title`, tags.value.find((i) => i.id === t)?.title as string);
   });
 
-  const { id } = await $request<{ id: string }>('/video/createUploadTask', {
+  const id = await $request<string>('/video/createUploadTask', {
     method: 'POST',
     body: fd,
   });

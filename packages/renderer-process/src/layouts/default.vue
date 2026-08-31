@@ -9,6 +9,8 @@
 
       <LayoutMainContent />
     </div>
+
+    <LayoutDrawer />
   </div>
 </template>
 

@@ -34,13 +34,13 @@ ipcMain.handle(HANDLE_EVENT.GET_APP_VERSION, () => app.getVersion());
 
 ipcMain.handle(
   HANDLE_EVENT.OPEN_DIALOG,
-  (
+  async (
     _e,
     options: { bounding: Bounding; args: Record<string, string>; name: string; onTop: boolean },
   ) => {
     const id = v4();
 
-    const dialog = createDialogWindow(
+    const dialog = await createDialogWindow(
       options.bounding,
       options.name,
       { ...options.args, dialogId: id },

@@ -8,6 +8,8 @@ import { addBroadcastWindows, removeBroadcastWindows } from '../upload';
 let floatWindow: BrowserWindow | null = null;
 let id: string;
 
+let isHiden = false;
+
 export function createFloatWindow() {
   if (floatWindow != null) return;
 
@@ -47,6 +49,14 @@ export function createFloatWindow() {
     win?.show();
   });
 
+  win.on('hide', () => {
+    isHiden = true;
+  });
+
+  win.on('show', () => {
+    isHiden = false;
+  });
+
   win.once('closed', () => {
     removeBroadcastWindows(id);
 
@@ -57,6 +67,10 @@ export function createFloatWindow() {
 
 export function getFloatWindow() {
   return floatWindow;
+}
+
+export function isfloatWinHidden() {
+  return isHiden;
 }
 
 export function storePositions(x: number, y: number) {

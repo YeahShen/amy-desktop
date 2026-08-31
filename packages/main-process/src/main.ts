@@ -9,6 +9,7 @@ import './ipc-event';
 import { enableCompileCache } from 'node:module';
 import { initDB } from './utils/sqlite-db';
 import { closeSSEConnect } from './server/sse';
+import { isfloatWinHidden } from './windows/float';
 
 enableCompileCache();
 
@@ -60,15 +61,17 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
-  // fullScreen().then(({ check }) => {
-  //   setInterval(async () => {
-  //     if (await check()) {
-  //       getFloatWindow()?.hide();
-  //     } else {
-  //       getFloatWindow()?.show();
-  //     }
-  //   }, 1000);
-  // });
+  fullScreen().then((worker) => {
+    worker.on('message', (msg) => {
+      if (msg.fullScreen) {
+        if (!isfloatWinHidden()) {
+          getFloatWindow()?.hide();
+        }
+      } else {
+        if (isfloatWinHidden()) getFloatWindow()?.show();
+      }
+    });
+  });
 
   if (app.isPackaged) {
     createServer();

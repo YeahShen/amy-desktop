@@ -22,7 +22,6 @@ export interface UploadTaskOptions {
   author: number;
   uploadedChunk: number[] | string;
 
-  transcodingPercentage?: number;
-  uploadedPercent?: number;
+  progressRate?: number;
   uploadedSize?: number;
 }

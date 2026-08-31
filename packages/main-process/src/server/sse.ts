@@ -5,7 +5,7 @@ import { syncTaskStatus } from '../upload';
 let stream: AxiosEventSourceLike | undefined = undefined;
 
 type Message = {
-  type: string;
+  event: string;
   data: any;
 };
 
@@ -32,8 +32,8 @@ export function createSSEConnector() {
     try {
       const data = JSON.parse(event.data) as Message;
 
-      switch (data.type) {
-        case 'update:status':
+      switch (data.event) {
+        case 'UPLOAD_STATUS':
           syncTaskStatus(data.data);
       }
     } catch {

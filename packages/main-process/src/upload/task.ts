@@ -21,6 +21,8 @@ export class Task {
   private uploadedChunk: Set<number>;
   private totalChunk: number;
 
+  private progressRate: number;
+
   private finishRetry = 0;
   private readonly MAX_FINISH_RETRY = 3;
   private finishTimer: ReturnType<typeof setTimeout> | null = null;
@@ -29,7 +31,7 @@ export class Task {
   private events: TaskEvent = {};
 
   private scheduler = new TaskScheduler<UploadChunkResult>({
-    sameTimeTask: 1,
+    sameTimeTask: 10,
     loopInterval: 100,
     retries: 5,
   });
@@ -47,6 +49,8 @@ export class Task {
     const { getChunk, totalChunk } = fileChunk(options.filePath, Number(FILE_UPLOAD_CHUNK_SIZE));
     this.getChunkFn = getChunk;
     this.totalChunk = totalChunk;
+
+    this.progressRate = Number((this.uploadedChunk.size / totalChunk).toFixed(2));
 
     for (let i = 1; i <= totalChunk; i++) {
       if (!this.uploadedChunk.has(i)) this.addTask(i);
@@ -66,7 +70,9 @@ export class Task {
     this.scheduler.on('over', () => this.uploadFinish());
 
     this.scheduler.on('progressRate', () => {
-      const rate = this.uploadedChunk.size / this.totalChunk;
+      const rate = Number((this.uploadedChunk.size / this.totalChunk).toFixed(2));
+
+      this.progressRate = rate;
 
       this.events['progress']?.(
         { ...this.option, status: this._status, uploadedChunk: [...this.uploadedChunk] },
@@ -98,6 +104,7 @@ export class Task {
       this.clearFinishTimer();
     }
 
+    this.events['progress']?.(this.getOption(), this.progressRate);
     this.events['status']?.(this.id, value);
   }
 
@@ -189,6 +196,12 @@ export class Task {
   syncMessage(status: UploadStatus, progress: number) {
     this.status = status;
 
+    if (progress > 1) {
+      progress = progress / 100;
+    }
+
+    this.progressRate = progress;
+
     this.events['progress']?.(
       { ...this.option, status: this._status, uploadedChunk: [...this.uploadedChunk] },
       progress,
@@ -196,6 +209,11 @@ export class Task {
   }
 
   getOption() {
-    return { ...this.option, status: this._status, uploadedChunk: [...this.uploadedChunk] };
+    return {
+      ...this.option,
+      status: this._status,
+      uploadedChunk: [...this.uploadedChunk],
+      progressRate: this.progressRate,
+    };
   }
 }
