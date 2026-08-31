@@ -77,6 +77,14 @@ function addPublisher(e: MouseEvent) {
   newPublisherName.value = '';
 }
 
+watch(
+  () => form,
+  (v) => {
+    console.log(v);
+  },
+  { deep: true },
+);
+
 async function commit() {
   await formRef.value?.validateFields();
 
@@ -225,7 +233,10 @@ async function commit() {
             :wrapper-col="{ span: 18 }"
             :rules="[{ required: true, message: '视频类型' }]"
           >
-            <ASelect :options="types.map((item) => ({ label: item.title, value: item.id }))" />
+            <ASelect
+              v-model:value="form.type"
+              :options="types.map((item) => ({ label: item.title, value: item.id }))"
+            />
           </AFormItem>
         </a-col>
       </a-row>
