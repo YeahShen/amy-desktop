@@ -4,6 +4,7 @@ import { ON_EVENT } from './channels';
 import { User } from '@amy/shared';
 import { setAuthenticate } from '../stores/auth';
 import { addTask } from '../upload';
+import { getNotificationWindow } from '../windows/notification';
 
 ipcMain.on(ON_EVENT.OPEN_DEV_TOOLS, (_e) =>
   BrowserWindow.fromWebContents(_e.sender)?.webContents.openDevTools({ mode: 'detach' }),
@@ -105,4 +106,8 @@ ipcMain.on(ON_EVENT.OPEN_MAIN_WINDOW, () => {
     home.show();
     home.focus();
   }
+});
+
+ipcMain.on(ON_EVENT.NOTIFY_MESSAGE, (_e, type, message) => {
+  getNotificationWindow()?.webContents.send(SEND_EVENT.NOTIFY_MESSAGE, { type, message });
 });

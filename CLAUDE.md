@@ -34,27 +34,34 @@ amy-desktop/
 main-process/
 ├── src/
 │   ├── main.ts              # Electron 入口：单实例锁、Squirrel 事件、color-mode 初始化、
-│   │                        # 全屏检测轮询（隐藏/显示悬浮窗）、按登录态开窗口、更新检查；
+│   │                        # 创建全屏检测 worker（监听 message 隐藏/显示悬浮窗）、按登录态开窗口、更新检查；
 │   │                        # whenReady 时 await initDB()（sqlite 建表）；window-all-closed 时 closeSSEConnect() + app.quit()
 │   ├── preload/
-│   │   ├── preload.ts       # contextBridge 暴露 window.electronAPI（send/on/invoke/getSetting/setSetting/getPathForFile/closeDialog）
+│   │   ├── preload.ts       # contextBridge 暴露 window.electronAPI（send/on/invoke/getSetting/setSetting/
+│   │   │                    #   getPathForFile/parseFilePath（fs.statSync 大小 + path.parse）/closeDialog）
 │   │   └── tsconfig.json    # Preload 专用 TS 配置（CommonJS, DOM+ESNext）
 │   ├── ipc-event/
 │   │   ├── index.ts         # 汇总入口（import handle/send/on）
-│   │   ├── channels.ts      # 通道定义：ON_EVENT(14) / HANDLE_EVENT(10) / SEND_EVENT(3)（含大文件上传：add-upload-task / pause|start|delete|get-upload-tasks）
+│   │   ├── channels.ts      # 通道定义：ON_EVENT(15) / HANDLE_EVENT(10) / SEND_EVENT(4)
+│   │   │                    #   （含大文件上传：add-upload-task / pause|start|delete|get-upload-tasks /
+│   │   │                    #    add-upload-task-error 错误广播）
 │   │   ├── on.ts            # ipcMain.on：login、open-dev-tools、set-ignore-mouse-events、set-window-position、
 │   │   │                    #   窗口控制（close/hid/min/max/restore）、set-setting、set-user-info、
-│   │   │                    #   open/close-float-window（悬浮窗开关）、add-upload-task（提交上传任务 → addTask(options,'wait')）；
+│   │   │                    #   open/close-float-window（悬浮窗开关）、open-main-window（悬浮窗双击打开主窗口）、
+│   │   │                    #   add-upload-task（提交上传任务 → addTask(options, 'wait', true) 落库）；
 │   │   │                    #   set-setting 遇 colorMode 变更同步主窗口背景色
 │   │   ├── send.ts          # 空文件（主→渲染推送由各窗口直接 webContents.send，如 home.ts 的 WINDOW_SIZE_STATE）
 │   │   └── handle.ts        # ipcMain.handle：get-screen-rect、get-window-position、get-setting、
-│   │                        #   open-dialog（动态弹窗 + close_dialog:{id} 回调释放）、get-user-detail、get-app-version、
-│   │                        #   pause/start/delete/get-upload-tasks（上传任务控制；⚠ get-upload-tasks 暂为占位空实现）
+│   │                        #   open-dialog（动态弹窗 + close_dialog:{id} 回调释放 + window closed 兜底防 invoke 挂起）、
+│   │                        #   get-user-detail、get-app-version、pause/start/delete/get-upload-tasks
+│   │                        #   （上传任务控制：pause→pause()、delete→deleteTask()、start→startTask()、
+│   │                        #    get-upload-tasks→getTasks(type) 返回运行中『x』/finish 任务列表）
 │   ├── server/
 │   │   ├── index.ts         # 内置 Koa 服务器（打包态）：/api、/resource/* 代理到后端
 │   │   │                    # （自动附加 Bearer token + X_PLATFORM: client），brotli 静态托管，/local 读图
-│   │   ├── sse.ts           # SSE 连接器（axios-eventsource）：连后端 'events' 流，onmessage 按 type 分发，
-│   │   │                    #   update:status → syncTaskStatus 同步转码/合并阶段进度；1s→30s 指数退避重连；
+│   │   ├── sse.ts           # SSE 连接器（axios-eventsource）：连后端 'events' 流，onmessage 按 data.event 分发，
+│   │   │                    #   event: UPLOAD_STATUS → syncTaskStatus 同步转码/合并阶段进度；timeout=0 关闭 60s
+│   │   │                    #   绝对超时（防 SSE 长连接被 60s 强制 abort）；1s→30s 指数退避重连；
 │   │   │                    #   主窗口 ready-to-show 时 createSSEConnector()，窗口关闭/全关时 closeSSEConnect()
 │   │   └── send/
 │   │       ├── index.ts     # koa-send 实现（brotli 压缩 + cheerio HTML color-mode 注入）
@@ -62,18 +69,20 @@ main-process/
 │   │       └── type.ts      # SendOptions 类型定义
 │   ├── upload/
 │   │   ├── index.ts         # 上传任务管理器：内存 Map<id,Task> + finishTasks 列表 + broadcastWindows 广播目标集；
+│   │   │                    #   addTask(options, status, newTask) — 文件存在性校验（不存在广播 ADD_UPLOAD_TASK_ERROR
+│   │   │                    #   『文件不存在』）、newTask 控制 insertTask 落库（重启重放不再重复插入）；
 │   │   │                    #   全局并发控制（uploadHugeFile.sameTimeUploadCount，超限转 wait 排队，finish 后补启动），
 │   │   │                    #   Task 事件接线：error→广播 REPORT_UPLOAD_ERROR、progress→广播 AYNC_UPLOAD_ITEM、
 │   │   │                    #   record→updateTask 落库、status=finish→记 finishTime + 移入 finishTasks 并启动下一个 wait 任务；
-│   │   │                    #   导出 addBroadcastWindows/removeBroadcastWindows（home/float 注册）、addTask/pause/
-│   │   │                    #   deleteTask/startTask/syncTaskStatus（SSE 同步）、initRecordUploadTask（重启重放存量任务：
-│   │   │                    #   finish→finishTasks，其余 pause）
-│   │   ├── task.ts          # Task 类：@amy/shared TaskScheduler（并发 1 / 100ms / 5 重试）串行分块上传；fileChunk
-│   │   │                    #   (filePath, FILE_UPLOAD_CHUNK_SIZE) 分块 + uploadedChunk Set 断点续传（跳过已传分块）；
-│   │   │                    #   流程 POST /api/upload/chunk → GET /api/upload/check-chunk（补传丢失分块）→
-│   │   │                    #   GET /api/upload/next-step（触发后端异步合并+转码）；next-step 失败按 1s/2s/3s 退避重试
-│   │   │                    #   3 次后报 error；事件 progress/record/error/status；syncMessage(status, rate) 由 SSE
-│   │   │                    #   驱动最终阶段进度；生命周期 start()/pause()/destroy()
+│   │   │                    #   导出 addBroadcastWindows/removeBroadcastWindows/emptyFinishTasks、addTask/pause/
+│   │   │                    #   deleteTask/startTask/getTasks/syncTaskStatus（SSE 同步）、initRecordUploadTask
+│   │   │                    #   （重启重放存量任务：finish→finishTasks，其余 pause）
+│   │   ├── task.ts          # Task 类：@amy/shared TaskScheduler（并发 10 / 100ms / 5 重试）串行分块上传；
+│   │   │                    #   progressRate 字段（两位小数）统一进度，onProgress 在 status 变更时也触发；
+│   │   │                    #   fileChunk(filePath, FILE_UPLOAD_CHUNK_SIZE) 分块 + uploadedChunk Set 断点续传；
+│   │   │                    #   流程 POST /api/upload/chunk → GET /api/upload/check-chunk → GET /api/upload/next-step；
+│   │   │                    #   next-step 失败按 1s/2s/3s 退避重试 3 次后报 error；syncMessage(status, rate) 由 SSE
+│   │   │                    #   驱动最终阶段进度（>1 按 /100 归一化）；生命周期 start()/pause()/destroy()
 │   │   └── record.ts        # upload_task 表访问层：getUploadTask（deleted=0）/ insertTask（INSERT OR REPLACE 幂等 upsert，
 │   │                        #   重启 initRecordUploadTask 重放用）/ updateTask（只更新传入字段，uploadedChunk 序列化逗号串）/
 │   │                        #   deleteTask（软删 deleted=1）；serializeUploadedChunk 统一落库格式（number[] ↔ 逗号串）
@@ -87,15 +96,20 @@ main-process/
 │   │   │                    #   登录后首个窗口：ready-to-show 时 addBroadcastWindows + initRecordUploadTask() 重放上传任务
 │   │   │                    #   + createSSEConnector()；close 时 removeBroadcastWindows + closeSSEConnect + app.quit）
 │   │   ├── float.ts         # 悬浮窗（透明 + 置顶 + skipTaskbar + 位置持久化；单例守卫防重复创建，closed 时清引用；
-│   │   │                    #   创建时 addBroadcastWindows 注册为上传进度广播接收窗口）
-│   │   └── dialog.ts        # createDialogWindow — 弹窗窗口（居中于父窗口、modal 阻塞，支持 onTop 置顶；
-│   │                        #   open-dialog invoke 返回 Promise，close_dialog:{id} 关闭并释放监听）
+│   │   │                    #   hide/show 状态跟踪（isfloatWinHidden 供全屏检测 use）；创建时 addBroadcastWindows
+│   │   │                    #   注册为上传进度广播接收窗口）
+│   │   ├── dialog.ts        # createDialogWindow — 弹窗窗口（居中于父窗口、modal 阻塞，支持 onTop 置顶；
+│   │   │                    #   async 创建前按主题 isDark 设 backgroundColor '#17181a'/'#fff' 防闪烁；
+│   │   │                    #   open-dialog invoke 返回 Promise，close_dialog:{id} 关闭并释放监听）
+│   │   └── notification.ts  # createNotificationWindow — 通知窗口（475×320 右下角、透明 + alwaysOnTop + skipTaskbar，
+│   │                        #   loadURL buildWindowUrl('notification')；⚠ 渲染进程暂未建 notification 页面）
 │   ├── utils/
 │   │   ├── constants.ts     # HTML_URL、HOME_WINDOW_BASE_SIZE、RESOURCE_PATH、DEFAULT_FONT_TYPE
 │   │   ├── window.ts        # createFrameWindow / buildWindowUrl（frame: false, contextIsolation: true）
 │   │   ├── tray.ts          # 系统托盘（Win 左键切换主窗口显隐；仅登录成功后创建）
 │   │   ├── color-mode.ts    # initColorMode / getColorModel / isDark（把 store 偏好解析为最终主题写入 cookie --amy-color-mode）
-│   │   ├── full-screen.ts   # koffi 原生调用全屏检测（Windows：SHQueryUserNotificationState + 前台窗口矩形）
+│   │   ├── full-screen.ts   # fullScreen() — worker_threads 全屏检测：spawn resource/full-screen.win32.js
+│   │   │                    #   （workerData 传 koffi 路径），返回 Worker；检测逻辑移出主进程，消除主进程卡顿
 │   │   ├── font-installer.ts# installFont — 系统字体安装（仅 .ttf；Windows 用户字体目录+注册表+AddFontResourceW；Linux XDG+fc-cache；幂等跳过）
 │   │   ├── squirrel.ts      # Squirrel 安装事件处理（安装/更新时装默认字体 + 创建快捷方式，处理完无条件退出）
 │   │   ├── check-ipv6.ts    # IPv6 探测（ipv6.icanhazip.com，3s 超时）
@@ -110,7 +124,8 @@ main-process/
 │       └── updater.ts       # 自动更新逻辑（vendored update-electron-app 实现）
 ├── resource/                # 原生/静态 vendored 资源（extraResource 分发 + .gitignore 豁免二进制）：koffi、@koromix（koffi
 │                            #   依赖）、sqlite3（npm 包完整目录：lib/package.json + build/Release/node_sqlite3.node 预编译
-│                            #   二进制 + node_modules/bindings），dev 模式 sqlite3 从 resource/sqlite3/lib/sqlite3.js require
+│                            #   二进制 + node_modules/bindings）、full-screen.win32.js（全屏检测 worker 脚本，dev 用源码、
+│                            #   打包态 extraResource，workerData 传 koffi 路径）；dev 模式 sqlite3 从 resource/sqlite3/lib/sqlite3.js require
 ├── types/
 │   ├── define.d.ts          # 自动生成：AMY_ 环境变量全局常量类型（vite.main.config.ts 生成）
 │   ├── forge.env.d.ts       # Electron Forge 环境类型
@@ -120,7 +135,7 @@ main-process/
 ├── vite.main.config.ts      # Vite 构建配置（AMY_ env → define + define.d.ts 生成 + auto-import）
 ├── vite.preload.config.ts   # Vite preload 构建配置
 ├── vitest.config.ts         # Vitest 测试配置（globals, src/**/*.test.ts）
-├── forge.config.ts          # Electron Forge 配置（Squirrel/ZIP/Deb/Rpm、Fuses、extraResource 含 koffi/sqlite3/fonts、@amy/publisher）
+├── forge.config.ts          # Electron Forge 配置（Squirrel/ZIP/Deb/Rpm、Fuses、extraResource 含 koffi/sqlite3/fonts/full-screen.win32.js、@amy/publisher）
 ├── .eslintrc-auto-import.json # 自动生成：ESLint auto-import globals 声明
 └── tsconfig.json            # 扩展 @tsconfig/node22
 ```
@@ -138,19 +153,34 @@ renderer-process/
 │   │   ├── home.vue         # 主页（空壳，workspace: 'home'）
 │   │   ├── film.vue         # 影视页（空壳）
 │   │   ├── photograph.vue   # 摄影页（空壳）
-│   │   ├── artist.vue       # 艺术家页（工具栏雏形：ARTIST 标题 + plus/reload 操作按钮，workspace: 'artist'）
+│   │   ├── artist.vue       # 艺术家页（按分类分组的番剧列表 + 骨架加载；工具栏 ARTIST 标题 + plus（打开 createArtist
+│   │   │                    #   弹窗）/reload 操作按钮，workspace: 'artist'，数据走 /artist/list + /artist/category/list）
+│   │   ├── createArtist.vue # 创建艺术家弹窗（dialog 布局：名称/类别 auto-complete/描述/头像 UploadOneImage；
+│   │   │                    #   FormData POST /artist/add，DialogFooter 传 hid-error-message）
+│   │   ├── createVideoUpload.vue # 添加视频弹窗（dialog 布局：filePath readonly/标题/描述/标签(可新增)/艺术家(多选)/
+│   │   │                    #   出版社(可新增)/视频类型/海报；FormData POST /video/createUploadTask 拿 id 后
+│   │   │                    #   add-upload-task IPC 排队上传；用 parseFilePath 读本地文件 name/ext/size）
+│   │   ├── imageCropper.vue # 图片裁剪弹窗（dialog 布局：cropperjs v2，等比 constrain/自由裁剪 + 缩放/旋转/重置，
+│   │   │                    #   支持 shape=circle 圆形成像；query：src/name/shape/size/aspectRatio；
+│   │   │                    #   confirm 返回 { dataUrl, blob, name, width, height }）
 │   │   ├── settings.vue     # 设置页（dialog 布局，三分区菜单：账户设置/通用设置/关于 AMY Station）
 │   │   └── float.vue        # 悬浮窗页（empty 布局 + 透明背景，折叠圆形按钮/展开菜单 + 拖动 + 鼠标穿透；
-│   │                        #   Logo 配色用 useColorMode，菜单用 i-lucide-* 图标）
+│   │                        #   拖拽文件显示上传菜单（上传视频/上传至合集/上传至相册），上传视频带 filePath 打开
+│   │                        #   createVideoUpload 弹窗，双击打开主窗口 open-main-window IPC；Logo 配色用 useColorMode，
+│   │                        #   菜单用 amy:* 图标）
 │   ├── layouts/
-│   │   ├── default.vue      # 默认布局（Sidebar + Navbar + MainContent）
+│   │   ├── default.vue      # 默认布局（Sidebar + Navbar + MainContent + Drawer 传输面板）
 │   │   ├── empty.vue        # 空白布局（用于登录/悬浮窗）
 │   │   └── dialog.vue       # 弹窗布局（DialogHeader 头部 + NuxtPage + #dialog-footer-wrapper 底部操作区挂载点）
 │   ├── components/
-│   │   ├── amy/             # 通用组件：Logo、Scrollbar、SwitchColorMode、FadeTransition（渐变过渡）
+│   │   ├── amy/             # 通用组件：Logo、Scrollbar、SwitchColorMode、FadeTransition、ListWrap（泛型自适应网格）、
+│   │   │                    #   UploadOneImage（本地选图，processImageFn 回调本地路径）
 │   │   │   └── window/      # 窗口控制按钮（Close / MinSize / MaxSize-最大化还原）
-│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent、Search、TitleWrap、ListWrap）
-│   │   ├── dialog/          # 弹窗布局组件（Header-从 meta 读标题/关闭、Footer-底部操作区 Teleport 到 #dialog-footer-wrapper）
+│   │   ├── layout/          # 布局组件（Navbar、Sidebar、MainContent、Search、TitleWrap、Drawer-传输抽屉面板）
+│   │   ├── dialog/          # 弹窗布局组件（Header-从 meta 读标题/关闭、Footer-底部操作区 Teleport 到
+│   │   │                    #   #dialog-footer-wrapper，confirm 失败 message.error，hid-error-message 可关提示）
+│   │   ├── transmission/    # 传输面板组件（List-segmented 上传列表/上传成功 + Item-文件图标/进度条/已传大小/暂停继续/
+│   │   │                    #   打开目录，start/pause 走 start-upload-task/pause-upload-task IPC）
 │   │   ├── setting/         # 设置页分区（UserProfile、Common、About）
 │   │   └── login/           # 登录页组件（Header、Usernamepassword）
 │   ├── composables/
@@ -158,13 +188,15 @@ renderer-process/
 │   │   ├── useMessage.ts    # 全局消息提示（自研 antd 风格 API；⚠ 已弃用，实际改用 antdv 原生 message.useMessage()，见 app.vue ContextHolder）
 │   │   ├── useSettings.ts   # 应用设置读写（基于 electronAPI getSetting/setSetting + watch 回写）
 │   │   ├── useColorMode.ts  # 颜色模式读写（cookie --amy-color-mode + 切换时应用 <html> class + setSetting 持久化）
-│   │   └── useDialog.ts     # openDialog / useDialog — 弹窗窗口控制（基于 open-dialog IPC + closeDialog 回调）
+│   │   └── useDialog.ts     # openDialog / useDialog — 弹窗窗口控制（openDialog(name,bounding,onTop,args) 基于 open-dialog
+│   │                        #   IPC + dialogId 路由 query + closeDialog 回调）
 │   ├── plugins/
 │   │   ├── request.ts       # $request 插件（$fetch 实例，mock 模式走 /mock/api，否则 /api）
 │   │   └── color-mode.server.ts # 页面级强制主题：把 definePageMeta({ colorMode }) 注入 html 的 data-color-mode-forced 属性
 │   ├── stores/
-│   │   ├── app.ts           # Pinia appStore（searchActive + showNavbarLeftContent 派生）
-│   │   └── user.ts          # Pinia userStore（token/info + updateUserInfo，经 get-user-detail / set-user-info IPC 同步）
+│   │   ├── app.ts           # Pinia appStore（searchActive + showNavbarLeftContent 派生 + drawer 传输抽屉状态 {open,title,component}）
+│   │   ├── user.ts          # Pinia userStore（token/info + updateUserInfo，经 get-user-detail / set-user-info IPC 同步）
+│   │   └── transmission.ts  # 传输 store（监听 get-upload-tasks('x') + sync-upload-item 事件，维护 uploadTasks map → uploadList）
 │   └── assets/
 │       ├── css/
 │       │   ├── main.css     # 全局 body/html 样式（高度 100%、overflow: hidden、user-select: none；body 用系统 PingFangSC）
@@ -175,20 +207,23 @@ renderer-process/
 │       │   ├── antd.css     # AntDV zero-runtime 静态主题（light，html.light/light .css-var 选择器下 --ant-* token 变量）
 │       │   ├── antd.dark.css# AntDV zero-runtime 静态主题（dark，html.dark 下 --ant-* token 变量）
 │       │   └── reset.css    # 浏览器样式重置（box-sizing、html/body 100%、清除 input 清除键等；⚠ 尚未接入 nuxt css 数组）
-│       ├── icons/           # amy 自定义图标集合（Nuxt Icon custom 前缀，24 个 svg）
+│       ├── icons/           # amy 自定义图标集合（Nuxt Icon custom 前缀，35 个 svg）
 │       └── fonts/           # Orbitron.woff2（仅保留标题字体）
 ├── shared/
-│   ├── electron-types.d.ts  # Window.electronAPI 全局类型声明（IPC、设置、文件操作）
+│   ├── electron-types.d.ts  # Window.electronAPI 全局类型声明（IPC、设置、文件操作：getPathForFile/parseFilePath）
 │   └── page.d.ts            # 页面元数据扩展（workspace、colorMode、sidebarMode、immersiveSidebar、dialog、requiresAuth）
 ├── server/                  # Nuxt Nitro 服务端
 │   ├── middleware/
 │   │   ├── api-proxy.ts     # /api/* 请求代理到后端（读 .nuxt/_auth_token 附加 Bearer + X_PLATFORM）
 │   │   └── static-resource-proxy.ts # /resource/* 静态资源代理
 │   ├── routes/
-│   │   ├── set-token.ts     # Token 写入路由（?token=xxx 写入 .nuxt/_auth_token，dev/mock 模式用）
+│   │   ├── set-token.get.ts # Token 写入路由（GET ?token=xxx 写入 .nuxt/_auth_token，dev/mock 模式用）
+│   │   ├── local-file.ts    # 读本地文件路由（GET ?filePath 直接返回文件字节，供渲染层展示本地图片/文件）
 │   │   └── mock/            # Mock 接口（AMY_MODE=mock 时使用）
 │   │       ├── api/auth/login-by-username-password.post.ts # 模拟登录接口
 │   │       ├── api/user/update-info.ts                     # 用户资料更新（空实现占位）
+│   │       ├── api/artist/                                 # 艺术家增查 mock（add.post / list.get / category）
+│   │       ├── api/video/get-tags.ts / get-types.ts        # 视频标签/类型 mock（空数组占位）
 │   │       └── resource/user-avatar.ts                     # 模拟用户头像资源
 │   └── plugins/
 │       └── html-transform.ts # Nitro HTML 钩子，开发模式读 cookie 注入 color-mode class/style（防 FOUC）
@@ -216,9 +251,9 @@ shared/src/
 │   └── common-dialog.ts     # 弹窗窗口类型定义（Bounding 等，经 barrel 导出）
 ├── types/
 │   ├── index.ts             # 类型统一导出（mda + upload），经 @amy/shared/types 子路径引入
-│   ├── mda.ts               # Artist / ArtistCategory（艺术家页 mock 数据用）
-│   └── upload.ts            # 上传任务类型：UploadStatus（pause/uploading/wait/finish/conversion/transcoding/merge）、
-│                            #   UploadTaskOptions（含 uploadedChunk + 转码/进度可选字段）、ListenerType（status/progress）
+│   ├── mda.ts               # Artist / ArtistCategory（艺术家页 mock 数据用）+ VideoTag / VideoType / VideoPublisher（视频表单用）
+│   └── upload.ts            # 上传任务类型：UploadStatus（pause/uploading/wait/finish/conversion/transcoding/merge/delete/error）、
+│                            #   UploadTaskOptions（含 progressRate 两位小数进度、uploadedChunk、finishTime 等）、ListenerType（status/progress）
 ├── __test__/                # Vitest 单元测试
 │   ├── auth-axios.test.ts
 │   ├── file.test.ts
@@ -246,7 +281,7 @@ zpublisher/src/
 | Package | Key Dependencies |
 |---------|-----------------|
 | `packages/main-process` | Electron 43.1.1, Electron Forge 7.11, Vite 5.4, TypeScript 5.7, Node 22, Koa 3.2 (内置服务器), electron-store 11, electron-log, koffi (原生 FFI), sqlite3 (本地数据库), axios-eventsource (SSE), form-data, cheerio, dotenv, unplugin-auto-import |
-| `packages/renderer-process` | Nuxt 4.3, Vue 3, TypeScript 6, antdv-next 1.5 + @antdv-next/{nuxt,tailwind,icons}, Tailwind CSS 4.3, Pinia, VueUse 14, sass-embedded |
+| `packages/renderer-process` | Nuxt 4.3, Vue 3, TypeScript 6, antdv-next 1.5 + @antdv-next/{nuxt,tailwind,icons}, Tailwind CSS 4.3, Pinia, VueUse 14, cropperjs 2（图片裁剪）, sass-embedded |
 | `packages/shared` | TypeScript 5.6, Vitest 2, axios 1.18, archiver 8, uuid 14, lodash-es |
 | `packages/zpublisher` | @electron-forge/publisher-base 7.11, axios, form-data, Vitest 2 |
 | Root | ESLint 10 (flat config), Prettier 3.9.5, TypeScript-ESLint 8 |
@@ -312,14 +347,15 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - `@electron-forge/plugin-vite` with separate Vite configs for main and preload
 - `@electron/fuses` 安全加固：RunAsNode 禁用、cookie 加密、Node options/cli inspect 禁用、Asar 完整性校验、OnlyLoadAppFromAsar
 - 自定义发布器（`@amy/publisher`）分块上传产物到 `https://release.ashen-station.top`（credentials in `AMY_PUBLISH_USERNAME` / `AMY_PUBLISH_PASSWORD`）
-- 多窗口架构：登录窗口（login）、主窗口（home）、浮动窗口（float）、弹窗窗口（dialog，经 `openDialog` IPC 动态创建）
+- 多窗口架构：登录窗口（login）、主窗口（home）、浮动窗口（float）、弹窗窗口（dialog，经 `openDialog` IPC 动态创建）、通知窗口（notification，createNotificationWindow 右下角提示）
 - 内置 Koa 服务器（`server/index.ts`）在**打包态**启动：代理 `/api`、`/resource` 到 `AMY_BASE_URL`（自动附加 Bearer token + `X_PLATFORM: client`），brotli 托管 Nuxt 静态产物，`/local?path=` 读任意图片；`send/index.ts` serve HTML 时 cheerio 注入主题 class（生产 FOUC 防护，见 Renderer 颜色模式）
-- **Preload 已实现**：`window.electronAPI` 暴露 `send(channel, ...args)` / `on(channel, fn)` / `invoke(channel, ...args)` / `getSetting` / `setSetting` / `getPathForFile`（webUtils）/ `closeDialog`（发 `close_dialog:{id}` 通道）（对应类型声明见 renderer `shared/electron-types.d.ts`）
-- IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT`(14) = login、open-dev-tools、set-ignore-mouse-events、set-window-position、close/hid/min/max/restore-window、set-setting、set-user-info、open-float-window、close-float-window、add-upload-task（renderer 提交上传任务 → addTask(options, 'wait')）；`HANDLE_EVENT`(10) = get-screen-rect、get-window-position、get-setting、open-dialog、get-user-detail、get-app-version、pause/start/delete/get-upload-tasks（上传任务控制：pause→pause()、delete→deleteTask()、start→startTask()，get-upload-tasks 暂为占位空实现）；`SEND_EVENT`(3) = window-size-state（最大化状态）、sync-upload-item（上传进度，Task progress 事件广播）、report-upload-error（上传错误广播）——主→渲染推送，经 upload/index.ts 的 broadcastWindows 转发到 home/float；另含动态通道 `close_dialog:{id}` 回传弹窗结果
+- **Preload 已实现**：`window.electronAPI` 暴露 `send(channel, ...args)` / `on(channel, fn)` / `invoke(channel, ...args)` / `getSetting` / `setSetting` / `getPathForFile`（webUtils）/ `parseFilePath(filePath)`（fs.statSync 大小 + path.parse，供视频表单读本地文件信息）/ `closeDialog`（发 `close_dialog:{id}` 通道）（对应类型声明见 renderer `shared/electron-types.d.ts`）
+- IPC 通道（`ipc-event/channels.ts`）：`ON_EVENT`(15) = login、open-dev-tools、set-ignore-mouse-events、set-window-position、open-main-window（悬浮窗双击唤起主窗口）、close/hid/min/max/restore-window、set-setting、set-user-info、open-float-window、close-float-window、add-upload-task（renderer 提交上传任务 → addTask(options, 'wait', true) 并落库）；`HANDLE_EVENT`(10) = get-screen-rect、get-window-position、get-setting、open-dialog、get-user-detail、get-app-version、pause/start/delete/get-upload-tasks（上传任务控制：pause→pause()、delete→deleteTask()、start→startTask() 并按并发上限排队、get-upload-tasks→getTasks(type) 返回运行中『x』/finish 任务列表）；`SEND_EVENT`(4) = window-size-state（最大化状态）、sync-upload-item（上传进度，Task progress 事件广播）、report-upload-error（上传错误广播）、add-upload-task-error（addTask 文件不存在等错误广播）——主→渲染推送，经 upload/index.ts 的 broadcastWindows 转发到 home/float；另含动态通道 `close_dialog:{id}` 回传弹窗结果
 - **本地数据库（sqlite3）**：原生 CJS 模块 vendor 于 `resource/sqlite3/`（`build/Release/node_sqlite3.node` 预编译二进制 + `node_modules/bindings` 依赖，`.gitignore` 豁免随包分发；npmmirror 二进制镜像获取），vite `external: ['sqlite3']`；`sqlite-db.ts` `initDB()` 按 dev/打包态不同路径 `require` 加载，DB 文件 `userData/data.db`，建 `upload_task` 表（`INSERT OR REPLACE` 幂等 upsert + `deleted` 软删标记）
-- **上传任务框架（`src/upload/`）**：`Task` 类基于 `@amy/shared` `TaskScheduler` + `fileChunk` 实现分块上传与断点续传（`uploadedChunk` Set 跳过已传分块），记录持久化 `upload_task` 表；主窗口 `ready-to-show` 时 `initRecordUploadTask()` 重放存量任务（finish→finishTasks、其余 pause）；并发上限 `uploadHugeFile.sameTimeUploadCount`（默认 5），超限任务 `wait` 排队、finish 后补启动；`addTask` 为任务创建入口，renderer 经 `add-upload-task` IPC（on.ts `send`）提交，`pause-upload-task`/`delete-upload-task`/`start-upload-task` 经 handle.ts `invoke` 控制（→ pause/deleteTask/startTask），`get-upload-tasks` 为占位待实现
-- **SSE 转码进度同步（`server/sse.ts`）**：`axios-eventsource` 连后端 `events` 流，`update:status` 消息 → `syncTaskStatus({id,status,rate})` → `Task.syncMessage` 驱动 conversion/transcoding/merge 阶段进度；指数退避 1s→30s 自动重连；主窗口创建时建立，主窗口关闭 / `window-all-closed` 时 `closeSSEConnect()`
-- **上传进度/错误广播**：home/float 窗口创建后 `addBroadcastWindows` 注册，`Task` progress 事件 → `SEND_EVENT.AYNC_UPLOAD_ITEM`（uploadedChunk + rate）、error 事件 → `SEND_EVENT.REPORT_UPLOAD_ERROR`
+- **上传任务框架（`src/upload/`）**：`Task` 类基于 `@amy/shared` `TaskScheduler`（分块并发 10）+ `fileChunk` 实现分块上传与断点续传（`uploadedChunk` Set 跳过已传分块），进度统一由 `progressRate`（两位小数）承担（上传期 = 已传分块/总分块，SSE 阶段 = syncMessage 归一化百分比）；记录持久化 `upload_task` 表；主窗口 `ready-to-show` 时 `initRecordUploadTask()` 重放存量任务（finish→finishTasks、其余 pause）；`addTask(options, status, newTask)` 为任务创建入口（renderer 经 `add-upload-task` IPC 提交，传 newTask=true 落库；文件不存在则广播 `add-upload-task-error` 不上传）；全局并发上限 `uploadHugeFile.sameTimeUploadCount`（默认 5）控制同时运行任务数，超限任务 `wait` 排队、finish 后补启动；`pause-upload-task`/`delete-upload-task`/`start-upload-task`/`get-upload-tasks` 经 handle.ts `invoke` 控制（→ pause/deleteTask/startTask/getTasks）
+- **SSE 转码进度同步（`server/sse.ts`）**：`axios-eventsource` 连后端 `events` 流，按 `data.event` 分发，`event: UPLOAD_STATUS` → `syncTaskStatus({id,status,rate})` → `Task.syncMessage` 驱动 conversion/transcoding/merge 阶段进度；**`timeout: 0` 关闭 authAxios 的 60s 绝对超时**（SSE 无限流，默认超时会导致每 60s 强制 abort 连接丢转码事件）；指数退避 1s→30s 自动重连；主窗口创建时建立，主窗口关闭 / `window-all-closed` 时 `closeSSEConnect()`
+- **上传进度/错误广播**：home/float 窗口创建后 `addBroadcastWindows` 注册，`Task` progress 事件 → `SEND_EVENT.AYNC_UPLOAD_ITEM`（option + progressRate）、error 事件 → `SEND_EVENT.REPORT_UPLOAD_ERROR`；addTask 文件校验失败 → `SEND_EVENT.ADD_UPLOAD_TASK_ERROR`
+- **全屏检测（worker_threads）**：主进程 `fullScreen()` 起 worker `resource/full-screen.win32.js`（workerData 传 koffi 路径），worker 内 koffi 调用 `SHQueryUserNotificationState` + 前台窗口矩形比对（仅 Windows 生效）每 1s `postMessage({fullScreen})`；main.ts 监听 message，用 float.ts `isfloatWinHidden()` 状态按当前显隐 hide/show 悬浮窗（避免重复 hide/show）
 - **登录流程**：渲染进程 jsencrypt RSA 加密密码 → `POST /auth/login-by-username-password` → `electronAPI.send('login', token, user)` → 主进程 `setAuthenticate` + 创建主窗口 + 关闭登录窗 +（若 `appRunSettings.showFloatWindow`）创建悬浮窗；主窗口 `userStore` 经 `get-user-detail` 拉取 token/用户信息，`set-user-info` 回写
 - **字体安装体系**：字体资源（PingFangSC ttf）在 `shared/src/assets/fonts/`，打包为 extraResource（`resources/fonts`）；Squirrel 安装/更新事件调用 `installFont(DEFAULT_FONT_TYPE)` 注册到系统（Windows 用户字体目录 + HKCU 注册表 + AddFontResourceW；Linux XDG + fc-cache）；渲染进程通过系统字体名 `PingFangSC` 直接使用，仅 Orbitron 内嵌 woff2
 - **Squirrel 事件**：install/updated/uninstall 处理完**无条件 `app.quit()`**（防止安装器动画期间打开应用窗口）；字体安装失败仅告警不阻断流程
@@ -327,7 +363,6 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - `unplugin-auto-import` 自动导入 `src/utils`、`src/windows`、`src/stores`、`src/ipc-event` 中的导出，类型生成至 `types/main-process-autoimport.d.ts`
 - `vite.main.config.ts` 将 `AMY_` 前缀环境变量转为 `define` 全局常量，并生成 `types/define.d.ts` 类型声明
 - 系统托盘：登录成功后创建，Win 左键单击切换主窗口显隐，菜单含"显示主窗口/退出"
-- 全屏检测：koffi 调用 `SHQueryUserNotificationState` + 前台窗口矩形比对（仅 Windows 生效），每 1s 轮询以隐藏/显示悬浮窗
 - 更新：StaticStorage 更新源（`AMY_UPGRADE_URL`，IPv6 可达时用 `AMY_UPGRADE_IPV6_URL`），baseUrl 拼 `${platform}/${arch}`
 
 ### Renderer (Nuxt)
@@ -340,17 +375,19 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
   - **开发 FOUC 防护**：Nitro `server/plugins/html-transform.ts` 读 cookie 注入 class
   - **页面级强制主题**：`plugins/color-mode.server.ts` 把 `definePageMeta({ colorMode })` 注入为 html 的 `data-color-mode-forced` 属性（如 login.vue 强制浅色）
   - **客户端**：`composables/useColorMode.ts` 读写 cookie（`useCookie`）、`toggleMode()` 同步 `<html>` class + color-scheme 并 `setSetting('colorMode')` 持久化；`SwitchColorMode.vue`（View Transitions 圆形扩散）与 `float.vue`（Logo 配色）使用；`set-setting:colorMode` 变更时主进程同步主窗口背景色（on.ts）
-- **Pinia** — 状态管理：`stores/app.ts`（searchActive + showNavbarLeftContent 派生）、`stores/user.ts`（token/info/updateUserInfo，IPC 同步）
+- **Pinia** — 状态管理：`stores/app.ts`（searchActive + showNavbarLeftContent 派生 + drawer 传输抽屉状态）、`stores/user.ts`（token/info/updateUserInfo，IPC 同步）、`stores/transmission.ts`（上传任务列表：监听 get-upload-tasks + sync-upload-item）
 - **VueUse** — 组合式工具集（useElementSize、useLocalStorage、onClickOutside 等）
-- **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（24 个 svg：home-2-bold、videocamera-add-bold、photo、cup-star-bold-duotone、cloud-check-broken、settings-line-duotone、settings-bold-duotone、shield-user-bold、bag-heart-bold-duotone、user-outlined、lock-outlined、eye/eye-off、minus、window-close、full-screen、restore、moon/sun、search、logo-base、add-square-bold、plus-outlined、reload-outlined）；lucide 前缀用于通用图标
+- **Nuxt Icon 自定义集合** — `amy` 前缀，路径 `src/assets/icons/`（35 个 svg：add-square-bold、add、arrow-down-outlined、bag-heart-bold-duotone、chat-round-video-line-duotone、cloud-check-broken、cup-star-bold-duotone、eye/eye-off、folder-open-bold-duotone、folder-open-outline、full-screen、home-2-bold、loading-twotone-loop、lock-outlined、logo-base、minus、moon/sun、pause-outlined、photo、plus-outlined、reload-outlined、restore、search、settings-line-duotone、settings-bold-duotone、shield-user-bold、trash-bin-minimalistic-line-duotone、trash-bin-trash-bold、user-outlined、video-file、video-library-broken、videocamera-add-bold、window-close）；lucide 前缀用于通用图标
 - 请求封装：`plugins/request.ts` 提供 `$request`（$fetch 实例），按 `AMY_MODE` 决定 baseURL（`mock` → `/mock/api`，否则 `/api`）；400 响应抛出 `createError`；`composables/useRequest.ts` 提供 `$request`/`useRequest` 封装
 - **Mock 模式**（`pnpm dev:mock`，`.env.mock`）：请求走 Nitro `server/routes/mock/` 模拟接口，无需启动后端
 - 应用设置：`composables/useSettings(key)` 通过 `window.electronAPI.getSetting/setSetting` 读写主进程 electron-store（'amy-setting'），watch 变化自动回写；键类型由 `@amy/shared` 的 `AppSettings` + `Flatten` 推导（login/proxy/colorMode/hideHomeWindowOrExit/appRunSettings.showFloatWindow/uploadHugeFile.sameTimeUploadCount）
-- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent、Search、TitleWrap、ListWrap），默认布局由四者组合；侧边栏菜单（home/film/photograph/artist）以页面 `workspace` meta 驱动高亮，`sidebarMode` 支持毛玻璃（frosted → apple-glass）/沉浸式/默认；侧边栏**独立主题色** `--ui-bg-sidebar`（Tailwind `bg-sidebar`）；`h-main-content` utility（`calc(100vh - var(--navbar-height))`）作为主内容高度约定；Navbar 含用户头像 + 最小化/最大化还原/关闭 三窗口按钮（MaxSize 监听 `window-size-state` 推送切换图标）；Search 搜索框点击展开居中，经 `appStore.searchActive` 联动导航栏左侧标题显隐（TitleWrap 经 `showNavbarLeftContent` + FadeTransition 控制显隐）
-- 列表组件：`ListWrap.vue`（泛型 T）自适应网格 —— 按容器宽 + itemMinWidth/sideWidth/gapX 计算每行列数，loading 时渲染骨架占位（slot `item` 接收 `{ item, loading }`）
+- 布局组件：`components/layout/`（Navbar、Sidebar、MainContent、Search、TitleWrap、Drawer），默认布局由五者组合；侧边栏菜单（home/film/photograph/artist）以页面 `workspace` meta 驱动高亮，`sidebarMode` 支持毛玻璃（frosted → apple-glass）/沉浸式/默认；侧边栏**独立主题色** `--ui-bg-sidebar`（Tailwind `bg-sidebar`）；`h-main-content` utility（`calc(100vh - var(--navbar-height))`）作为主内容高度约定；Navbar 含用户头像 + 最小化/最大化还原/关闭 三窗口按钮（MaxSize 监听 `window-size-state` 推送切换图标）；Search 搜索框点击展开居中，经 `appStore.searchActive` 联动导航栏左侧标题显隐（TitleWrap 经 `showNavbarLeftContent` + FadeTransition 控制显隐）
+- 列表组件：`ListWrap.vue`（泛型 T，已迁入 `components/amy/`）自适应网格 —— 按容器宽 + itemMinWidth/sideWidth/gapX 计算每行列数，loading 时渲染骨架占位（slot `item` 接收 `{ item, loading }`）
 - 布局标题：`TitleWrap.vue`（slot 内容包一层 fade 显隐，跟随导航栏左侧标题区）
-- **设置弹窗**：`pages/settings.vue`（dialog 布局）三分区菜单切换 `setting/` 组件 —— 账户设置 `UserProfile.vue`（表单 + 校验 + update-info）、通用设置 `Common.vue`（主题模式 a-segmented、悬浮窗开关、关闭主窗口行为 hide/exit、网络代理、登录偏好）、关于 `About.vue`（get-app-version 显示版本）；`dialog/Header.vue` 标题/副标题 + 最小化/关闭（minSizeAble、customCloseWindowFn 可配置），`dialog/Footer.vue` 底部操作区（取消/确认 + teleport 到 `#dialog-footer-wrapper`，confirmFn 返回结果经 closeDialog 回传）；弹窗标题/能力经 `definePageMeta({ dialog })` 声明
-- 悬浮窗（`pages/float.vue`）：折叠圆形 Logo 按钮 + 呼吸光晕，展开菜单（搜索/笔记/任务/设置），基于 `set-ignore-mouse-events` 实现鼠标穿透，拖拽移动窗口并持久化位置；登录成功后按 `appRunSettings.showFloatWindow` 创建，通用设置里的开关经 `open-float-window` / `close-float-window` IPC 实时显隐（createFloatWindow 单例守卫）
+- **传输抽屉面板**：侧边栏底部 `cloud-check-broken` 按钮 → `appStore.drawer = { open, component: 'cloud', title: '传输' }` → `default.vue` 内置 `LayoutDrawer`（a-drawer 右侧 600px）渲染 `transmission/List` + `Item`；`transmission` store 监听 `get-upload-tasks('x')` + `sync-upload-item` 事件维护任务列表；Item 显示进度条/已传大小/暂停/继续/打开目录（start-upload-task / pause-upload-task IPC）
+- **图片裁剪弹窗**：`openDialog('imageCropper', bounding, onTop, { src, name, shape, size, aspectRatio })` → cropperjs v2（裁剪框等比 constraint/自由 + 缩放/旋转/重置），`shape=circle` 圆形成像（头像场景，选区内裁半径最大圆 + 透明背景）；`confirm` 返回 `{ dataUrl, blob, name, width, height }` 经 closeDialog 回传
+- **设置弹窗**：`pages/settings.vue`（dialog 布局）三分区菜单切换 `setting/` 组件 —— 账户设置 `UserProfile.vue`（表单 + 校验 + update-info）、通用设置 `Common.vue`（主题模式 a-segmented、悬浮窗开关、关闭主窗口行为 hide/exit、网络代理、登录偏好）、关于 `About.vue`（get-app-version 显示版本）；`dialog/Header.vue` 标题/副标题 + 最小化/关闭（minSizeAble、customCloseWindowFn 可配置），`dialog/Footer.vue` 底部操作区（取消/确认 + teleport 到 `#dialog-footer-wrapper`，confirmFn 失败 `message.error` 展示而非仅落错误态，确认成功结果经 closeDialog 回传，`hid-error-message` 可关错误提示）；弹窗标题/能力经 `definePageMeta({ dialog })` 声明
+- 悬浮窗（`pages/float.vue`）：折叠圆形 Logo 按钮 + 呼吸光晕，展开菜单（搜索/笔记/任务/设置改造为**视频上传入口**：上传视频/上传至合集/上传至相册），**拖拽文件弹上传菜单**、选中文件后带 filePath 打开 `createVideoUpload` 弹窗、**双击打开主窗口（open-main-window IPC）**；基于 `set-ignore-mouse-events` 实现鼠标穿透，拖拽移动窗口并持久化位置；登录成功后按 `appRunSettings.showFloatWindow` 创建，通用设置里的开关经 `open-float-window` / `close-float-window` IPC 实时显隐（createFloatWindow 单例守卫）
 - 页面级元数据（`definePageMeta`）：`workspace`（'home'|'film'|'photograph'|'artist'|'cloud'）、`colorMode`、`sidebarMode`（'immersive'|'default'|'frosted'）、`immersiveSidebar`、`dialog`（DialogMeta: title/subtitle/minSizeAble/customCloseWindowFn）、`requiresAuth`
 - 字体策略：正文用系统安装的 `PingFangSC`（Squirrel 安装时注册，见主进程字体安装体系）；仅标题字体 Orbitron 内嵌 woff2（fonts.css）
 
@@ -382,7 +419,7 @@ cd packages/renderer-process && pnpm stage # 生成 staging 构建产物（⚠ �
 - `*.mts` files are TypeScript modules (ESM) — used for ESLint config and similar
 - **AGENTS.md 与 CLAUDE.md 内容保持一致** — AGENTS.md 是给其他 agent（Codex 等）读取的项目说明，为 CLAUDE.md 的镜像，改 CLAUDE.md 后需同步 AGENTS.md
 - Type declaration files in `types/**/*.d.ts` per package
-- Assets 分布：`packages/shared/src/assets/`（icon / fonts / scripts-svg2png-sqlite3，打包 extraResource）、`packages/main-process/resource/`（koffi / @koromix / sqlite3 vendored 原生资源，extraResource 分发）、`packages/renderer-process/src/assets/`（css / icons / fonts-Orbitron）
+- Assets 分布：`packages/shared/src/assets/`（icon / fonts / scripts-svg2png-sqlite3，打包 extraResource）、`packages/main-process/resource/`（koffi / @koromix / sqlite3 / full-screen.win32.js vendored 原生资源，extraResource 分发）、`packages/renderer-process/src/assets/`（css / icons / fonts-Orbitron）
 - `resource/sqlite3/` 的 `build/` 与 `node_modules/bindings/` 已由 `.gitignore` 豁免随源码入库（预编译二进制，勿删）；新增/更换原生二进制时需同步豁免路径
 - Renderer shared types (`packages/renderer-process/shared/`) — Nuxt 类型声明扩展（electronAPI、PageMeta），不参与构建产物
 - 模板字符串风格的 IPC 通道：preload 的 `electronAPI` 类型从主进程 `channels.ts` 导入，渲染进程通过 `shared/electron-types.d.ts` 声明全局 `Window.electronAPI`

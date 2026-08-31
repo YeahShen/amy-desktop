@@ -32,6 +32,7 @@
     "getHomeWindow": "readonly",
     "getInfo": "readonly",
     "getLoginWindow": "readonly",
+    "getNotificationWindow": "readonly",
     "getRuntimeConfigItem": "readonly",
     "getSetting": "readonly",
     "getToken": "readonly",

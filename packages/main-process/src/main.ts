@@ -10,6 +10,7 @@ import { enableCompileCache } from 'node:module';
 import { initDB } from './utils/sqlite-db';
 import { closeSSEConnect } from './server/sse';
 import { isfloatWinHidden } from './windows/float';
+import { createNotificationWindow, getNotificationWindow } from './windows/notification';
 
 enableCompileCache();
 
@@ -61,14 +62,20 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
+  createNotificationWindow();
+
   fullScreen().then((worker) => {
     worker.on('message', (msg) => {
       if (msg.fullScreen) {
         if (!isfloatWinHidden()) {
           getFloatWindow()?.hide();
+          getNotificationWindow()?.hide();
         }
       } else {
-        if (isfloatWinHidden()) getFloatWindow()?.show();
+        if (isfloatWinHidden()) {
+          getFloatWindow()?.show();
+          getNotificationWindow()?.show();
+        }
       }
     });
   });

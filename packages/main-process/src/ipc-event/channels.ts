@@ -21,6 +21,7 @@ export enum ON_EVENT {
 
   // huge file upload
   ADD_UPLOAD_TASK = 'add-upload-task',
+  NOTIFY_MESSAGE = 'notify-message',
 }
 
 export enum HANDLE_EVENT {
@@ -46,6 +47,8 @@ export enum SEND_EVENT {
   REPORT_UPLOAD_ERROR = 'report-upload-error',
 
   ADD_UPLOAD_TASK_ERROR = 'add-upload-task-error',
+
+  NOTIFY_MESSAGE = 'notify-message',
 }
 
 export type OnEventChannels = `${ON_EVENT}`;
