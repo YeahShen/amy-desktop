@@ -4,7 +4,7 @@ export const useAppStore = defineStore('appStore', () => {
   const showNavbarLeftContent = computed(() => searchActive.value === false);
 
   const drawer = ref({
-    open: true,
+    open: false,
     title: '',
     component: '',
   });
