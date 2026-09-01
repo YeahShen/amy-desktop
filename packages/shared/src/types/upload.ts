@@ -1,13 +1,5 @@
-export type UploadStatus =
-  | 'pause'
-  | 'uploading'
-  | 'wait'
-  | 'finish'
-  | 'conversion'
-  | 'transcoding'
-  | 'merge'
-  | 'delete'
-  | 'error';
+export type UploadStatus = 'pause' | 'uploading' | 'wait' | 'finish' | 'delete' | 'error';
+
 export type ListenerType = 'status' | 'progress';
 
 export interface UploadTaskOptions {
@@ -17,11 +9,11 @@ export interface UploadTaskOptions {
   size: number;
   chunkSize: number;
   createdTime: number;
-  finishTime: number;
   status: UploadStatus;
   author: number;
   uploadedChunk: number[] | string;
 
+  finishTime?: number;
   progressRate?: number;
   uploadedSize?: number;
 }

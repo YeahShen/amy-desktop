@@ -47,14 +47,8 @@ const status = computed(() => {
   if (item.status === 'wait') {
     return '等待';
   }
-  if (item.status === 'merge') {
-    return '合并中';
-  }
-  if (item.status === 'conversion' || item.status === 'transcoding') {
-    return '转码中';
-  }
   if (item.status === 'error') {
-    return '删除失败';
+    return '上传失败';
   }
   if (item.status === 'pause') {
     return '暂停';

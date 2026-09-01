@@ -1,6 +1,5 @@
 import { axiosEventSource, AxiosEventSourceLike } from 'axios-eventsource';
 import log from 'electron-log';
-import { syncTaskStatus } from '../upload';
 
 let stream: AxiosEventSourceLike | undefined = undefined;
 
@@ -34,7 +33,9 @@ export function createSSEConnector() {
 
       switch (data.event) {
         case 'UPLOAD_STATUS':
-          syncTaskStatus(data.data);
+          // 上传分块阶段进度已由 Task 内 progressRate 承担（upload/task.ts）。
+          // 后台转码/合并不再经 SSE 同步：finish() 内 next-step 成功后直接置 finish。
+          break;
       }
     } catch {
       log.info('错误消息:', event.data);
