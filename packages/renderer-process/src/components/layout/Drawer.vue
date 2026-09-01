@@ -40,7 +40,10 @@ const transmissionStore = useTransmissionStore();
       <template #title>{{ appStore.drawer.title }}</template>
 
       <div class="w-full h-full">
-        <TransmissionList :upload-list="transmissionStore.uploadList" />
+        <TransmissionList
+          :upload-list="transmissionStore.uploadList"
+          :finish-list="transmissionStore.finishList"
+        />
       </div>
     </a-drawer>
   </ClientOnly>

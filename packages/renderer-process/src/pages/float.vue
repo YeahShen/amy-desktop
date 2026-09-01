@@ -17,8 +17,14 @@ const pointObj = Object.freeze({
   br: { x: 265, y: 265 },
 });
 
+const tmStore = useTransmissionStore();
+
 const showMenu = ref(false);
-const showGlow = ref(true); // 呼吸光晕开关
+
+const showGlow = computed(() => {
+  return tmStore.isUploading;
+}); // 呼吸光晕开关
+
 const wrapRef = useTemplateRef<HTMLDivElement>('wrapRef');
 
 const files = ref<FileList>();

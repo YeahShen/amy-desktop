@@ -115,7 +115,7 @@ export class Task {
       getChunk = _;
     } catch {
       this.events['error']?.('文件不存在！');
-      return;
+      return { success: false };
     }
 
     this.totalChunk = totalChunk;
@@ -142,6 +142,8 @@ export class Task {
         });
       }
     }
+
+    return { success: true };
   }
 
   start() {

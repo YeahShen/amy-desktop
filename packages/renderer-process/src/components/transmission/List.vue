@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import type { UploadTaskOptions } from '@amy/shared/types';
 
+import FinishList from './FinishList.vue';
+import UploadList from './UploadList.vue';
+
 const alignValue = ref('upload');
 
 defineProps<{
   uploadList: UploadTaskOptions[];
+  finishList: UploadTaskOptions[];
 }>();
 
 const options = [
@@ -20,11 +24,13 @@ const options = [
     </div>
 
     <div class="w-full h-[calc(100vh-115px)] relative top-12.25">
-      <amy-scrollbar v-show="alignValue === 'upload'" view-class="px-3 py-3 gap-y-3 flex flex-col">
-        <transmission-item v-for="item in uploadList" :key="item.id" :item="item" />
-      </amy-scrollbar>
-
-      <amy-scrollbar v-show="alignValue === 'upload-finish'"> </amy-scrollbar>
+      <amy-fade-transition>
+        <component
+          :is="alignValue === 'upload' ? UploadList : FinishList"
+          :upload-list="uploadList"
+          :finish-list="finishList"
+        />
+      </amy-fade-transition>
     </div>
   </div>
 </template>

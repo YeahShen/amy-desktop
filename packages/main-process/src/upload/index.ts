@@ -131,7 +131,11 @@ export function addTask(options: UploadTaskOptions, status: UploadStatus, newTas
     });
   });
 
-  task.init();
+  const { success } = task.init();
+
+  if (!success) {
+    return;
+  }
 
   const old = tasks.get(options.id);
   if (old) {

@@ -39,8 +39,13 @@ export const useTransmissionStore = defineStore('transmissionStore', () => {
     return Object.values(finishTasks);
   });
 
+  const isUploading = computed(() => {
+    return uploadList.value.some((item) => item.status === 'uploading');
+  });
+
   return {
     uploadList,
     finishList,
+    isUploading,
   };
 });
