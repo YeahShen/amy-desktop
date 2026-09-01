@@ -26,23 +26,23 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-const actionArgs = process.argv;
-
 if (!gotTheLock) {
   app.quit();
 } else {
+  // 二次启动唤起已有窗口。勿用本实例 process.argv 判断（它是第一个实例的静态 argv，
+  // 且 length===1 在 dev 下恒不成立）——需要区分『打开文件启动』时改用事件携带的
+  // (event, commandLine, workingDirectory)，此处暂不处理文件参数
   app.on('second-instance', () => {
-    if (actionArgs.length === 1) {
-      const loginWindow = getLoginWindow();
-      const home = getHomeWindow();
-      if (home) {
-        home?.show();
-      } else if (loginWindow) {
-        if (loginWindow.isMinimized()) {
-          loginWindow.restore();
-        }
-        loginWindow.focus();
-      }
+    const loginWindow = getLoginWindow();
+    const home = getHomeWindow();
+
+    if (home) {
+      if (home.isMinimized()) home.restore();
+      home.show();
+      home.focus();
+    } else if (loginWindow) {
+      if (loginWindow.isMinimized()) loginWindow.restore();
+      loginWindow.focus();
     }
   });
 }
