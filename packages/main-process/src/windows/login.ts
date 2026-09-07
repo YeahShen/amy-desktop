@@ -1,5 +1,7 @@
 import type { BrowserWindow } from 'electron';
 
+import { app } from 'electron';
+
 let loginWindow: BrowserWindow | null = null;
 
 export function createLoginWindow() {
@@ -12,6 +14,12 @@ export function createLoginWindow() {
 
   win.once('ready-to-show', () => {
     win?.show();
+  });
+
+  win.on('closed', () => {
+    if (!getToken()) {
+      app.quit();
+    }
   });
 }
 

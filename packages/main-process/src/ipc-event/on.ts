@@ -33,7 +33,7 @@ ipcMain.on(ON_EVENT.LOGIN, async (_e, token: string, user: User) => {
   setAuthenticate(token, user);
   await createHomeWindow();
 
-  BrowserWindow.fromWebContents(_e.sender)?.close();
+  BrowserWindow.fromWebContents(_e.sender)?.destroy();
 
   if (await getSetting('appRunSettings.showFloatWindow')) {
     createFloatWindow();
