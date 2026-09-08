@@ -200,6 +200,18 @@ async function commit() {
       <a-row :gutter="16">
         <a-col :span="12">
           <AFormItem
+            label="番号"
+            name="serialNumber"
+            :label-col="{ span: 6 }"
+            :wrapper-col="{ span: 18 }"
+            :rules="[{ required: true, message: '番号不能为空' }]"
+          >
+            <AInput v-model:value="form.serialNumber" />
+          </AFormItem>
+        </a-col>
+
+        <a-col :span="12">
+          <AFormItem
             label="出版社"
             :label-col="{ span: 6 }"
             :wrapper-col="{ span: 18 }"
