@@ -78,7 +78,13 @@ const status = computed(() => {
           <p>{{ status }}</p>
         </div>
 
-        <a-progress :percent="percent" :show-info="false" />
+        <a-progress
+          :percent="percent"
+          :show-info="false"
+          :stroke-color="
+            item.status === 'uploading' ? 'var(--ant-color-primary)' : 'var(--ui-text-dimmed)'
+          "
+        />
       </div>
     </div>
 

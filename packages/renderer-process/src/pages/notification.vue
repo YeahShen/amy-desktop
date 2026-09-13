@@ -25,6 +25,8 @@ onMounted(() => {
       openNotification(data.type, data.message);
     },
   );
+
+  window.electronAPI.send('set-ignore-mouse-events', true);
 });
 
 async function openNotification(

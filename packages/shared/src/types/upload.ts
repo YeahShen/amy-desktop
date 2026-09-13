@@ -1,4 +1,5 @@
-export type UploadStatus = 'pause' | 'uploading' | 'wait' | 'finish' | 'delete' | 'error';
+export type UploadStatus =
+  'pause' | 'uploading' | 'wait' | 'finish' | 'delete' | 'error' | 'conversion';
 
 export type ListenerType = 'status' | 'progress';
 

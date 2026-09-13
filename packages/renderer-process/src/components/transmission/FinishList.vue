@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <amy-scrollbar v-if="finishList.length" view-class="px-3 py-3 gap-y-3 flex flex-col">
+  <amy-scrollbar v-if="finishList.length" view-class="px-3 py-3 gap-y-1 flex flex-col">
     <transmission-finish-item v-for="item in finishList" :key="item.id" :item="item" />
   </amy-scrollbar>
 
