@@ -11,7 +11,7 @@ router.post('/recevie/video-info', upload.single('file'), async (ctx) => {
     return;
   }
 
-  const { category, title, fh, publishData, publisher } = ctx.request.body as any;
+  const { category, title, fh, publishData, publisher, artist, type } = ctx.request.body as any;
 
   const file = ctx.file;
 
@@ -22,6 +22,8 @@ router.post('/recevie/video-info', upload.single('file'), async (ctx) => {
     publishData,
     publisher,
     posterData: file,
+    artist,
+    type,
   };
 
   getAllDialog().forEach((dia) => {
@@ -32,8 +34,11 @@ router.post('/recevie/video-info', upload.single('file'), async (ctx) => {
         dia.instance.restore(); // 从最小化恢复
       }
 
+      dia.instance.setAlwaysOnTop(true);
+
       dia.instance.show(); // 如果被隐藏则显示出来
       dia.instance.focus(); // 拉到前台并获得键盘焦点
+      dia.instance.setAlwaysOnTop(false);
     }
   });
 

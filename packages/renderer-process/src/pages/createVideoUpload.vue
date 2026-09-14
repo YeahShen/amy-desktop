@@ -65,7 +65,8 @@ onMounted(() => {
     });
 
     const type = types.value.find((t) => t.title === info.type);
-    if (type) form.type = type.id + '';
+    // @ts-ignore
+    if (type) form.type = type.id;
 
     const ph = publisher.value.find(
       (p) => p.name === info.publisher || p.name.startsWith(info.publisher),
@@ -76,7 +77,7 @@ onMounted(() => {
       const id = '$$_' + new Date().getTime();
       publisher.value.push({
         id: id,
-        name: newPublisherName.value,
+        name: info.publisher,
       });
       form.publisher = id;
     }
@@ -90,7 +91,7 @@ onMounted(() => {
         const id = '$$_' + new Date().getTime();
 
         tags.value.push({
-          title: newTagName.value,
+          title: citem,
           id: id,
         });
         form.tags.push(id);

@@ -80,7 +80,7 @@ function removeImg() {
       ref="fileInput"
       type="file"
       accept="image/jpeg,image/png,image/webp"
-      class="hidden"
+      class="hidden!"
       @change="onFileChange"
     />
 
