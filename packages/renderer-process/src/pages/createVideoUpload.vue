@@ -23,7 +23,7 @@ const form = reactive({
   description: '',
   serialNumber: '',
   type: '',
-  poster: null as File | null,
+  poster: null as Blob | null,
   actors: [],
   publisher: null as string | null,
   tags: [] as string[],
@@ -31,8 +31,27 @@ const form = reactive({
   fileExt: '',
   filePath: route.query.filePath as string,
 });
+// {'category': [], 'type': '', 'title': '082926_001 余裕で三連発できちゃう極上の女優 弘中れおな', 'poster': '', 'fh': '', 'publishData': '2026-08-29', 'publisher': '一本道'}
 
 onMounted(() => {
+  window.electronAPI.on<{
+    category: string[];
+    title: string; //'082926_001 余裕で三連発できちゃう極上の女優 弘中れおな'
+    fh: string;
+    publishData: string;
+    publisher: string;
+    posterData: {
+      originalname: string;
+      buffer: Buffer;
+      mimetype: string;
+    };
+  }>('video-info', (info) => {
+    const bytes = new Uint8Array(info.posterData.buffer);
+    const blob = new Blob([bytes], { type: info.posterData.mimetype });
+
+    form.poster = blob;
+  });
+
   $request<VideoTag[]>('/video/get-tags').then((res) => {
     tags.value = res;
   });

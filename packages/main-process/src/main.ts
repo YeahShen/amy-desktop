@@ -80,9 +80,9 @@ app.whenReady().then(async () => {
     });
   });
 
-  if (app.isPackaged) {
-    createServer();
+  createServer();
 
+  if (app.isPackaged) {
     if (await isLogin()) {
       createHomeWindow();
     } else {

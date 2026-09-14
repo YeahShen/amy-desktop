@@ -22,6 +22,7 @@ const schema: Schema<AppSettings> = {
     type: 'object',
     properties: {
       showFloatWindow: { type: 'boolean', default: false },
+      enableSendVideoInfoApi: { type: 'boolean', default: false },
     },
   },
   uploadHugeFile: {

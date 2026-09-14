@@ -10,7 +10,15 @@ const props = withDefaults(
 );
 
 const previewImg = ref<any>();
-const fileBolb = defineModel<any>();
+const fileBolb = defineModel<Blob | null>();
+
+watch(fileBolb, (fb) => {
+  if (fb) {
+    const url = URL.createObjectURL(fb);
+    previewImg.value = url;
+    URL.revokeObjectURL(url);
+  }
+});
 
 async function addImg() {
   const a = document.createElement('input');

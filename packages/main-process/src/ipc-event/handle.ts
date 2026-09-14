@@ -5,6 +5,7 @@ import { Bounding } from '@amy/shared';
 import { v4 } from 'uuid';
 import { createDialogWindow } from '../windows/dialog';
 import { deleteTask, getTasks, pause, startTask } from '../upload';
+import { getAllDialog, removeDialog, setDialog } from '../utils/dialog-manager';
 
 ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -36,8 +37,20 @@ ipcMain.handle(
   HANDLE_EVENT.OPEN_DIALOG,
   async (
     _e,
-    options: { bounding: Bounding; args: Record<string, string>; name: string; onTop: boolean },
+    options: {
+      bounding: Bounding;
+      args: Record<string, string>;
+      name: string;
+      onTop: boolean;
+      singleton?: boolean;
+    },
   ) => {
+    if (options.singleton) {
+      if (getAllDialog().find((dia) => dia.name === options.name)) {
+        return;
+      }
+    }
+
     const id = v4();
 
     const dialog = await createDialogWindow(
@@ -47,6 +60,8 @@ ipcMain.handle(
       options.onTop,
       BrowserWindow.fromWebContents(_e.sender)!,
     );
+
+    setDialog(id, dialog, options.name);
 
     return new Promise((resolve) => {
       const onCloseDialog = (_e: IpcMainEvent, result: any) => {
@@ -63,6 +78,7 @@ ipcMain.handle(
       // 同样释放监听器并结束挂起的 Promise，避免 invoke 永久挂起
       dialog.once('closed', () => {
         ipcMain.off(`close_dialog:${id}`, onCloseDialog);
+        removeDialog(id);
         resolve(undefined);
       });
     });

@@ -19,6 +19,7 @@ export type HideHomeWindowOrExit = 'hide' | 'exit';
 
 export type AppRunSettings = {
   showFloatWindow: boolean;
+  enableSendVideoInfoApi: boolean;
 };
 
 export type AppSettings = {

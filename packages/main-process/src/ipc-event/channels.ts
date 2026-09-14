@@ -49,6 +49,8 @@ export enum SEND_EVENT {
   ADD_UPLOAD_TASK_ERROR = 'add-upload-task-error',
 
   NOTIFY_MESSAGE = 'notify-message',
+
+  VIDEO_INFO = 'video-info',
 }
 
 export type OnEventChannels = `${ON_EVENT}`;
