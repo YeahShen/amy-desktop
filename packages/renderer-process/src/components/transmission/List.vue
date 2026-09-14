@@ -22,7 +22,7 @@ const options = [
     <div
       class="border-b border-muted pt-2 px-2 absolute top-0 left-0 w-full flex items-center justify-between"
     >
-      <div class="w-2/3">
+      <div class="w-2/3 z-10">
         <a-segmented
           v-model:value="alignValue"
           style="margin-bottom: 8px"

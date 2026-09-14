@@ -4,11 +4,31 @@ import type { UploadTaskOptions } from '@amy/shared/types';
 defineProps<{
   finishList: UploadTaskOptions[];
 }>();
+
+const selected = defineModel<string[]>({
+  default: () => [],
+});
+
+function select(item: UploadTaskOptions, selectOne: boolean) {
+  if (selectOne) {
+    selected.value = [item.id];
+  } else if (selected.value.includes(item.id)) {
+    selected.value = selected.value.filter((id) => id !== item.id);
+  } else {
+    selected.value = [...selected.value, item.id];
+  }
+}
 </script>
 
 <template>
-  <amy-scrollbar v-if="finishList.length" view-class="px-3 py-3 gap-y-1 flex flex-col">
-    <transmission-finish-item v-for="item in finishList" :key="item.id" :item="item" />
+  <amy-scrollbar v-if="finishList.length" view-class="px-3 py-3 gap-y-0.5 flex flex-col">
+    <transmission-finish-item
+      v-for="item in finishList"
+      :key="item.id"
+      :item="item"
+      :selected="selected.includes(item.id)"
+      @select="select"
+    />
   </amy-scrollbar>
 
   <div v-else class="w-full h-full flex items-center justify-center">

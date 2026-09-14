@@ -11,6 +11,10 @@ const playIcon = computed(() => {
   return 'amy:pause-outlined';
 });
 
+const emits = defineEmits<{
+  select: [UploadTaskOptions, boolean];
+}>();
+
 async function start() {
   if (item.status === 'pause') {
     await window.electronAPI.invoke('start-upload-task', item.id);
@@ -55,12 +59,22 @@ const status = computed(() => {
   }
   return '';
 });
+
+function handleClick(event: any) {
+  if (event.ctrlKey) {
+    emits('select', item, false);
+    // 你的逻辑
+  } else {
+    emits('select', item, true);
+  }
+}
 </script>
 
 <template>
   <div
     class="w-full flex px-2 rounded-lg gap-x-3 h-21 items-center hover:bg-primary-bg-hover/20 transform"
     :class="{ 'bg-primary-active/20!': selected }"
+    @click="handleClick"
   >
     <div>
       <NuxtIcon name="amy:video-file" size="45" />

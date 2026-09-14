@@ -5,6 +5,11 @@ import dayjs from 'dayjs';
 
 const { item } = defineProps<{
   item: UploadTaskOptions;
+  selected: boolean;
+}>();
+
+const emits = defineEmits<{
+  select: [UploadTaskOptions, boolean];
 }>();
 
 function formatSizeUnits(kb: number): string {
@@ -40,20 +45,24 @@ const statusTextColor = computed(() => {
   }
   return '';
 });
+
+function handleClick(event: MouseEvent) {
+  emits('select', item, !event.ctrlKey);
+}
 </script>
 
 <template>
   <div
     class="w-full flex px-2 rounded-lg gap-x-3 h-18 items-center hover:bg-primary-bg-hover/20 transform"
+    :class="[{ 'bg-primary-active/20!': selected }]"
+    @click="handleClick"
   >
     <div>
       <NuxtIcon name="amy:video-file" size="40" />
     </div>
 
     <div class="flex-1 flex flex-col justify-between h-full pt-3 pb-2 pr-3">
-      <p class="line-clamp-1 text-default text-lg">
-        {{ item.title }}
-      </p>
+      <p class="line-clamp-1 text-default">{{ item.title }}</p>
 
       <div class="w-ful flex text-xs py-1.5 text-toned justify-start gap-x-2">
         <p :class="statusTextColor">{{ status }}</p>
