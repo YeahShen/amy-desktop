@@ -24,22 +24,24 @@ const form = reactive({
   serialNumber: '',
   type: '',
   poster: null as Blob | null,
-  actors: [],
+  actors: [] as number[],
   publisher: null as string | null,
+  publishDate: '',
   tags: [] as string[],
   size: 0,
   fileExt: '',
   filePath: route.query.filePath as string,
 });
-// {'category': [], 'type': '', 'title': '082926_001 余裕で三連発できちゃう極上の女優 弘中れおな', 'poster': '', 'fh': '', 'publishData': '2026-08-29', 'publisher': '一本道'}
 
 onMounted(() => {
   window.electronAPI.on<{
-    category: string[];
-    title: string; //'082926_001 余裕で三連発できちゃう極上の女優 弘中れおな'
+    category: string;
+    title: string;
     fh: string;
     publishData: string;
     publisher: string;
+    artist: string;
+    type: string;
     posterData: {
       originalname: string;
       buffer: Buffer;
@@ -50,6 +52,50 @@ onMounted(() => {
     const blob = new Blob([bytes], { type: info.posterData.mimetype });
 
     form.poster = blob;
+    form.title = info.title;
+    form.publishDate = info.publishData;
+    form.serialNumber = info.fh;
+
+    // artists.value.filter()
+    info.artist.split(',').forEach((a) => {
+      const has = artists.value.find((b) => b.name === a);
+      if (has) {
+        form.actors.push(has.id);
+      }
+    });
+
+    const type = types.value.find((t) => t.title === info.type);
+    if (type) form.type = type.id + '';
+
+    const ph = publisher.value.find(
+      (p) => p.name === info.publisher || p.name.startsWith(info.publisher),
+    );
+    if (ph) {
+      form.publisher = ph.id + '';
+    } else {
+      const id = '$$_' + new Date().getTime();
+      publisher.value.push({
+        id: id,
+        name: newPublisherName.value,
+      });
+      form.publisher = id;
+    }
+
+    info.category.split(',').forEach((citem) => {
+      const exist = tags.value.find((t) => t.title === citem);
+
+      if (exist) {
+        form.tags.push(exist.id + '');
+      } else {
+        const id = '$$_' + new Date().getTime();
+
+        tags.value.push({
+          title: newTagName.value,
+          id: id,
+        });
+        form.tags.push(id);
+      }
+    });
   });
 
   $request<VideoTag[]>('/video/get-tags').then((res) => {
@@ -96,14 +142,6 @@ function addPublisher(e: MouseEvent) {
   newPublisherName.value = '';
 }
 
-watch(
-  () => form,
-  (v) => {
-    console.log(v);
-  },
-  { deep: true },
-);
-
 async function commit() {
   await formRef.value?.validateFields();
 
@@ -116,15 +154,13 @@ async function commit() {
   fd.append('fileExt', form.fileExt);
 
   form.actors.forEach((id, index) => {
-    fd.append(`artist[${index}].id`, id);
+    fd.append(`artist[${index}].id`, id + '');
   });
-
-  console.log(form);
 
   if ((`${form.publisher}` || '').startsWith('$$')) {
     fd.append(
       `publisher.name`,
-      publisher.value.find((p) => p.id === form.publisher)?.name as string,
+      publisher.value.find((p) => p.id == form.publisher)?.name as string,
     );
   } else {
     fd.append('publisher.id', form.publisher as string);
@@ -134,7 +170,7 @@ async function commit() {
     if (!`${t}`.startsWith('$$')) {
       fd.append(`tag[${index}].id`, t);
     }
-    fd.append(`tag[${index}].title`, tags.value.find((i) => i.id === t)?.title as string);
+    fd.append(`tag[${index}].title`, tags.value.find((i) => i.id == t)?.title as string);
   });
 
   const id = await $request<string>('/video/createUploadTask', {

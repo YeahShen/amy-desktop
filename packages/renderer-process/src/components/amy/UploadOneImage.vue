@@ -1,7 +1,9 @@
 <script setup lang="tsx">
+import { message } from 'antdv-next';
+
 const props = withDefaults(
   defineProps<{
-    processImageFn?: (file: string) => Promise<any>;
+    processImageFn?: (file: string) => void | Promise<void>;
     wrapClasses?: string;
   }>(),
   {
@@ -9,93 +11,106 @@ const props = withDefaults(
   },
 );
 
-const previewImg = ref<any>();
-const fileBolb = defineModel<Blob | null>();
+const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
-watch(fileBolb, (fb) => {
-  if (fb) {
-    const url = URL.createObjectURL(fb);
-    previewImg.value = url;
-    URL.revokeObjectURL(url);
-  }
+const previewImg = ref<string>();
+const fileBlob = defineModel<Blob | null>();
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
+
+// 预览地址随 v-model 走：外部注入 Blob（如 video-info）和本地选择共用同一条路径
+let previewUrl: string | undefined;
+
+watch(fileBlob, (fb) => {
+  // 换图 / 清空时回收上一个地址（此时它已加载完成，吊销不会影响已渲染的画面）
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+
+  previewUrl = fb ? URL.createObjectURL(fb) : undefined;
+  previewImg.value = previewUrl;
 });
 
-async function addImg() {
-  const a = document.createElement('input');
+onUnmounted(() => {
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+});
 
-  a.setAttribute('type', 'file');
-  a.setAttribute('accept', 'image/jpeg,image/png,image/webp');
+function pickImage() {
+  fileInput.value?.click();
+}
 
-  a.addEventListener('change', function () {
-    const file = this?.files?.[0];
+async function onFileChange() {
+  const input = fileInput.value;
+  const file = input?.files?.[0];
 
-    fileBolb.value = file;
+  // 清空以便重复选择同一文件时仍触发 change；File 引用不受影响
+  if (input) input.value = '';
 
-    if (file) {
-      const reader = new FileReader();
+  if (!file) return;
 
-      props.processImageFn?.(window.electronAPI.getPathForFile(file));
+  // file.type 为空时（系统未注册该扩展名）交给 accept 与后端判断
+  if (file.type && !ACCEPTED_TYPES.includes(file.type)) {
+    message.error('仅支持 JPG / PNG / WebP 格式的图片');
+    return;
+  }
 
-      reader.onload = function (e) {
-        previewImg.value = e?.target?.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
+  if (file.size > MAX_IMAGE_SIZE) {
+    message.error(`图片大小不能超过 ${MAX_IMAGE_SIZE / 1024 / 1024}MB`);
+    return;
+  }
 
-  a.click();
+  fileBlob.value = file;
+
+  try {
+    await props.processImageFn?.(window.electronAPI.getPathForFile(file));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 function removeImg() {
-  previewImg.value = undefined;
-  fileBolb.value = undefined;
+  fileBlob.value = null;
 }
 </script>
 
 <template>
   <div
     :class="wrapClasses"
-    class="border border-dashed rounded-xl border-muted flex items-center justify-center cursor-pointer hover:border-primary-border-hover hover:text-primary text-muted overflow-hidden px-0.5 py-0.5 relative bg-(--ant-color-bg-container)"
+    class="group relative flex items-center justify-center px-0.5 py-0.5 overflow-hidden border border-dashed rounded-xl border-muted bg-(--ant-color-bg-container) text-muted hover:border-primary-border-hover hover:text-primary"
   >
-    <div v-if="!previewImg" class="flex items-center w-full h-full justify-center" @click="addImg">
-      <NuxtIcon name="amy:plus-outlined" />
-    </div>
+    <input
+      ref="fileInput"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      class="hidden"
+      @change="onFileChange"
+    />
 
-    <div v-else class="w-full h-full flex items-center justify-center rounded-xl overflow-hidden">
-      <img class="w-full h-full" :src="previewImg" />
-    </div>
+    <button
+      v-if="!previewImg"
+      type="button"
+      aria-label="选择图片"
+      class="w-full h-full flex items-center justify-center cursor-pointer"
+      @click="pickImage"
+    >
+      <NuxtIcon name="amy:plus-outlined" />
+    </button>
+
+    <img v-else :src="previewImg" alt="已选图片" class="w-full h-full rounded-xl object-cover" />
 
     <div
       v-if="previewImg"
-      class="absolute w-full h-full left-0 top-0 z-999 hover:bg-mask transition ease-in-out duration-100 flex items-center justify-center preview-mask"
+      class="absolute inset-0 z-999 hidden items-center justify-center bg-mask group-hover:flex"
     >
-      <div class="op-wrap items-center">
-        <AButton type="text" @click="addImg">
-          <template #icon>
-            <NuxtIcon name="amy:plus-outlined" class="text-white text-lg" />
-          </template>
-        </AButton>
+      <AButton type="text" aria-label="更换图片" @click="pickImage">
+        <template #icon>
+          <NuxtIcon name="amy:plus-outlined" class="text-white text-lg" />
+        </template>
+      </AButton>
 
-        <AButton type="text" @click="removeImg">
-          <template #icon>
-            <NuxtIcon name="amy:trash-bin-trash-bold" class="text-white text-lg" />
-          </template>
-        </AButton>
-      </div>
+      <AButton type="text" aria-label="移除图片" @click="removeImg">
+        <template #icon>
+          <NuxtIcon name="amy:trash-bin-trash-bold" class="text-white text-lg" />
+        </template>
+      </AButton>
     </div>
   </div>
 </template>
-
-<style lang="scss">
-.preview-mask {
-  .op-wrap {
-    display: none;
-  }
-
-  &:hover {
-    .op-wrap {
-      display: flex !important;
-    }
-  }
-}
-</style>

@@ -15,7 +15,7 @@ const form = reactive({
   name: '',
   category: '',
   description: '',
-  avatarFile: '',
+  avatarFile: null as Blob | null,
 });
 
 const categoryEntity = ref<ArtistCategory>();
@@ -51,7 +51,7 @@ async function confirm() {
   const fd = new FormData();
   fd.append('name', form.name);
   fd.append('description', form.description + '');
-  fd.append('avatarFile', form.avatarFile as string);
+  fd.append('avatarFile', form.avatarFile as Blob);
   if (categoryEntity.value?.id) {
     fd.append('category.id', categoryEntity.value?.id + '');
   }
@@ -62,8 +62,6 @@ async function confirm() {
     method: 'POST',
     body: fd,
   });
-
-  
 }
 </script>
 
