@@ -32,7 +32,7 @@ async function createArtist() {
 }
 
 async function select(artist: Artist) {
-  console.log(artist);
+  navigateTo('artistDetail?id=' + artist.id);
 }
 
 onMounted(async () => {

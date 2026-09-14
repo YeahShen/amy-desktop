@@ -72,7 +72,8 @@ onMounted(() => {
       (p) => p.name === info.publisher || p.name.startsWith(info.publisher),
     );
     if (ph) {
-      form.publisher = ph.id + '';
+      // @ts-ignore
+      form.publisher = ph.id;
     } else {
       const id = '$$_' + new Date().getTime();
       publisher.value.push({
@@ -86,7 +87,8 @@ onMounted(() => {
       const exist = tags.value.find((t) => t.title === citem);
 
       if (exist) {
-        form.tags.push(exist.id + '');
+        // @ts-ignore
+        form.tags.push(exist.id);
       } else {
         const id = '$$_' + new Date().getTime();
 
