@@ -12,8 +12,9 @@ export function openDialog<T>(
   bounding: Bounding,
   onTop: boolean,
   args: Record<string, string> = {},
+  singleton: boolean = true,
 ) {
-  return window.electronAPI.invoke<T>('open-dialog', { bounding, args, name, onTop });
+  return window.electronAPI.invoke<T>('open-dialog', { bounding, args, name, onTop, singleton });
 }
 
 /**

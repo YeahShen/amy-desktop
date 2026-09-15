@@ -11,6 +11,7 @@ import { initDB } from './utils/sqlite-db';
 import { closeSSEConnect } from './server/sse';
 import { isfloatWinHidden } from './windows/float';
 import { createNotificationWindow, getNotificationWindow } from './windows/notification';
+import { createPlayerWindow } from './windows/video-player';
 
 enableCompileCache();
 
@@ -48,6 +49,8 @@ if (!gotTheLock) {
 }
 
 app.whenReady().then(async () => {
+  if (createPlayerWindow()) return;
+
   const squirreling = await handleSquirrelEvent();
 
   if (squirreling) {
