@@ -5,7 +5,9 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="w-full h-full bg-amber-200"></div>
+  <LayoutPage immersive-header>
+    <div class="w-full h-full"></div>
+  </LayoutPage>
 </template>
 
 <style lang="scss"></style>

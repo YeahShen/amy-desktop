@@ -1,22 +1,17 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   immersiveHeader?: boolean;
 }>();
-
-const classes = computed(() => {
-  const v = ['w-full'];
-
-  if (props.immersiveHeader) {
-    v.push('h-main-content');
-  }
-  return v;
-});
 </script>
 
 <template>
-  <div :class="classes">
+  <div :class="{ tp: !immersiveHeader }" class="w-full min-h-screen">
     <slot />
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.tp {
+  padding-top: var(--navbar-height);
+}
+</style>

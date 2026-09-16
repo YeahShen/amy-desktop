@@ -7,7 +7,9 @@
     <div class="main h-full relative">
       <LayoutNavbar />
 
-      <LayoutMainContent />
+      <AmyScrollbar track-class="common-content_track">
+        <NuxtPage />
+      </AmyScrollbar>
     </div>
 
     <LayoutDrawer />
@@ -17,5 +19,9 @@
 <style lang="scss">
 .main {
   width: calc(100% - #{var(--sidebar-width)});
+}
+
+.common-content_track {
+  padding-top: var(--navbar-height);
 }
 </style>

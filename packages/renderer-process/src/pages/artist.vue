@@ -43,114 +43,105 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full h-main-content">
-    <div class="w-full h-full relative pt-15">
-      <div
-        class="w-full h-fit flex items-center justify-between px-4 absolute top-0 left-0 bg-(--ui-bg) z-999"
-      >
-        <h1 class="font-bold text-primary text-lg">艺术家</h1>
+  <LayoutPage>
+    <div
+      class="w-full h-fit flex items-center justify-between px-4 absolute top-0 left-0 bg-(--ui-bg) z-999 mt-15"
+    >
+      <h1 class="font-bold text-primary text-lg">艺术家</h1>
 
-        <div class="flex gap-x-3">
-          <AButton type="dashed" @click="createArtist">
-            <template #icon>
-              <NuxtIcon name="amy:plus-outlined" />
-            </template>
-          </AButton>
+      <div class="flex gap-x-3">
+        <AButton type="dashed" @click="createArtist">
+          <template #icon>
+            <NuxtIcon name="amy:plus-outlined" />
+          </template>
+        </AButton>
 
-          <AButton type="dashed">
-            <template #icon>
-              <NuxtIcon name="amy:reload-outlined" />
-            </template>
-          </AButton>
-        </div>
-      </div>
-
-      <AmyScrollbar
-        v-if="renderList.length > 0 || laoding"
-        view-class="px-4 flex flex-col gap-y-10"
-        :disabled="laoding"
-      >
-        <div v-for="(i, idx) in renderList" :key="i.id" class="w-full h-fit">
-          <div class="pb-8">
-            <a-skeleton
-              :loading="laoding"
-              :paragraph="false"
-              active
-              :styles="{
-                title: {
-                  width: '120px',
-                },
-              }"
-            >
-              <p class="text-muted">{{ i.title }}</p>
-            </a-skeleton>
-          </div>
-
-          <AmyListWrap
-            :item-min-width="80"
-            :side-width="16"
-            :gap-x="36"
-            :gap-y="20"
-            :list="i.list"
-            :loading="laoding"
-            :loading-row-number="idx + 1"
-            item-classes="cursor-pointer hover:text-primary"
-            @select="select"
-          >
-            <template #item="{ item, loading: l }">
-              <a-skeleton
-                :loading="l"
-                :paragraph="false"
-                :avatar="{ shape: 'circle' }"
-                active
-                :styles="{
-                  avatar: {
-                    width: '100%',
-                    height: 'auto',
-                    'aspect-ratio': 1,
-                    display: 'block',
-                  },
-                  header: {
-                    padding: 0,
-                  },
-                }"
-                :title="false"
-              >
-                <AAvatar
-                  shape="circle"
-                  :src="item.avatar"
-                  :style="{ width: '100%', height: 'auto', 'aspect-ratio': 1 }"
-                />
-              </a-skeleton>
-
-              <div class="mt-3 w-full">
-                <a-skeleton
-                  active
-                  :loading="l"
-                  :paragraph="false"
-                  :styles="{
-                    title: {
-                      width: '100%',
-                    },
-                  }"
-                >
-                  <p class="w-full text-center">{{ item.name }}</p>
-                </a-skeleton>
-              </div>
-            </template>
-          </AmyListWrap>
-        </div>
-      </AmyScrollbar>
-
-      <div
-        v-else
-        class="w-full h-full flex items-center justify-center relative bottom-20 flex-col"
-      >
-        <AmyLogo :color="isDark ? '#343334' : '#f0f0f0'" size="130px" :animation="false" />
-        <p :style="{ color: isDark ? '#343334' : '#f0f0f0' }">EMPTY</p>
+        <AButton type="dashed">
+          <template #icon>
+            <NuxtIcon name="amy:reload-outlined" />
+          </template>
+        </AButton>
       </div>
     </div>
-  </div>
+
+    <div v-if="renderList.length > 0 || laoding" class="px-4 flex flex-col gap-y-10">
+      <div v-for="(i, idx) in renderList" :key="i.id" class="w-full h-fit">
+        <div class="pb-8">
+          <a-skeleton
+            :loading="laoding"
+            :paragraph="false"
+            active
+            :styles="{
+              title: {
+                width: '120px',
+              },
+            }"
+          >
+            <p class="text-muted">{{ i.title }}</p>
+          </a-skeleton>
+        </div>
+
+        <AmyListWrap
+          :item-min-width="80"
+          :side-width="16"
+          :gap-x="36"
+          :gap-y="20"
+          :list="i.list"
+          :loading="laoding"
+          :loading-row-number="idx + 1"
+          item-classes="cursor-pointer hover:text-primary"
+          @select="select"
+        >
+          <template #item="{ item, loading: l }">
+            <a-skeleton
+              :loading="l"
+              :paragraph="false"
+              :avatar="{ shape: 'circle' }"
+              active
+              :styles="{
+                avatar: {
+                  width: '100%',
+                  height: 'auto',
+                  'aspect-ratio': 1,
+                  display: 'block',
+                },
+                header: {
+                  padding: 0,
+                },
+              }"
+              :title="false"
+            >
+              <AAvatar
+                shape="circle"
+                :src="item.avatar"
+                :style="{ width: '100%', height: 'auto', 'aspect-ratio': 1 }"
+              />
+            </a-skeleton>
+
+            <div class="mt-3 w-full">
+              <a-skeleton
+                active
+                :loading="l"
+                :paragraph="false"
+                :styles="{
+                  title: {
+                    width: '100%',
+                  },
+                }"
+              >
+                <p class="w-full text-center">{{ item.name }}</p>
+              </a-skeleton>
+            </div>
+          </template>
+        </AmyListWrap>
+      </div>
+    </div>
+
+    <div v-else class="w-full h-full flex items-center justify-center relative bottom-20 flex-col">
+      <AmyLogo :color="isDark ? '#343334' : '#f0f0f0'" size="130px" :animation="false" />
+      <p :style="{ color: isDark ? '#343334' : '#f0f0f0' }">EMPTY</p>
+    </div>
+  </LayoutPage>
 </template>
 
 <style lang="scss"></style>
