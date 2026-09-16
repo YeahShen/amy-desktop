@@ -1,7 +1,7 @@
 <script setup lang="ts">
-defineProps<{
-  immersiveHeader?: boolean;
-}>();
+const route = useRoute();
+
+const immersiveHeader = computed(() => route.meta.immersiveHeader);
 </script>
 
 <template>

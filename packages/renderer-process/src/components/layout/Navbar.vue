@@ -10,11 +10,18 @@ async function closeWindow() {
 }
 
 const userStore = useUserStore();
+
+const route = useRoute();
+
+const immersiveHeader = computed(() => route.meta.immersiveHeader);
 </script>
 
 <template>
-  <div class="w-full navbar drag flex justify-end px-4 z-10 absolute">
-    <div class="inset-x-0 isolate navbar absolute top-0 left-0">
+  <div
+    class="w-full navbar drag flex justify-end px-4 z-10 absolute"
+    :class="{ 'bg-(--ui-bg)': !immersiveHeader }"
+  >
+    <div v-if="immersiveHeader" class="inset-x-0 isolate navbar absolute top-0 left-0">
       <div
         style="-webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px); opacity: 1"
         class="absolute inset-0 bg-(--ui-bg)/3 gradient-mask-b-0"

@@ -12,6 +12,7 @@ type ArtistByCate = {
 };
 
 const { isDark } = useColorMode();
+const appStore = useAppStore();
 
 const laoding = ref(true);
 
@@ -19,7 +20,7 @@ const artistList = ref<ArtistByCate[]>([]);
 
 const renderList = computed<ArtistByCate[]>(() => {
   if (!laoding.value) return artistList.value;
-  return new Array(10).fill(0).map((_i, idx) => ({
+  return new Array(3).fill(0).map((_i, idx) => ({
     id: idx,
     title: '',
     list: [],
@@ -35,17 +36,25 @@ async function select(artist: Artist) {
   navigateTo('artistDetail?id=' + artist.id);
 }
 
+watch(laoding, (v) => appStore.setScrollBarStatus(!v));
+
 onMounted(async () => {
+  // 禁用态只在客户端同步：layout 先于本页渲染，SSR 期间写 store 会让 payload 与 HTML 不一致（hydration mismatch）
+  appStore.setScrollBarStatus(!laoding.value);
+
   laoding.value = true;
   artistList.value = await $request<ArtistByCate[]>('/artist/list');
   laoding.value = false;
 });
+
+// 加载未结束就离开页面时复位，否则滚动条会一直处于禁用态
+onUnmounted(() => appStore.setScrollBarStatus(true));
 </script>
 
 <template>
   <LayoutPage>
     <div
-      class="w-full h-fit flex items-center justify-between px-4 absolute top-0 left-0 bg-(--ui-bg) z-999 mt-15"
+      class="w-full h-fit flex items-center justify-between px-4 left-0 z-999 sticky top-(--navbar-height) bg-(--ui-bg) pt-5 pb-10"
     >
       <h1 class="font-bold text-primary text-lg">艺术家</h1>
 

@@ -1,5 +1,6 @@
 export const useAppStore = defineStore('appStore', () => {
   const searchActive = ref(false);
+  const disableScrollbar = ref(false);
 
   const showNavbarLeftContent = computed(() => searchActive.value === false);
 
@@ -9,9 +10,15 @@ export const useAppStore = defineStore('appStore', () => {
     component: '',
   });
 
+  function setScrollBarStatus(enabled: boolean) {
+    disableScrollbar.value = !enabled;
+  }
+
   return {
     showNavbarLeftContent,
+    disableScrollbar,
     searchActive,
     drawer,
+    setScrollBarStatus,
   };
 });

@@ -1,4 +1,6 @@
-<script setup lang="tsx"></script>
+<script setup lang="tsx">
+const appStore = useAppStore();
+</script>
 
 <template>
   <div class="w-full h-full flex bg-(--ui-bg)">
@@ -7,7 +9,7 @@
     <div class="main h-full relative">
       <LayoutNavbar />
 
-      <AmyScrollbar track-class="common-content_track">
+      <AmyScrollbar track-class="common-content_track" :disabled="appStore.disableScrollbar">
         <NuxtPage />
       </AmyScrollbar>
     </div>
