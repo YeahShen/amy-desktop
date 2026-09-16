@@ -1,15 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const route = useRoute();
+</script>
 
 <template>
-  <div class="w-full main-content relative h-full">
-    <AmyScrollbar track-class="main-content_track">
+  <div class="w-full relative h-full" :class="[{ 'common-content': !route.meta.immersiveHeader }]">
+    <AmyScrollbar track-class="common-content_track">
       <NuxtPage />
     </AmyScrollbar>
   </div>
 </template>
 
 <style lang="scss">
-.main-content {
+.common-content {
   padding-top: var(--navbar-height);
 
   &_track {

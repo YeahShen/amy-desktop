@@ -49,8 +49,6 @@ if (!gotTheLock) {
 }
 
 app.whenReady().then(async () => {
-  if (createPlayerWindow()) return;
-
   const squirreling = await handleSquirrelEvent();
 
   if (squirreling) {
