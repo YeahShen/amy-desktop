@@ -21,7 +21,7 @@ const immersiveHeader = computed(() => route.meta.immersiveHeader);
     class="w-full navbar drag flex justify-end px-4 z-10 absolute"
     :class="{ 'bg-(--ui-bg)': !immersiveHeader }"
   >
-    <div v-if="immersiveHeader" class="inset-x-0 isolate navbar absolute top-0 left-0">
+    <div v-if="immersiveHeader" class="inset-x-0 isolate navbar absolute top-0 left-0 z-11">
       <div
         style="-webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px); opacity: 1"
         class="absolute inset-0 bg-(--ui-bg)/3 gradient-mask-b-0"
@@ -40,13 +40,13 @@ const immersiveHeader = computed(() => route.meta.immersiveHeader);
       ></div>
       <div
         style="-webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); opacity: 1"
-        class="absolute inset-0 bg-(--ui-bg)/3 gradient-mask-b-0"
+        class="absolute inset-0 bg-(--ui-bg)/1 gradient-mask-b-0"
       ></div>
     </div>
 
-    <LayoutSearch />
+    <LayoutSearch class="z-12" />
 
-    <div class="w-fit h-full flex items-center">
+    <div class="w-fit h-full flex items-center z-12">
       <div class="no-drag">
         <a-avatar :src="userStore.info?.avatar">
           <template #icon>

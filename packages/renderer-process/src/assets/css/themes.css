@@ -2,6 +2,11 @@
   --sidebar-width: 60px;
   --navbar-height: 70px;
 
+  --img-filter: brightness(1.05) contrast(0.9) saturate(0.9);
+  --img-overlay: rgba(255, 255, 255, 0.2);
+  --img-backdrop: blur(1px);
+  --img-bg: #fff;
+
   --main-content-height: calc(100vh - var(--navbar-height));
 
   --ui-primary: var(--color-primary-500);
@@ -30,6 +35,11 @@
 }
 
 .dark {
+  --img-filter: brightness(0.82) contrast(0.95) saturate(0.85);
+  --img-overlay: rgba(0, 0, 0, 0.16);
+  --img-backdrop: none;
+  --img-bg: #121212;
+
   --ui-primary: var(--color-primary-400);
   --ui-secondary: var(--ui-color-secondary-400);
   --ui-success: var(--ui-color-success-400);
