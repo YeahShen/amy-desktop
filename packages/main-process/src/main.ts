@@ -63,8 +63,6 @@ app.whenReady().then(async () => {
 
   await initColorMode();
 
-  if (await createHomeWindow()) return;
-
   createNotificationWindow();
 
   fullScreen().then((worker) => {
