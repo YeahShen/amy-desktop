@@ -1,6 +1,12 @@
 import tailwindcss from '@tailwindcss/vite';
 
-const videoJsElements = new Set(['video-player', 'video-skin', 'mux-video', 'hls-video']);
+const videoJsElements = new Set([
+  'video-player',
+  'video-skin',
+  'mux-video',
+  'hls-video',
+  'hlsjs-video',
+]);
 
 export default defineNuxtConfig({
   app: {

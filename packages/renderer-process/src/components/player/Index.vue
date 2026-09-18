@@ -1,30 +1,26 @@
 <script setup lang="ts">
 import '@videojs/html/video/player';
 import '@videojs/html/video/skin';
-import '@videojs/html/media/hls-video';
+import '@videojs/html/media/hlsjs-video';
 
 import { selectControls, selectVolume } from '@videojs/html';
 import type { VideoPlayerElement } from '@videojs/html/video';
 
+import { getDecryptedFragmentLoader } from './decrypted-ts-loader';
+import type { playerVideoDetail } from '@amy/shared/types';
+
 type VolumePrefs = { volume: number; muted: boolean };
 const VOLUME_STORAGE_KEY = 'amy:player:volume';
 
-type VideoDetail = {
-  id: string;
-  title: string;
-  description?: string;
-  /** 海报图，缺省时不显示 */
-  poster?: string;
-  /** 播放地址：mp4 直链或 HLS 的 m3u8 */
-  url: string;
-  duration?: number;
-};
-
 const props = defineProps<{
-  detail?: VideoDetail;
+  detail?: playerVideoDetail;
+  decryptKey: string;
   loading: boolean;
   loadError: string;
 }>();
+
+/** 拉取详情是父级的活，重试也交回去 */
+const emit = defineEmits<{ retry: [] }>();
 
 const playUrl = computed(() => props.detail?.url);
 const title = computed(() => props.detail?.title);
@@ -110,8 +106,22 @@ function bindControlsVisibility(player: VideoPlayerElement) {
   unsubscribers.push(store.subscribe(sync));
 }
 
-/** 后端转码产物若是 HLS 就走 hls-video —— Chromium 的原生 video 放不了 m3u8 */
+/** 后端转码产物若是 HLS 就走 hlsjs-video —— Chromium 的原生 video 放不了 m3u8，
+    而且 TS 分片只有 hls.js 这条路（SPF 的 hls-video 不吃 MPEG-TS） */
 const isHls = computed(() => /\.m3u8(\?|$)/i.test(playUrl.value || ''));
+
+/**
+ * hls.js 的结构化 source：分片要解密时挂上自定义 fLoader。
+ * 类引用按密钥缓存（见 decrypted-ts-loader），否则 hls.js 会当成配置变了而重建引擎。
+ */
+const hlsSource = computed(() => {
+  const fLoader = props.decryptKey ? getDecryptedFragmentLoader(props.decryptKey) : undefined;
+
+  return {
+    src: playUrl.value ?? '',
+    ...(fLoader ? { engine: { hlsJs: { fLoader } } } : {}),
+  };
+});
 
 // 播放器只在拿到播放地址后才渲染，所以监听 ref 而不是在 onMounted 里一次性绑定
 watch(playerRef, (player) => {
@@ -125,8 +135,6 @@ watch(playerRef, (player) => {
 
 /** 控制栏是否可见（皮肤按用户活动/播放状态算好），标题跟着它一起显隐 */
 const controlsVisible = ref(true);
-
-function load() {}
 
 onUnmounted(clearSubscribers);
 </script>
@@ -142,20 +150,20 @@ onUnmounted(clearSubscribers);
       class="absolute inset-0 flex flex-col items-center justify-center gap-y-4 px-10 text-center"
     >
       <p class="text-white/60">{{ loadError }}</p>
-      <AButton @click="load">重试</AButton>
+      <AButton @click="emit('retry')">重试</AButton>
     </div>
 
     <template v-else-if="playUrl">
       <video-player ref="player" :content-title="title || null">
         <video-skin>
           <!-- 播放器皮肤已内置控制栏、快捷键、手势、缓冲/错误提示与海报 -->
-          <hls-video
+          <hlsjs-video
             v-if="isHls"
-            :src="playUrl"
+            :source.prop="hlsSource"
             playsinline
             :autoplay="autoplay"
             preload="metadata"
-          ></hls-video>
+          ></hlsjs-video>
           <video v-else :src="playUrl" playsinline :autoplay="autoplay" preload="metadata"></video>
         </video-skin>
       </video-player>
@@ -197,7 +205,8 @@ onUnmounted(clearSubscribers);
     }
 
     /* 自定义媒体元素自身不产生布局盒，撑满容器后由内部 video 成像 */
-    hls-video {
+    hls-video,
+    hlsjs-video {
       display: block;
       width: 100%;
       height: 100%;

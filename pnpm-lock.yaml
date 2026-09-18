@@ -201,6 +201,9 @@ importers:
 
   packages/renderer-process:
     dependencies:
+      '@videojs/hlsjs-video':
+        specifier: 10.0.0-rc.2
+        version: 10.0.0-rc.2
       '@videojs/html':
         specifier: 10.0.0-rc.2
         version: 10.0.0-rc.2(@videojs/hlsjs-video@10.0.0-rc.2)(@videojs/mux-video@10.0.0-rc.2)
@@ -210,6 +213,9 @@ importers:
       dayjs:
         specifier: ^1.11.23
         version: 1.11.23
+      hls.js:
+        specifier: 1.6.7
+        version: 1.6.7
     devDependencies:
       '@amy/shared':
         specifier: workspace:*

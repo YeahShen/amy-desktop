@@ -25,3 +25,14 @@ export type VideoPublisher = {
   id: string | number;
   name: string;
 };
+
+export type playerVideoDetail = {
+  id: string;
+  title: string;
+  description?: string;
+  /** 海报图，缺省时不显示 */
+  poster?: string;
+  /** 播放地址：mp4 直链或 HLS 的 m3u8 */
+  url: string;
+  duration?: number;
+};
