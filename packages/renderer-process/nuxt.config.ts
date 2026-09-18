@@ -1,5 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 
+const videoJsElements = new Set(['video-player', 'video-skin', 'mux-video', 'hls-video']);
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -47,6 +49,12 @@ export default defineNuxtConfig({
       include: ['@vue/devtools-core', '@vue/devtools-kit'],
     },
     plugins: [tailwindcss()],
+  },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => videoJsElements.has(tag),
+    },
   },
 
   icon: {

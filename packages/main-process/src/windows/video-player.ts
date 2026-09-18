@@ -2,7 +2,7 @@ import type { BrowserWindow } from 'electron';
 
 let playerWindow: BrowserWindow | null = null;
 
-export function createPlayerWindow() {
+export async function createPlayerWindow() {
   const win = (playerWindow = createFrameWindow({
     ...HOME_WINDOW_BASE_SIZE,
     resizable: true,

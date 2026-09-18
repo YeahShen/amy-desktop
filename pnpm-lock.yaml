@@ -201,6 +201,12 @@ importers:
 
   packages/renderer-process:
     dependencies:
+      '@videojs/html':
+        specifier: 10.0.0-rc.2
+        version: 10.0.0-rc.2(@videojs/hlsjs-video@10.0.0-rc.2)(@videojs/mux-video@10.0.0-rc.2)
+      '@videojs/mux-video':
+        specifier: 10.0.0-rc.2
+        version: 10.0.0-rc.2
       dayjs:
         specifier: ^1.11.23
         version: 1.11.23
@@ -1470,6 +1476,15 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@inquirer/prompts': '>= 3 < 8'
+
+  '@lit-labs/ssr-dom-shim@1.6.0':
+    resolution: {integrity: sha512-VHb0ALPMTlgKjM6yIxxoQNnpKyUKLD04VzeQdsiXkMqkvYlAHxq9glGLmgbb889/1GsohSOAjvQYoiBppXFqrQ==}
+
+  '@lit/context@1.1.6':
+    resolution: {integrity: sha512-M26qDE6UkQbZA2mQ3RjJ3Gzd8TxP+/0obMgE5HfkfLhEEyYE3Bui4A5XHiGPjy0MUGAyxB3QgVuw2ciS0kHn6A==}
+
+  '@lit/reactive-element@2.1.2':
+    resolution: {integrity: sha512-pbCDiVMnne1lYUIaYNN5wrwQXDtHaYtg7YEFPeW+hws6U47WeFvISGUWekPGKWOP1ygrs0ef0o1VJMk1exos5A==}
 
   '@malept/cross-spawn-promise@1.1.1':
     resolution: {integrity: sha512-RTBGWL5FWQcg9orDOCcp4LvItNzUPcyEU9bwaeJX0rJ1IQxzucC48Y0/sQLp/g6t99IQgAlGIaesJS+gTn7tVQ==}
@@ -3070,6 +3085,88 @@ packages:
     resolution: {integrity: sha512-w+WyX5Ulmj4dtTZrxaulqrjaLZHSbnPzx75SJsTNYmotKsqn1JlLnDJa+lz5hn90HJofhl/2MAtw0mCrgM3qYw==}
     engines: {node: '>=20'}
     hasBin: true
+
+  '@videojs/core@10.0.0-rc.2':
+    resolution: {integrity: sha512-yr6DA5CXFIrQ22xM5k0fEEoX64znex0NvMO5mcagkg8s5BaD0zOGuhCOGI0IHs+LFx29HZWZeY9Cf3BHpL5m6A==}
+
+  '@videojs/element@10.0.0-rc.2':
+    resolution: {integrity: sha512-uHvwK/Hsx1+NN8m8Sa6zYHH4aiyvnGJM4iZImhDKGHrE9pe3gWbViKHQqxpHWGVXOIgG+SJmcfvM0veqwBU04Q==}
+
+  '@videojs/hlsjs-video@10.0.0-rc.2':
+    resolution: {integrity: sha512-JK5HhvTYASrhrSh7ye+ZFT+vyVAMOQt74M5eMBEZl3S04KdPWa31cGclCuDMbrWxkVlehtjB0A1Xc0XqJMiX7A==}
+
+  '@videojs/html@10.0.0-rc.2':
+    resolution: {integrity: sha512-ZVKg4OClXgSEKaCWzBgb5hOPMVAwj1/oqnlowmsCULmj1ePCcyQm27QkZMWUaXRqc/LbLYzIrwtIN3OMWy5oNw==}
+    peerDependencies:
+      '@videojs/cloudflare-video': 10.0.0-rc.2
+      '@videojs/dash-video': 10.0.0-rc.2
+      '@videojs/google-cast': 10.0.0-rc.2
+      '@videojs/hlsjs-video': 10.0.0-rc.2
+      '@videojs/mux-audio': 10.0.0-rc.2
+      '@videojs/mux-data': 10.0.0-rc.2
+      '@videojs/mux-video': 10.0.0-rc.2
+      '@videojs/shaka-video': 10.0.0-rc.2
+      '@videojs/spotify-audio': 10.0.0-rc.2
+      '@videojs/tiktok-video': 10.0.0-rc.2
+      '@videojs/twitch-video': 10.0.0-rc.2
+      '@videojs/vimeo-video': 10.0.0-rc.2
+      '@videojs/wistia-video': 10.0.0-rc.2
+      '@videojs/youtube-video': 10.0.0-rc.2
+    peerDependenciesMeta:
+      '@videojs/cloudflare-video':
+        optional: true
+      '@videojs/dash-video':
+        optional: true
+      '@videojs/google-cast':
+        optional: true
+      '@videojs/hlsjs-video':
+        optional: true
+      '@videojs/mux-audio':
+        optional: true
+      '@videojs/mux-data':
+        optional: true
+      '@videojs/mux-video':
+        optional: true
+      '@videojs/shaka-video':
+        optional: true
+      '@videojs/spotify-audio':
+        optional: true
+      '@videojs/tiktok-video':
+        optional: true
+      '@videojs/twitch-video':
+        optional: true
+      '@videojs/vimeo-video':
+        optional: true
+      '@videojs/wistia-video':
+        optional: true
+      '@videojs/youtube-video':
+        optional: true
+
+  '@videojs/media@10.0.0-rc.2':
+    resolution: {integrity: sha512-hMZwCZQCtiPu7a1e2ZY/0ZXTqwPhy2T2VhqB+xQs7OgYx5LaCsVyjfSf7YNvIM8Fe4tTm7t/OJkehTAUrX7uSQ==}
+
+  '@videojs/mux-video@10.0.0-rc.2':
+    resolution: {integrity: sha512-7NmjRD2DaGbqMqX/3QMyefKlDgTkcwK9FpDQDQDdKUMgBl5PGrfIoh07+RD8EXNO468oesDfVbfME+9IlSVy8A==}
+
+  '@videojs/native-hls-video@10.0.0-rc.2':
+    resolution: {integrity: sha512-euVa3CGPdAHa5xPxsEM6L3dz4aD9HzK3AsO+ede4x9bExJlEmWWQVLJQ+CpAQdbotoPMeVTiXI4/4Y3X2HuZag==}
+
+  '@videojs/spf@10.0.0-rc.2':
+    resolution: {integrity: sha512-CLi/67WE7uluWYc27MxUIiYMYfAQS3erZUzLcQcn0ycuxlOo0+buNl2TgVaitZD99RS1vx0shB1eL5YoAeFTPg==}
+
+  '@videojs/store@10.0.0-rc.2':
+    resolution: {integrity: sha512-F4Rh8tWFhEODwxdssyk5ucXwEcxga2lR3dSTD0aP2gHPv2/hv5EXavsbICYXyWZnn2dDaHK+4uYJpAJGxv+xZQ==}
+    peerDependencies:
+      '@videojs/element': 10.0.0-rc.2
+      react: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@videojs/element':
+        optional: true
+      react:
+        optional: true
+
+  '@videojs/utils@10.0.0-rc.2':
+    resolution: {integrity: sha512-4BKDIwxB6HWBp74nKBmP2ubOrPnCicC6CAaJBFRNQOrhFjOOy5wv74DV1ZKmNY4FFwaLxQH710+NEU5S3exGFg==}
 
   '@vitejs/plugin-vue-jsx@5.1.6':
     resolution: {integrity: sha512-YXvi4as2clxt6DFw5+a0tTA97ntiQXm/raR8ofNj3aNwwdlVGTiG2gp7EvfZW17P50acL/9bP0ccF4XnqNmlgA==}
@@ -4902,6 +4999,9 @@ packages:
   hasown@2.0.4:
     resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
+
+  hls.js@1.6.7:
+    resolution: {integrity: sha512-QW2fnwDGKGc9DwQUGLbmMOz8G48UZK7PVNJPcOUql1b8jubKx4/eMHNP5mGqr6tYlJNDG1g10Lx2U/qPzL6zwQ==}
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
@@ -6971,6 +7071,9 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  signal-polyfill@0.2.2:
+    resolution: {integrity: sha512-p63Y4Er5/eMQ9RHg0M0Y64NlsQKpiu6MDdhBXpyywRuWiPywhJTpKJ1iB5K2hJEbFZ0BnDS7ZkJ+0AfTuL37Rg==}
 
   simple-concat@1.0.1:
     resolution: {integrity: sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==}
@@ -9435,6 +9538,16 @@ snapshots:
       '@inquirer/prompts': 6.0.1
       '@inquirer/type': 1.5.5
 
+  '@lit-labs/ssr-dom-shim@1.6.0': {}
+
+  '@lit/context@1.1.6':
+    dependencies:
+      '@lit/reactive-element': 2.1.2
+
+  '@lit/reactive-element@2.1.2':
+    dependencies:
+      '@lit-labs/ssr-dom-shim': 1.6.0
+
   '@malept/cross-spawn-promise@1.1.1':
     dependencies:
       cross-spawn: 7.0.6
@@ -11221,6 +11334,71 @@ snapshots:
       - encoding
       - rollup
       - supports-color
+
+  '@videojs/core@10.0.0-rc.2(@videojs/element@10.0.0-rc.2)':
+    dependencies:
+      '@videojs/media': 10.0.0-rc.2
+      '@videojs/store': 10.0.0-rc.2(@videojs/element@10.0.0-rc.2)
+      '@videojs/utils': 10.0.0-rc.2
+    transitivePeerDependencies:
+      - '@videojs/element'
+      - react
+
+  '@videojs/element@10.0.0-rc.2':
+    dependencies:
+      '@lit/context': 1.1.6
+
+  '@videojs/hlsjs-video@10.0.0-rc.2':
+    dependencies:
+      '@videojs/media': 10.0.0-rc.2
+      '@videojs/native-hls-video': 10.0.0-rc.2
+      '@videojs/utils': 10.0.0-rc.2
+      hls.js: 1.6.7
+
+  '@videojs/html@10.0.0-rc.2(@videojs/hlsjs-video@10.0.0-rc.2)(@videojs/mux-video@10.0.0-rc.2)':
+    dependencies:
+      '@videojs/core': 10.0.0-rc.2(@videojs/element@10.0.0-rc.2)
+      '@videojs/element': 10.0.0-rc.2
+      '@videojs/media': 10.0.0-rc.2
+      '@videojs/native-hls-video': 10.0.0-rc.2
+      '@videojs/spf': 10.0.0-rc.2
+      '@videojs/store': 10.0.0-rc.2(@videojs/element@10.0.0-rc.2)
+      '@videojs/utils': 10.0.0-rc.2
+    optionalDependencies:
+      '@videojs/hlsjs-video': 10.0.0-rc.2
+      '@videojs/mux-video': 10.0.0-rc.2
+    transitivePeerDependencies:
+      - react
+
+  '@videojs/media@10.0.0-rc.2':
+    dependencies:
+      '@videojs/utils': 10.0.0-rc.2
+
+  '@videojs/mux-video@10.0.0-rc.2':
+    dependencies:
+      '@videojs/hlsjs-video': 10.0.0-rc.2
+      '@videojs/media': 10.0.0-rc.2
+      '@videojs/spf': 10.0.0-rc.2
+      '@videojs/utils': 10.0.0-rc.2
+
+  '@videojs/native-hls-video@10.0.0-rc.2':
+    dependencies:
+      '@videojs/media': 10.0.0-rc.2
+      '@videojs/utils': 10.0.0-rc.2
+
+  '@videojs/spf@10.0.0-rc.2':
+    dependencies:
+      '@videojs/media': 10.0.0-rc.2
+      '@videojs/utils': 10.0.0-rc.2
+      signal-polyfill: 0.2.2
+
+  '@videojs/store@10.0.0-rc.2(@videojs/element@10.0.0-rc.2)':
+    dependencies:
+      '@videojs/utils': 10.0.0-rc.2
+    optionalDependencies:
+      '@videojs/element': 10.0.0-rc.2
+
+  '@videojs/utils@10.0.0-rc.2': {}
 
   '@vitejs/plugin-vue-jsx@5.1.6(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.33.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.40(typescript@6.0.3))':
     dependencies:
@@ -13405,6 +13583,8 @@ snapshots:
   hasown@2.0.4:
     dependencies:
       function-bind: 1.1.2
+
+  hls.js@1.6.7: {}
 
   hookable@5.5.3: {}
 
@@ -15670,6 +15850,8 @@ snapshots:
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
+
+  signal-polyfill@0.2.2: {}
 
   simple-concat@1.0.1: {}
 

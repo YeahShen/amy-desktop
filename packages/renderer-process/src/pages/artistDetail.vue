@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import bg from '@/assets/img/wallhaven-zpoxyj_1920x1080.png';
-
 import { UserOutlined } from '@antdv-next/icons';
 
 definePageMeta({
