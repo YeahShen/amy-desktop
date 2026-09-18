@@ -65,7 +65,7 @@ app.whenReady().then(async () => {
 
   createNotificationWindow();
 
-  if (await createPlayerWindow()) return;
+  // if (await createPlayerWindow()) return;
 
   fullScreen().then((worker) => {
     worker.on('message', (msg) => {
