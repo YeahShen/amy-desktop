@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Artist, VideoItem } from '@amy/shared/types';
+import dayjs from 'dayjs';
 
 const props = defineProps<{
   item: VideoItem;
@@ -43,6 +44,13 @@ const duration = computed(() => {
   return formatVideoDuration(props.item.duration);
 });
 
+const uploadDate = computed(() => {
+  const d = dayjs(props.item.createdAt);
+  const str = d.format('YYYY-MM-DD');
+
+  return str.replace('', '');
+});
+
 function play() {
   if (props.loading) return;
   emits('play', props.item.id);
@@ -79,7 +87,7 @@ function play() {
         />
 
         <div
-          class="w-full absolute bottom-0 h-10 bg-gradient-to-b from-black/0 to-black/80 flex justify-between px-2 font-medium"
+          class="w-full absolute bottom-0 h-10 bg-gradient-to-b from-black/0 to-black/80 flex justify-between px-2 font-medium text-white"
         >
           <div class="flex items-center" @click="play">
             <span>{{ item.typeTitle }}</span>
@@ -88,23 +96,25 @@ function play() {
         </div>
       </div>
 
-      <div class="flex cursor-pointer items-start text-default hover:text-primary pr-2 title pt-2">
+      <div
+        class="flex cursor-pointer items-start text-default hover:text-primary pr-2 title pt-2 h-11.5 justify-between"
+      >
         <p class="line-clamp-2 leading-normal text-[15px] font-medium">
           {{ item.title }}
         </p>
 
-        <div class="w-3">
+        <div class="w-3 shrink-0">
           <NuxtIcon class="more-icon" name="amy:more-outlined" size="22" />
         </div>
       </div>
 
       <div
-        class="sub-info flex items-center justify-between text-xs text-muted mt-1 cursor-pointer pr-3"
+        class="sub-info flex items-center justify-between text-xs text-muted mt-2 cursor-pointer pr-3"
       >
         <div class="flex items-center gap-x-1">
           <span v-if="showArtist" class="hover:text-primary-active">{{ artist?.name }}</span>
           <NuxtIcon v-if="showArtist" name="amy:dot-bold" />
-          <span>9-15</span>
+          <span>{{ uploadDate }}</span>
         </div>
 
         <div>{{ item.serialNumber }}</div>

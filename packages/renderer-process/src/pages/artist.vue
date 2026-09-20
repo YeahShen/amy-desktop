@@ -3,6 +3,7 @@ import type { Artist } from '@amy/shared/types';
 
 definePageMeta({
   workspace: 'artist',
+  keepalive: true,
 });
 
 type ArtistByCate = {
