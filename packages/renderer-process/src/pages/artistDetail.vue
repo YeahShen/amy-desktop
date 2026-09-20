@@ -42,7 +42,9 @@ async function load() {
 const loadingProfile = computed(() => loadProfile.value && loadList.value);
 const loadingList = computed(() => loadProfile.value || loadList.value);
 
-console.log(route);
+function play(id: string) {
+  window.electronAPI.send('play-video', id);
+}
 </script>
 
 <template>
@@ -68,7 +70,7 @@ console.log(route);
         :loading="loadingList"
       >
         <template #item="{ item, loading: l }">
-          <VideoItem :loading="l" :item :artist="artist" show-artist />
+          <VideoItem :loading="l" :item :artist="artist" show-artist @play="play" />
         </template>
       </AmyListWrap>
     </div>

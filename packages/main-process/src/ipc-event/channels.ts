@@ -22,6 +22,8 @@ export enum ON_EVENT {
   // huge file upload
   ADD_UPLOAD_TASK = 'add-upload-task',
   NOTIFY_MESSAGE = 'notify-message',
+
+  PLAY_VIDEO = 'play-video',
 }
 
 export enum HANDLE_EVENT {
@@ -51,6 +53,7 @@ export enum SEND_EVENT {
   NOTIFY_MESSAGE = 'notify-message',
 
   VIDEO_INFO = 'video-info',
+  CHANGE_VIDEO = 'change-video',
 }
 
 export type OnEventChannels = `${ON_EVENT}`;

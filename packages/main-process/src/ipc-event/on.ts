@@ -111,3 +111,14 @@ ipcMain.on(ON_EVENT.OPEN_MAIN_WINDOW, () => {
 ipcMain.on(ON_EVENT.NOTIFY_MESSAGE, (_e, type, message) => {
   getNotificationWindow()?.webContents.send(SEND_EVENT.NOTIFY_MESSAGE, { type, message });
 });
+
+ipcMain.on(ON_EVENT.PLAY_VIDEO, (_e, id: string) => {
+  const win = getPlayerWindow();
+
+  if (win) {
+    changePlay(id);
+    return;
+  }
+
+  createPlayerWindow(id);
+});

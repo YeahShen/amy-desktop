@@ -8,6 +8,10 @@ const props = defineProps<{
   showArtist: boolean;
 }>();
 
+const emits = defineEmits<{
+  play: [id: string];
+}>();
+
 /**
  * 将视频时长秒数转换为 00:00 或 00:00:00 格式的字符串。
  * @param seconds 视频时长，单位为秒。可以是整数或浮点数。
@@ -38,6 +42,11 @@ function formatVideoDuration(seconds: number): string {
 const duration = computed(() => {
   return formatVideoDuration(props.item.duration);
 });
+
+function play() {
+  if (props.loading) return;
+  emits('play', props.item.id);
+}
 </script>
 
 <template>
@@ -60,7 +69,7 @@ const duration = computed(() => {
         },
       }"
     >
-      <div class="w-full h-fit poster-wrap relative">
+      <div class="w-full h-fit poster-wrap relative" @click="play">
         <a-image
           width="100%"
           class="aspect-video rounded-lg cursor-pointer"
@@ -72,7 +81,7 @@ const duration = computed(() => {
         <div
           class="w-full absolute bottom-0 h-10 bg-gradient-to-b from-black/0 to-black/80 flex justify-between px-2 font-medium"
         >
-          <div class="flex items-center">
+          <div class="flex items-center" @click="play">
             <span>{{ item.typeTitle }}</span>
           </div>
           <div class="flex items-center">{{ duration }}</div>
@@ -90,13 +99,15 @@ const duration = computed(() => {
       </div>
 
       <div
-        class="sub-info flex items-center justify-between text-xs text-muted mt-1 cursor-pointer"
+        class="sub-info flex items-center justify-between text-xs text-muted mt-1 cursor-pointer pr-3"
       >
         <div class="flex items-center gap-x-1">
-          <span v-if="showArtist">{{ artist?.name }}</span>
+          <span v-if="showArtist" class="hover:text-primary-active">{{ artist?.name }}</span>
           <NuxtIcon v-if="showArtist" name="amy:dot-bold" />
           <span>9-15</span>
         </div>
+
+        <div>{{ item.serialNumber }}</div>
       </div>
     </a-skeleton>
   </div>

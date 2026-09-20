@@ -15,6 +15,7 @@
     "SendEventChannels": "readonly",
     "authAxios": "readonly",
     "buildWindowUrl": "readonly",
+    "changePlay": "readonly",
     "checkIPv6HTTP": "readonly",
     "createDialogWindow": "readonly",
     "createFloatWindow": "readonly",

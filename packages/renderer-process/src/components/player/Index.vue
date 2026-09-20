@@ -22,7 +22,7 @@ const props = defineProps<{
 /** 拉取详情是父级的活，重试也交回去 */
 const emit = defineEmits<{ retry: [] }>();
 
-const playUrl = computed(() => props.detail?.url);
+const playUrl = computed(() => props.detail?.playUrl);
 const title = computed(() => props.detail?.title);
 const autoplay = computed(() => false);
 const playerRef = useTemplateRef<VideoPlayerElement>('player');
