@@ -30,7 +30,7 @@ export async function createHomeWindow() {
     backgroundColor: dark ? '#17181a' : '#fff',
   }));
 
-  win.loadURL(buildWindowUrl('artistDetail'));
+  win.loadURL(buildWindowUrl('home'));
 
   win.once('ready-to-show', () => {
     win?.show();

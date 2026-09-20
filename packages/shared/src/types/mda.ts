@@ -26,6 +26,28 @@ export type VideoPublisher = {
   name: string;
 };
 
+export type VideoStatus = 'normal' | 'delete' | 'conversion';
+
+export type VideoItem = {
+  id: string;
+  title: string;
+  description: string;
+  serialNumber: string;
+  type: number;
+  typeTitle: string;
+  posterName: string;
+  publisherId: number;
+  posterUrl: string;
+  seriesId: number;
+  duration: number;
+  parentFolderName: string;
+  createdAt: Date;
+  creator: number;
+  rootAbsolutePath: string;
+  resolutions: string;
+  status: VideoStatus;
+};
+
 export type playerVideoDetail = {
   id: string;
   title: string;
