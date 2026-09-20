@@ -80,10 +80,16 @@ function play() {
       <div class="w-full h-fit poster-wrap aspect-video overflow-hidden relative" @click="play">
         <a-image
           width="100%"
-          class="aspect-video rounded-lg cursor-pointer"
+          class="aspect-video cursor-pointer"
           alt="basic"
           :preview="false"
           :src="item.posterUrl"
+          :styles="{
+            root: {
+              borderRadius: '6px',
+              overflow: 'hidden',
+            },
+          }"
         />
 
         <div
@@ -109,7 +115,7 @@ function play() {
       </div>
 
       <div
-        class="sub-info flex items-center justify-between text-xs text-muted mt-2 cursor-pointer pr-3"
+        class="sub-info flex items-center justify-between text-xs text-muted mt-3 cursor-pointer pr-3"
       >
         <div class="flex items-center gap-x-1">
           <span v-if="showArtist" class="hover:text-primary-active">{{ artist?.name }}</span>

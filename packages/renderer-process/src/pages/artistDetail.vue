@@ -16,6 +16,8 @@ const mdaStore = useMdaStore();
 const loadProfile = ref(false);
 const loadList = ref(false);
 
+watch(tab, (v) => loadMdaList(v));
+
 onMounted(() => {
   load();
 });
@@ -45,6 +47,7 @@ async function loadArtistProfile() {
 }
 
 async function loadMdaList(type: string) {
+  videoList.value = [];
   try {
     if (type === 'video') {
       const videoCache = mdaStore.videoCache.get(route.query.id as string);

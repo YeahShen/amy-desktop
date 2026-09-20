@@ -23,6 +23,10 @@ const items: TabsProps['items'] = [
     label: '相册',
   },
 ];
+
+function change(item: any) {
+  activeTab.value = item;
+}
 </script>
 
 <template>
@@ -34,7 +38,6 @@ const items: TabsProps['items'] = [
     :classes="{ paragraph: 'flex justify-start items-center tabs-loading-skeleton' }"
   >
     <a-tabs
-      v-model="activeTab"
       class="artist-tabs"
       :items="items"
       :indicator="{
@@ -63,6 +66,7 @@ const items: TabsProps['items'] = [
           borderRadius: '50%',
         },
       }"
+      @change="change"
     />
   </ASkeleton>
 </template>
