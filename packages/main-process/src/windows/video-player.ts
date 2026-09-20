@@ -21,6 +21,14 @@ export async function createPlayerWindow(id: string) {
     playerWindow = null;
   });
 
+  win.on('maximize', () => {
+    win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, true);
+  });
+
+  win.on('unmaximize', () => {
+    win.webContents.send(SEND_EVENT.WINDOW_SIZE_STATE, false);
+  });
+
   return true;
 }
 

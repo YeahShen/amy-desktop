@@ -41,7 +41,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class="w-full h-full flex flex-col">
+    <PlayerNavbar :title="detail?.title" />
     <Player
       :detail="detail"
       :decrypt-key="decryptKey"

@@ -168,9 +168,9 @@ onUnmounted(clearSubscribers);
         </video-skin>
       </video-player>
 
-      <p v-if="title" class="player-title" :class="{ 'is-hidden': !controlsVisible }">
+      <!-- <p v-if="title" class="player-title" :class="{ 'is-hidden': !controlsVisible }">
         {{ title }}
-      </p>
+      </p> -->
     </template>
 
     <div v-else class="absolute inset-0 flex items-center justify-center text-white/40">
