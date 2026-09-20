@@ -38,6 +38,7 @@
     "@videojs/html": "10.0.0-rc.2",
     "@videojs/mux-video": "10.0.0-rc.2",
     "dayjs": "^1.11.23",
-    "hls.js": "1.6.7"
+    "hls.js": "1.6.7",
+    "uuid": "^14.0.1"
   }
 }

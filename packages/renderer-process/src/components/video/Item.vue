@@ -69,7 +69,7 @@ function play() {
         },
       }"
     >
-      <div class="w-full h-fit poster-wrap relative" @click="play">
+      <div class="w-full h-fit poster-wrap aspect-video overflow-hidden relative" @click="play">
         <a-image
           width="100%"
           class="aspect-video rounded-lg cursor-pointer"
@@ -88,7 +88,7 @@ function play() {
         </div>
       </div>
 
-      <div class="flex cursor-pointer items-start text-default hover:text-primary pr-2 title">
+      <div class="flex cursor-pointer items-start text-default hover:text-primary pr-2 title pt-2">
         <p class="line-clamp-2 leading-normal text-[15px] font-medium">
           {{ item.title }}
         </p>

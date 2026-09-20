@@ -55,13 +55,13 @@ function stylesFn(info: { props: { active?: boolean } }) {
           :loading="loading"
           active
         >
-          <a-tooltip placement="top" :title="artist?.name">
-            <p class="text-xl line-clamp-2">{{ artist?.name }}</p>
-          </a-tooltip>
+          <p class="text-xl">{{ artist?.name }}</p>
 
-          <span class="text-toned">
-            {{ artist?.description }}
-          </span>
+          <a-tooltip placement="bottomLeft" :title="artist?.description" :max-width="450">
+            <span class="text-toned line-clamp-2">
+              {{ artist?.description }}
+            </span>
+          </a-tooltip>
         </a-skeleton>
       </div>
     </div>
@@ -76,7 +76,7 @@ function stylesFn(info: { props: { active?: boolean } }) {
             :classes="{ paragraph: 'flex justify-center items-center flex-col' }"
           >
             <div class="flex flex-col items-center justify-center px-3 gap-y-1">
-              <p class="text-2xl text-nowrap">960</p>
+              <p class="text-2xl text-nowrap">0</p>
               <span class="text-xs text-muted text-nowrap">关注数</span>
             </div>
           </a-skeleton>
@@ -92,7 +92,7 @@ function stylesFn(info: { props: { active?: boolean } }) {
             :classes="{ paragraph: 'flex justify-center items-center flex-col' }"
           >
             <div class="flex flex-col items-center justify-center px-3 gap-y-1">
-              <p class="text-2xl text-nowrap">960</p>
+              <p class="text-2xl text-nowrap">0</p>
               <span class="text-xs text-muted text-nowrap">关注数</span>
             </div>
           </a-skeleton>
@@ -108,7 +108,7 @@ function stylesFn(info: { props: { active?: boolean } }) {
             :classes="{ paragraph: 'flex justify-center items-center flex-col' }"
           >
             <div class="flex flex-col items-center justify-center px-3 gap-y-1">
-              <p class="text-2xl text-nowrap">960</p>
+              <p class="text-2xl text-nowrap">0</p>
               <span class="text-xs text-muted text-nowrap">关注数</span>
             </div>
           </a-skeleton>

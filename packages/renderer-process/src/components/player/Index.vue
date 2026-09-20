@@ -24,7 +24,7 @@ const emit = defineEmits<{ retry: [] }>();
 
 const playUrl = computed(() => props.detail?.playUrl);
 const title = computed(() => props.detail?.title);
-const autoplay = computed(() => false);
+const autoplay = computed(() => true);
 const playerRef = useTemplateRef<VideoPlayerElement>('player');
 
 const unsubscribers: Array<() => void> = [];

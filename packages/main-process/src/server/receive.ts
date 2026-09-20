@@ -6,10 +6,10 @@ const router = new Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/recevie/video-info', upload.single('file'), async (ctx) => {
-  if (!(await getSetting('appRunSettings.enableSendVideoInfoApi'))) {
-    ctx.body = `'amy station' send video api is diaable'`;
-    return;
-  }
+  // if (!(await getSetting('appRunSettings.enableSendVideoInfoApi'))) {
+  //   ctx.body = `'amy station' send video api is diaable'`;
+  //   return;
+  // }
 
   const { category, title, fh, publishData, publisher, artist, type } = ctx.request.body as any;
 

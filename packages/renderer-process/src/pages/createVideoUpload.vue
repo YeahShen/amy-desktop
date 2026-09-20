@@ -2,6 +2,8 @@
 import type { FormInstance } from 'antdv-next';
 import type { Artist, VideoPublisher, VideoTag, VideoType } from '@amy/shared/types';
 
+import { v4 } from 'uuid';
+
 definePageMeta({
   layout: 'dialog',
   dialog: {
@@ -75,7 +77,7 @@ onMounted(() => {
       // @ts-ignore
       form.publisher = ph.id;
     } else {
-      const id = '$$_' + new Date().getTime();
+      const id = '$$_' + v4();
       publisher.value.push({
         id: id,
         name: info.publisher,
@@ -90,12 +92,15 @@ onMounted(() => {
         // @ts-ignore
         form.tags.push(exist.id);
       } else {
-        const id = '$$_' + new Date().getTime();
+        const id = '$$_' + v4();
 
         tags.value.push({
           title: citem,
           id: id,
         });
+
+        console.log(tags.value);
+
         form.tags.push(id);
       }
     });
@@ -129,7 +134,7 @@ async function addItem(e: MouseEvent) {
   e.preventDefault();
   tags.value.push({
     title: newTagName.value,
-    id: '$$_' + new Date().getTime(),
+    id: '$$_' + v4(),
   });
 
   newTagName.value = '';
@@ -138,7 +143,7 @@ async function addItem(e: MouseEvent) {
 function addPublisher(e: MouseEvent) {
   e.preventDefault();
   publisher.value.push({
-    id: '$$_' + new Date().getTime(),
+    id: '$$_' + v4(),
     name: newPublisherName.value,
   });
 
@@ -186,7 +191,7 @@ async function commit() {
     title: form.title,
     filePath: form.filePath,
     size: form.size,
-    createdTime: new Date().getTime(),
+    createdTime: v4(),
     author: form.actors.join(','),
   });
 

@@ -216,6 +216,9 @@ importers:
       hls.js:
         specifier: 1.6.7
         version: 1.6.7
+      uuid:
+        specifier: ^14.0.1
+        version: 14.0.1
     devDependencies:
       '@amy/shared':
         specifier: workspace:*
