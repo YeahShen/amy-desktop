@@ -55,7 +55,10 @@ function stylesFn(info: { props: { active?: boolean } }) {
           :loading="loading"
           active
         >
-          <p class="text-xl">{{ artist?.name }}</p>
+          <a-tooltip placement="top" :title="artist?.name">
+            <p class="text-xl line-clamp-2">{{ artist?.name }}</p>
+          </a-tooltip>
+
           <span class="text-toned">
             {{ artist?.description }}
           </span>
