@@ -11,6 +11,7 @@ const tab = ref('video');
 
 const route = useRoute();
 const videoList = ref<VideoItem[]>([]);
+const mdaStore = useMdaStore();
 
 const loadProfile = ref(false);
 const loadList = ref(false);
@@ -20,23 +21,49 @@ onMounted(() => {
 });
 
 async function load() {
+  await loadArtistProfile();
+  await loadMdaList(tab.value);
+}
+
+async function loadArtistProfile() {
   try {
     loadProfile.value = true;
-    const res = await $request<Artist>(`/artist/${route.query.id}`, { method: 'GET' });
-    artist.value = res;
 
-    loadList.value = true;
-    const resp = await $request<{
-      videoId: string;
-      videoList: VideoItem[];
-    }>('/video/get-artiest-videos?id=' + route.query.id);
+    const artistCache = mdaStore.artistMap.get(route.query.id as string);
 
-    videoList.value = resp.videoList;
-  } catch {
+    if (artistCache) {
+      artist.value = artistCache;
+    } else {
+      const res = await $request<Artist>(`/artist/${route.query.id}`, { method: 'GET' });
+      mdaStore.artistMap.set(route.query.id as string, res);
+
+      artist.value = res;
+    }
+  } finally {
     loadProfile.value = false;
   }
-  loadProfile.value = false;
-  loadList.value = false;
+}
+
+async function loadMdaList(type: string) {
+  try {
+    if (type === 'video') {
+      const videoCache = mdaStore.videoCache.get(route.query.id as string);
+      if (videoCache) {
+        videoList.value = videoCache;
+      } else {
+        loadList.value = true;
+
+        const resp = await $request<{
+          videoList: VideoItem[];
+        }>('/video/get-artiest-videos?id=' + route.query.id);
+
+        videoList.value = resp.videoList;
+        mdaStore.videoCache.set(route.query.id as string, videoList.value);
+      }
+    }
+  } finally {
+    loadList.value = false;
+  }
 }
 
 const loadingProfile = computed(() => loadProfile.value && loadList.value);
