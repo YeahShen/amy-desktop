@@ -38,4 +38,16 @@ export function getPlayerWindow() {
 
 export function changePlay(id: string) {
   playerWindow?.webContents.send(SEND_EVENT.CHANGE_VIDEO, id);
+
+  if (playerWindow) {
+    if (playerWindow.isMinimized()) {
+      playerWindow.restore(); // 从最小化恢复
+    }
+
+    playerWindow.setAlwaysOnTop(true);
+
+    playerWindow.show(); // 如果被隐藏则显示出来
+    playerWindow.focus(); // 拉到前台并获得键盘焦点
+    playerWindow.setAlwaysOnTop(false);
+  }
 }
