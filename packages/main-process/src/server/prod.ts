@@ -6,6 +6,7 @@ import { serve } from './send/serve';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import path from 'node:path';
 import { app } from 'electron';
+import { info } from 'electron-log';
 
 import bodyParser from 'koa-bodyparser';
 
@@ -22,6 +23,7 @@ export function createServer() {
         changeOrigin: true,
         secure: false,
         router: () => {
+          info('enable base api:', getEnableUrl());
           return getEnableUrl();
         },
         on: {
