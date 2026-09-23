@@ -53,3 +53,10 @@ export function appSettingBuilder({
     setSetting: setter,
   };
 }
+
+export type ApiUrls = {
+  list: {
+    url: string;
+    isEnable: boolean;
+  }[];
+};
