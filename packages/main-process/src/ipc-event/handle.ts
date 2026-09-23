@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import { createDialogWindow } from '../windows/dialog';
 import { deleteTask, getTasks, pause, startTask } from '../upload';
 import { getAllDialog, removeDialog, setDialog } from '../utils/dialog-manager';
+import { getApiUrls } from '../stores/api-url';
 
 ipcMain.handle(HANDLE_EVENT.GET_SCREEN_RECT, () => {
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -100,4 +101,8 @@ ipcMain.handle(HANDLE_EVENT.START_UPLOAD_TASK, (_e, id) => {
 
 ipcMain.handle(HANDLE_EVENT.GET_UPLOAD_TASKS, (_e, type) => {
   return getTasks(type);
+});
+
+ipcMain.handle(HANDLE_EVENT.GET_API_URLS, () => {
+  return getApiUrls();
 });

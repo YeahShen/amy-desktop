@@ -10,6 +10,7 @@ import { app } from 'electron';
 import bodyParser from 'koa-bodyparser';
 
 import { router as receiveRouter } from './receive';
+import { getEnableUrl } from '../stores/api-url';
 
 export function createServer() {
   const server = new Koa();
@@ -21,7 +22,7 @@ export function createServer() {
         changeOrigin: true,
         secure: false,
         router: () => {
-          return BASE_URL;
+          return getEnableUrl();
         },
         on: {
           proxyReq: (proxyReq, req) => {

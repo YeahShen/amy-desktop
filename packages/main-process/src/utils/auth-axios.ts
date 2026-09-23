@@ -1,5 +1,5 @@
 import { createAuthAxios } from '@amy/shared';
 
-export const authAxios = createAuthAxios(BASE_URL, () => {
+export const authAxios = createAuthAxios(`http://localhost:${PORT}/`, () => {
   return 'Bearer ' + getToken();
 });

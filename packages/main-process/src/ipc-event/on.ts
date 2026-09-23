@@ -5,6 +5,8 @@ import { User } from '@amy/shared';
 import { setAuthenticate } from '../stores/auth';
 import { addTask } from '../upload';
 import { getNotificationWindow } from '../windows/notification';
+import { changePlay } from '../windows/video-player';
+import { setApiUrls } from '../stores/api-url';
 
 ipcMain.on(ON_EVENT.OPEN_DEV_TOOLS, (_e) =>
   BrowserWindow.fromWebContents(_e.sender)?.webContents.openDevTools({ mode: 'detach' }),
@@ -121,4 +123,8 @@ ipcMain.on(ON_EVENT.PLAY_VIDEO, (_e, id: string) => {
   }
 
   createPlayerWindow(id);
+});
+
+ipcMain.on(ON_EVENT.SET_API_URLS, (_e, list) => {
+  setApiUrls(list);
 });

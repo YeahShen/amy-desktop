@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import type { ColorMode, HideHomeWindowOrExit } from '@amy/shared';
+import type { ApiUrls, ColorMode, HideHomeWindowOrExit } from '@amy/shared';
 
 /* ── 外观：主题模式 ──────────────────────────────── */
 
@@ -71,10 +71,42 @@ const closeWindowOptions: { label: string; value: HideHomeWindowOrExit }[] = [
   { label: '退出应用', value: 'exit' },
 ];
 
-/* ── 网络代理 ────────────────────────────────────── */
+/* ── 网络，代理 ────────────────────────────────────── */
 
 const proxyEnabled = useSettings('proxy.enabled');
 const proxyUrl = useSettings('proxy.url');
+
+const apis = ref<ApiUrls['list']>([]);
+const enableApi = ref<string>();
+const newApi = ref<string>('');
+
+onMounted(() => {
+  window.electronAPI.invoke<ApiUrls['list']>('get-api-urls').then((res) => {
+    apis.value = res;
+    enableApi.value = res.find((i) => i.isEnable)?.url;
+  });
+
+  watch(enableApi, (url) => {
+    if (!url) return;
+    apis.value.forEach((i) => (i.isEnable = i.url === url));
+    update(apis.value);
+  });
+});
+
+function addApiItem() {
+  const url = newApi.value.trim();
+  if (!url) return;
+
+  apis.value.push({ url, isEnable: false });
+  newApi.value = '';
+
+  enableApi.value = url; // 或按需切换
+  update(apis.value); // 通知主进程落库
+}
+
+function update(list: ApiUrls['list']) {
+  window.electronAPI.send('set-api-urls', toRaw(list));
+}
 
 /* ── 登录偏好 ────────────────────────────────────── */
 
@@ -119,6 +151,35 @@ const rememberPassword = useSettings('login.remenberMe');
           :options="closeWindowOptions"
           class="shrink-0"
         />
+      </div>
+    </section>
+
+    <section class="rounded-xl bg-card border border-default overflow-hidden">
+      <header class="px-4 py-2.5 text-[13px] font-medium text-toned">API 接口</header>
+
+      <div
+        class="px-4 py-3 flex items-start justify-between gap-x-4 border-t border-default flex-col"
+      >
+        <div class="min-w-0">
+          <p class="text-sm">接口基础地址</p>
+        </div>
+
+        <div class="w-full mt-2">
+          <a-select
+            v-model:value="enableApi"
+            class="w-full"
+            :options="apis.map((i) => ({ value: i.url }))"
+          >
+            <template #popupRender="menu">
+              <component :is="menu" />
+              <a-divider style="margin: 8px 0" />
+              <a-space style="padding: 0 8px 4px">
+                <a-input v-model:value="newApi" class="w-full" @keydown.stop />
+                <a-button type="primary" @click="addApiItem"> 添加 </a-button>
+              </a-space>
+            </template>
+          </a-select>
+        </div>
       </div>
     </section>
 

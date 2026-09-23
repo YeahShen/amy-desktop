@@ -24,6 +24,8 @@ export enum ON_EVENT {
   NOTIFY_MESSAGE = 'notify-message',
 
   PLAY_VIDEO = 'play-video',
+
+  SET_API_URLS = 'set-api-urls',
 }
 
 export enum HANDLE_EVENT {
@@ -41,6 +43,8 @@ export enum HANDLE_EVENT {
   DELETE_UPLOAD_TASK = 'delete-upload-task',
   START_UPLOAD_TASK = 'start-upload-task',
   GET_UPLOAD_TASKS = 'get-upload-tasks',
+
+  GET_API_URLS = 'get-api-urls',
 }
 
 export enum SEND_EVENT {

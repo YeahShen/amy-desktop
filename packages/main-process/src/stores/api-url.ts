@@ -3,10 +3,13 @@ import Store from 'electron-store';
 
 const store = new Store<ApiUrls>({ name: 'api-url' });
 
+let cache: ApiUrls['list'] = [];
+
 export function getApiUrls() {
+  if (cache.length > 0) return cache;
   let list = store.get('list') || [];
 
-  list = [...list, { url: BASE_URL, isEnable: false }];
+  list = [{ url: BASE_URL, isEnable: false }, ...list];
 
   if (!list.some((i) => i.isEnable)) {
     list.forEach((i) => {
@@ -25,5 +28,14 @@ export function setApiUrls(
     isEnable: boolean;
   }[],
 ) {
-  store.set('list', list);
+  store.set(
+    'list',
+    list.filter((i) => i.url !== BASE_URL),
+  );
+  cache = [];
+}
+
+export function getEnableUrl() {
+  const list = getApiUrls();
+  return list.find((i) => i.isEnable)?.url;
 }
