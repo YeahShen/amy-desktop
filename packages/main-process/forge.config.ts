@@ -65,7 +65,7 @@ const config: ForgeConfig = {
     new PublisherBitbucket({
       appName: appName as string,
       packageName: 'site.ashenstation.amy',
-      baseUrl: 'https://f21abade925144bbbbdf92c1f8c4f8ac.hn.takin.cc',
+      baseUrl: 'http://release.ashen-station.top',
       auth: {
         username: process.env.AMY_PUBLISH_USERNAME,
         password: process.env.AMY_PUBLISH_PASSWORD,

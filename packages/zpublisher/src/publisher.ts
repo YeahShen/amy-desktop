@@ -124,7 +124,7 @@ export default class PublisherBitbucket extends PublisherBase<PublisherBitbucket
   ) {
     return new Promise((resolve) => {
       const scheduler = new TaskScheduler<UploadChunkResult>({
-        sameTimeTask: 10,
+        sameTimeTask: 15,
         loopInterval: 100,
         retries: 5,
       });

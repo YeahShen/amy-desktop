@@ -84,7 +84,7 @@ function play(id: string) {
     <ArtistProfile :artist="artist" :loading="loadingProfile" />
 
     <div
-      class="w-full h-10 bg-(--ui-bg) flex items-end sticky top-(--navbar-height) border-b border-(--ant-color-border-secondary)"
+      class="w-full h-10 bg-(--ui-bg) flex items-end sticky top-(--navbar-height) border-b border-(--ant-color-border-secondary) z-999"
     >
       <ArtistTabBar v-model="tab" :loading="loadingProfile" />
     </div>
