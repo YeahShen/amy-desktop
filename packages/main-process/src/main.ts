@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { app } from 'electron';
+import { app, Notification } from 'electron';
 import { checkForUpdate } from './updater';
 import { createServer } from './server';
 import { isLogin } from './stores/auth';

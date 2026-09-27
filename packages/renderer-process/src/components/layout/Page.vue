@@ -5,9 +5,11 @@ const immersiveHeader = computed(() => route.meta.immersiveHeader);
 </script>
 
 <template>
-  <div :class="{ tp: !immersiveHeader }" class="w-full min-h-screen">
-    <slot />
-  </div>
+  <AmyScrollbar track-class="common-content_track">
+    <div :class="{ tp: !immersiveHeader }" class="w-full min-h-screen">
+      <slot />
+    </div>
+  </AmyScrollbar>
 </template>
 
 <style lang="scss">

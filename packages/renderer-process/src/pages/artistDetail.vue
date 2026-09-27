@@ -16,7 +16,9 @@ const mdaStore = useMdaStore();
 const loadProfile = ref(false);
 const loadList = ref(false);
 
-watch(tab, (v) => loadMdaList(v));
+// watch(tab, (v) => {
+//   // jump(v);
+// });
 
 onMounted(() => {
   load();
@@ -75,26 +77,30 @@ const loadingList = computed(() => loadProfile.value || loadList.value);
 function play(id: string) {
   window.electronAPI.send('play-video', id);
 }
+
+function jump(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+}
 </script>
 
 <template>
-  <LayoutPage class="bg-[#f6f7f8] dark:bg-[#0d0d0e]">
-    <div class="profile-wrap h-(--navbar-height) w-full sticky top-0 bg-(--ui-bg)"></div>
+  <LayoutPage class="">
+    <div class="profile-placeholder w-full sticky top-0 bg-(--ui-bg)/50 glass-bg z-1"></div>
 
     <ArtistProfile :artist="artist" :loading="loadingProfile" />
 
     <div
-      class="w-full h-10 bg-(--ui-bg) flex items-end sticky top-(--navbar-height) border-b border-(--ant-color-border-secondary) z-999"
+      class="w-full h-10 flex items-end sticky top-(--navbar-height) border-b border-(--ant-color-border-secondary) z-999"
     >
       <ArtistTabBar v-model="tab" :loading="loadingProfile" />
     </div>
 
-    <div class="w-full rs-wrap py-6 h-fit">
+    <div class="w-full rs-wrap py-6 h-fit bg-[#f6f7f8] dark:bg-[#0d0d0e]">
       <AmyListWrap
         :item-min-width="220"
         :side-width="32"
         :gap-x="36"
-        :gap-y="26"
+        :gap-y="40"
         :list="videoList"
         :loading-row-number="5"
         :loading="loadingList"
@@ -109,6 +115,10 @@ function play(id: string) {
 
 <style lang="scss">
 .rs-wrap {
-  min-height: calc(100vh - 584px);
+  min-height: calc(100vh - 323px);
+}
+
+.profile-placeholder {
+  height: calc(#{var(--navbar-height)} + 38px);
 }
 </style>

@@ -50,6 +50,8 @@ onMounted(async () => {
 
 // 加载未结束就离开页面时复位，否则滚动条会一直处于禁用态
 onUnmounted(() => appStore.setScrollBarStatus(true));
+
+const wle = computed(() => appStore.lwem.get('artistlistpage'));
 </script>
 
 <template>
@@ -92,10 +94,10 @@ onUnmounted(() => appStore.setScrollBarStatus(true));
         </div>
 
         <AmyListWrap
-          :item-min-width="80"
-          :side-width="16"
-          :gap-x="36"
-          :gap-y="26"
+          :item-min-width="wle?.itemMinWidth || 0"
+          :side-width="wle?.sideWidth || 0"
+          :gap-x="wle?.gapX || 0"
+          :gap-y="36"
           :list="i.list"
           :loading="laoding"
           :loading-row-number="idx + 1"

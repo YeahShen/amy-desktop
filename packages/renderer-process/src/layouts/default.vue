@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-const appStore = useAppStore();
+useAppStore();
 </script>
 
 <template>
@@ -9,9 +9,11 @@ const appStore = useAppStore();
     <div class="main h-full relative">
       <LayoutNavbar />
 
-      <AmyScrollbar track-class="common-content_track" :disabled="appStore.disableScrollbar">
+      <!-- <AmyScrollbar track-class="common-content_track" :disabled="appStore.disableScrollbar">
         <NuxtPage />
-      </AmyScrollbar>
+      </AmyScrollbar> -->
+
+      <NuxtPage />
     </div>
 
     <LayoutDrawer />
@@ -21,9 +23,5 @@ const appStore = useAppStore();
 <style lang="scss">
 .main {
   width: calc(100% - #{var(--sidebar-width)});
-}
-
-.common-content_track {
-  padding-top: var(--navbar-height);
 }
 </style>

@@ -80,16 +80,10 @@ function play() {
       <div class="w-full h-fit poster-wrap aspect-video overflow-hidden relative" @click="play">
         <a-image
           width="100%"
-          class="aspect-video cursor-pointer"
+          class="aspect-video cursor-pointer poster"
           alt="basic"
           :preview="false"
           :src="item.posterUrl"
-          :styles="{
-            root: {
-              borderRadius: '6px',
-              overflow: 'hidden',
-            },
-          }"
         />
 
         <div
@@ -141,6 +135,8 @@ function play() {
 
   .poster-wrap {
     transition: all 0.25s;
+    border-radius: 6px;
+    overflow: hidden;
 
     &:hover {
       transform: scale(1.075);

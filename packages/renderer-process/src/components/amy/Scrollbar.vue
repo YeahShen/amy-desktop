@@ -195,6 +195,14 @@ onUnmounted(() => {
   // 拖动中卸载时清理全部 document 监听，避免污染全局状态（文本选择被禁等）
   onDragEnd();
 });
+
+defineExpose({
+  /** 滚动回顶部（路由跳转时由布局调用重置滚动位置） */
+  scrollToTop() {
+    const wrap = wrapRef.value;
+    if (wrap) wrap.scrollTop = 0;
+  },
+});
 </script>
 
 <template>

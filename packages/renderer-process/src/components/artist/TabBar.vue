@@ -67,7 +67,11 @@ function change(item: any) {
         },
       }"
       @change="change"
-    />
+    >
+      <template #labelRender="{ item }">
+        <p :id="item.key">{{ item.label }}</p>
+      </template>
+    </a-tabs>
   </ASkeleton>
 </template>
 

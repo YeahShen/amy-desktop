@@ -1,6 +1,6 @@
 :root {
-  --sidebar-width: 60px;
-  --navbar-height: 70px;
+  --sidebar-width: 70px;
+  --navbar-height: 75px;
 
   --img-filter: brightness(1.05) contrast(0.9) saturate(0.9);
   --img-overlay: rgba(255, 255, 255, 0.2);
