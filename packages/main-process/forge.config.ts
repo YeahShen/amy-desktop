@@ -8,9 +8,9 @@ import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { serialHooks } from '@electron/packager';
 import { PublisherBitbucket } from '@amy/publisher';
+import { AliOssPublisher } from '@amy/zalioss-publisher';
 import dotenv from 'dotenv';
 import fs from 'node:fs';
-import fse from 'fs-extra';
 import path from 'node:path';
 
 const model = process.env.NODE_ENV;
@@ -62,14 +62,26 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   publishers: [
-    new PublisherBitbucket({
-      appName: appName as string,
-      packageName: 'site.ashenstation.amy',
-      baseUrl: 'https://release.ashen-station.top/',
-      auth: {
-        username: process.env.AMY_PUBLISH_USERNAME,
-        password: process.env.AMY_PUBLISH_PASSWORD,
+    // new PublisherBitbucket({
+    //   appName: appName as string,
+    //   packageName: 'site.ashenstation.amy',
+    //   baseUrl: 'https://release.ashen-station.top/',
+    //   auth: {
+    //     username: process.env.AMY_PUBLISH_USERNAME,
+    //     password: process.env.AMY_PUBLISH_PASSWORD,
+    //   },
+    // }),
+    new AliOssPublisher({
+      notify: {
+        baseUrl: 'https://release.ashen-station.top/',
+        username: process.env.AMY_PUBLISH_USERNAME + '',
+        password: process.env.AMY_PUBLISH_PASSWORD + '',
       },
+      appName: appName as string,
+      accessKeyId: process.env.ALI_ACCESS_KEY_ID || '',
+      accessKeySecret: process.env.ALI_ACCESS_KEY_SECRET || '',
+      region: 'oss-cn-shenzhen',
+      bucket: 'amy-station',
     }),
   ],
   makers: [

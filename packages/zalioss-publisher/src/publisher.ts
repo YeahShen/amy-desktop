@@ -35,18 +35,18 @@ export default class AliOssPublisher extends PublisherBase<AliOssPublisherConfig
       }
     }
 
-    const { notifyUrl } = config;
+    const { notify } = config;
 
-    if (!notifyUrl) {
+    if (!notify) {
       setStatusLine('⚠ 未配置 notifyUrl，跳过发布通知');
     }
 
-    const authAxios = notifyUrl
+    const authAxios = notify
       ? createAuthAxios(
-          notifyUrl,
+          notify.baseUrl,
           () =>
             'Bearer ' +
-            Buffer.from(config.accessKeyId + ':' + config.accessKeySecret).toString('base64'),
+            Buffer.from(config.notify.username + ':' + config.notify.password).toString('base64'),
         )
       : null;
 

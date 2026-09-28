@@ -1,5 +1,9 @@
 export type AliOssPublisherConfig = {
-  notifyUrl: string;
+  notify: {
+    baseUrl: string;
+    username: string;
+    password: string;
+  };
   /** 应用名，作为对象 Key 前缀：`${appName}/${platform}/${arch}/${filename}` */
   appName: string;
   /** Bucket 所在地域，如 `oss-cn-hangzhou` */

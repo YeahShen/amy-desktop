@@ -36,7 +36,11 @@ const baseConfig: AliOssPublisherConfig = {
   accessKeyId: 'ak',
   accessKeySecret: 'sk',
   bucket: 'amy-release',
-  notifyUrl: 'https://release.example.com',
+  notify: {
+    baseUrl: 'https://release.example.com',
+    username: 'ak',
+    password: 'sk',
+  },
 };
 
 function createOptions(makeResults: ForgeMakeResult[]) {
@@ -225,8 +229,9 @@ describe('AliOssPublisher', () => {
     expect(body).toContain(version);
   });
 
-  it('notifyUrl 为空时跳过通知并提示，但仍完成上传', async () => {
-    const publisher = new AliOssPublisher({ ...baseConfig, notifyUrl: '' });
+  it('notify 未配置时跳过通知并提示，但仍完成上传', async () => {
+    // notify 在类型上是必填的，这里验证运行时兜底分支
+    const publisher = new AliOssPublisher({ ...baseConfig, notify: undefined as any });
     const { options, setStatusLine } = createOptions(makeResults);
 
     await publisher.publish(options);
