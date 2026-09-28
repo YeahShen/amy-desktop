@@ -15,7 +15,7 @@ const mdaStore = useMdaStore();
 
 const appStore = useAppStore();
 
-const wle = computed(() => appStore.lwem.get('artistDetailPage') as ListWrapEnat);
+const wle = computed(() => appStore.lwem.get('artistDetailPage'));
 
 const loadProfile = ref(false);
 const loadList = ref(false);
@@ -97,11 +97,11 @@ function play(id: string) {
 
     <div class="w-full rs-wrap py-6 h-fit bg-[#f6f7f8] dark:bg-[#0d0d0e]">
       <AmyListWrap
-        :item-min-width="wle.itemMinWidth"
-        :side-width="wle.sideWidth"
-        :gap-x="wle.gapX"
+        :item-min-width="wle?.itemMinWidth || 0"
+        :side-width="wle?.sideWidth || 0"
+        :gap-x="wle?.gapX || 0"
         :gap-y="40"
-        :column-count="wle.columnCount"
+        :column-count="wle?.columnCount || 0"
         :list="videoList"
         :loading-row-number="5"
         :loading="loadingList"
