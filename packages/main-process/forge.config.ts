@@ -83,6 +83,8 @@ const config: ForgeConfig = {
       region: 'oss-cn-shenzhen',
       bucket: 'amy-station',
       packageName: 'site.ashenstation.amy',
+      endpoint: 'oss-cn-shenzhen.aliyuncs.com',
+      timeout: 120000,
     }),
   ],
   makers: [
