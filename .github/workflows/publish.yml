@@ -36,3 +36,5 @@ jobs:
         env:
           AMY_PUBLISH_USERNAME: ${{ secrets.AMY_PUBLISH_USERNAME }}
           AMY_PUBLISH_PASSWORD: ${{ secrets.AMY_PUBLISH_PASSWORD }}
+          ALI_ACCESS_KEY_ID: ${{ secrets.ALI_ACCESS_KEY_ID }}
+          ALI_ACCESS_KEY_SECRET: ${{ secrets.ALI_ACCESS_KEY_SECRET }}
