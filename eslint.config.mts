@@ -72,7 +72,11 @@ export default (async function () {
     },
 
     {
-      files: ['packages/main-process/src/**/*.ts', 'packages/zpublisher/src/**/*.ts'],
+      files: [
+        'packages/main-process/src/**/*.ts',
+        'packages/zpublisher/src/**/*.ts',
+        'packages/zalioss-publisher/src/**/*.ts',
+      ],
       languageOptions: { globals: { ...globals.node } },
       extends: [tseslint.configs.recommended],
       rules: {

@@ -14,7 +14,10 @@
       "Bash(node -e \"const p=require\\('../../node_modules/@antdv-next/icons/package.json'\\);console.log\\(p.version, JSON.stringify\\(p.exports||p.main\\)\\)\")",
       "Bash(cd /d/AMY_PRO/amy-desktop/.claude/skills/antdv-next/references/components && sed -n '/^## API/,/^### /p' dropdown/docs.md | head -60; echo \"=========== TOOLTIP ===========\"; sed -n '/^## API/,/^### /p' tooltip/docs.md | head -40)",
       "Bash(unset ELECTRON_RUN_AS_NODE)",
-      "Bash(./node_modules/.bin/electron .vp-probe 'http://localhost:5326/videoPlayer')"
+      "Bash(./node_modules/.bin/electron .vp-probe 'http://localhost:5326/videoPlayer')",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/@types/ali-oss/package.json'\\).version\\)\")",
+      "Bash(xargs -I{} sh -c 'echo \"--- {} ---\"; cat {}')",
+      "Bash(npx prettier *)"
     ],
     "additionalDirectories": [
       "D:\\AMY_PRO\\amy-desktop\\tooltip"
