@@ -96,8 +96,9 @@ export default class AliOssPublisher extends PublisherBase<AliOssPublisherConfig
         fd.append('platform', platform);
         fd.append('arch', arch);
         fd.append('version', version);
+        fd.append('packageName', config.packageName);
 
-        await authAxios.post('/app/new-version', fd);
+        await authAxios.post('/api/archive/new-version', fd);
       }
 
       setStatusLine(`✅ 发布完成`);

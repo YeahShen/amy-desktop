@@ -36,6 +36,7 @@ const baseConfig: AliOssPublisherConfig = {
   accessKeyId: 'ak',
   accessKeySecret: 'sk',
   bucket: 'amy-release',
+  packageName: 'site.ashenstation.amy',
   notify: {
     baseUrl: 'https://release.example.com',
     username: 'ak',
@@ -220,10 +221,11 @@ describe('AliOssPublisher', () => {
     expect(token).toBe('Bearer ' + Buffer.from('ak:sk').toString('base64'));
 
     const [url, fd] = mocks.notifyPost.mock.calls[0];
-    expect(url).toBe('/app/new-version');
+    expect(url).toBe('/api/archive/new-version');
 
     const body = fd.getBuffer().toString();
     expect(body).toContain('AMY STATIONS');
+    expect(body).toContain('site.ashenstation.amy');
     expect(body).toContain('win32');
     expect(body).toContain('x64');
     expect(body).toContain(version);

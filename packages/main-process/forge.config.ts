@@ -82,6 +82,7 @@ const config: ForgeConfig = {
       accessKeySecret: process.env.ALI_ACCESS_KEY_SECRET || '',
       region: 'oss-cn-shenzhen',
       bucket: 'amy-station',
+      packageName: 'site.ashenstation.amy',
     }),
   ],
   makers: [

@@ -11,6 +11,7 @@ export type AliOssPublisherConfig = {
   accessKeyId: string;
   accessKeySecret: string;
   bucket: string;
+  packageName: string;
   /** 自定义接入点/域名，优先级高于 region */
   endpoint?: string;
   /** 是否使用 HTTPS，默认 true */
