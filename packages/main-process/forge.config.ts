@@ -7,7 +7,7 @@ import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 import { serialHooks } from '@electron/packager';
-import { PublisherBitbucket } from '@amy/publisher';
+// import { PublisherBitbucket } from '@amy/publisher';
 import { AliOssPublisher } from '@amy/zalioss-publisher';
 import dotenv from 'dotenv';
 import fs from 'node:fs';
