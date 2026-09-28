@@ -13,6 +13,10 @@ const route = useRoute();
 const videoList = ref<VideoItem[]>([]);
 const mdaStore = useMdaStore();
 
+const appStore = useAppStore();
+
+const wle = computed(() => appStore.lwem.get('artistDetailPage') as ListWrapEnat);
+
 const loadProfile = ref(false);
 const loadList = ref(false);
 
@@ -77,10 +81,6 @@ const loadingList = computed(() => loadProfile.value || loadList.value);
 function play(id: string) {
   window.electronAPI.send('play-video', id);
 }
-
-function jump(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-}
 </script>
 
 <template>
@@ -97,10 +97,11 @@ function jump(id: string) {
 
     <div class="w-full rs-wrap py-6 h-fit bg-[#f6f7f8] dark:bg-[#0d0d0e]">
       <AmyListWrap
-        :item-min-width="220"
-        :side-width="32"
-        :gap-x="36"
+        :item-min-width="wle.itemMinWidth"
+        :side-width="wle.sideWidth"
+        :gap-x="wle.gapX"
         :gap-y="40"
+        :column-count="wle.columnCount"
         :list="videoList"
         :loading-row-number="5"
         :loading="loadingList"

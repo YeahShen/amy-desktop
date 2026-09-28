@@ -45,13 +45,13 @@ onMounted(async () => {
 
   laoding.value = true;
   artistList.value = await $request<ArtistByCate[]>('/artist/list');
-  laoding.value = false;
+  // laoding.value = false;
 });
 
 // 加载未结束就离开页面时复位，否则滚动条会一直处于禁用态
 onUnmounted(() => appStore.setScrollBarStatus(true));
 
-const wle = computed(() => appStore.lwem.get('artistlistpage'));
+const wle = computed(() => appStore.lwem.get('artistlistPage'));
 </script>
 
 <template>
@@ -100,6 +100,7 @@ const wle = computed(() => appStore.lwem.get('artistlistpage'));
           :gap-y="36"
           :list="i.list"
           :loading="laoding"
+          :column-count="wle?.columnCount || 0"
           :loading-row-number="idx + 1"
           item-classes="cursor-pointer hover:text-primary"
           @select="select"
