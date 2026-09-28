@@ -13,6 +13,10 @@ const DEFAULT_PARALLEL = 4;
 /** 必填配置项，缺失时直接抛错而不是让 OSS 客户端在运行时莫名失败 */
 const REQUIRED_KEYS = ['appName', 'region', 'accessKeyId', 'accessKeySecret', 'bucket'] as const;
 
+const headers: Record<string, any> = {
+  // 'x-oss-forbid-overwrite': true,
+};
+
 export default class AliOssPublisher extends PublisherBase<AliOssPublisherConfig> {
   name = 'alioss';
 
@@ -58,6 +62,10 @@ export default class AliOssPublisher extends PublisherBase<AliOssPublisherConfig
       timeout: config.timeout,
     });
 
+    if (!config.replaceExits) {
+      headers['x-oss-forbid-overwrite'] = true;
+    }
+
     const partSize = config.partSize ?? DEFAULT_PART_SIZE;
     const parallel = config.parallel ?? DEFAULT_PARALLEL;
 
@@ -76,12 +84,19 @@ export default class AliOssPublisher extends PublisherBase<AliOssPublisherConfig
           await client.multipartUpload(objectKey, artifact, {
             partSize,
             parallel,
+            headers,
             progress: (percentage: number) => {
               setStatusLine(`上传中：${objectKey} ${(Number(percentage) * 100).toFixed(2)}%`);
             },
           });
-        } catch (e: any) {
-          throw new Error(`上传失败：${objectKey}，cause：${e.message}`);
+        } catch (error: any) {
+          // 捕获服务端返回的 FileAlreadyExists 错误，视为跳过
+          if (error.code === 'FileAlreadyExists') {
+            setStatusLine(`文件已存在，跳过: ${filename}`);
+          } else {
+            throw new Error(`上传失败：${objectKey}，cause：${error.message}`);
+          }
+          // 其他错误则抛出
         }
 
         setStatusLine(`✅ 上传完成：${objectKey}`);

@@ -206,6 +206,33 @@ describe('AliOssPublisher', () => {
     expect(mocks.notifyPost).not.toHaveBeenCalled();
   });
 
+  it('产物已存在（FileAlreadyExists）时跳过该文件并继续后续上传', async () => {
+    mocks.multipartUpload.mockRejectedValueOnce(
+      Object.assign(new Error('File already exists'), { code: 'FileAlreadyExists' }),
+    );
+
+    const publisher = new AliOssPublisher(baseConfig);
+    const { options, setStatusLine } = createOptions(makeResults);
+
+    await publisher.publish(options);
+
+    // 不抛错，后续两个产物照常上传，通知照发
+    expect(mocks.multipartUpload).toHaveBeenCalledTimes(3);
+    expect(setStatusLine).toHaveBeenCalledWith('文件已存在，跳过: RELEASES');
+    expect(mocks.notifyPost).toHaveBeenCalledTimes(1);
+  });
+
+  it('默认携带 x-oss-forbid-overwrite 头', async () => {
+    const publisher = new AliOssPublisher(baseConfig);
+    const { options } = createOptions(makeResults);
+
+    await publisher.publish(options);
+
+    expect(mocks.multipartUpload.mock.calls[0][2].headers).toMatchObject({
+      'x-oss-forbid-overwrite': true,
+    });
+  });
+
   it('配置 notifyUrl 时以 AccessKey 为 Bearer 通知发布完成', async () => {
     const publisher = new AliOssPublisher(baseConfig);
     const { options } = createOptions(makeResults);

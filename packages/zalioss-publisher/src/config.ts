@@ -24,4 +24,5 @@ export type AliOssPublisherConfig = {
   partSize?: number;
   /** 分片并发数，默认 4 */
   parallel?: number;
+  replaceExits?: boolean;
 };
