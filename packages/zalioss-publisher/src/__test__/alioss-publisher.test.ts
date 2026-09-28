@@ -220,15 +220,15 @@ describe('AliOssPublisher', () => {
     const token = mocks.createAuthAxios.mock.calls[0][1]();
     expect(token).toBe('Bearer ' + Buffer.from('ak:sk').toString('base64'));
 
-    const [url, fd] = mocks.notifyPost.mock.calls[0];
+    const [url, payload] = mocks.notifyPost.mock.calls[0];
     expect(url).toBe('/api/archive/new-version');
-
-    const body = fd.getBuffer().toString();
-    expect(body).toContain('AMY STATIONS');
-    expect(body).toContain('site.ashenstation.amy');
-    expect(body).toContain('win32');
-    expect(body).toContain('x64');
-    expect(body).toContain(version);
+    expect(payload).toEqual({
+      appName: 'AMY STATIONS',
+      platform: 'win32',
+      arch: 'x64',
+      version,
+      packageName: 'site.ashenstation.amy',
+    });
   });
 
   it('notify 未配置时跳过通知并提示，但仍完成上传', async () => {

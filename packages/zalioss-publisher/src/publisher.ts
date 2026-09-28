@@ -2,10 +2,7 @@ import { PublisherBase, type PublisherOptions } from '@electron-forge/publisher-
 import type { ForgeListrTaskDefinition } from '@electron-forge/shared-types';
 import OSS from 'ali-oss';
 import path from 'node:path';
-
 import type { AliOssPublisherConfig } from './config';
-
-import FormData from 'form-data';
 
 import { createAuthAxios } from '@amy/shared';
 
@@ -91,14 +88,13 @@ export default class AliOssPublisher extends PublisherBase<AliOssPublisherConfig
       }
 
       if (authAxios) {
-        const fd = new FormData();
-        fd.append('appName', config.appName);
-        fd.append('platform', platform);
-        fd.append('arch', arch);
-        fd.append('version', version);
-        fd.append('packageName', config.packageName);
-
-        await authAxios.post('/api/archive/new-version', fd);
+        await authAxios.post('/api/archive/new-version', {
+          appName: config.appName,
+          platform,
+          arch,
+          version,
+          packageName: config.packageName,
+        });
       }
 
       setStatusLine(`✅ 发布完成`);
