@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const hidOrClose = useSettings('hideHomeWindowOrExit');
 
+const searching = defineModel<boolean>('searching');
+
 async function closeWindow() {
   if (hidOrClose.value === 'hide') {
     window.electronAPI.send('hid-window');
@@ -10,18 +12,11 @@ async function closeWindow() {
 }
 
 const userStore = useUserStore();
-
-const route = useRoute();
-
-const immersiveHeader = computed(() => route.meta.immersiveHeader);
 </script>
 
 <template>
-  <div
-    class="w-full navbar drag flex justify-end px-4 z-10 absolute"
-    :class="{ 'bg-(--ui-bg)': !immersiveHeader }"
-  >
-    <LayoutSearch class="z-12" />
+  <div class="w-full navbar drag flex justify-end px-4 z-99999 absolute">
+    <LayoutSearch v-model:active="searching" class="z-12" />
 
     <div class="w-fit h-full flex items-center z-12">
       <div class="no-drag">

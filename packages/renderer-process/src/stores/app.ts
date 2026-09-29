@@ -28,12 +28,24 @@ export type ListWrapEnat = {
   columnCount: number;
 };
 
-export const useAppStore = defineStore('appStore', () => {
-  const searchActive = ref(false);
-  const disableScrollbar = ref(false);
-  const { width } = useWindowSize();
+export const SEARCHING_INJECTION_KEY = Symbol() as InjectionKey<Ref<boolean>>;
 
-  const showNavbarLeftContent = computed(() => searchActive.value === false);
+function calcArtistListPageLoadingNumx(opt: ListWrapPageArgs, width: number) {
+  const { sideWidth, gapX, itemMinWidth } = opt;
+
+  const columnCount = Math.floor((width - sideWidth * 2 + gapX) / Math.max(1, itemMinWidth + gapX));
+
+  return {
+    sideWidth,
+    gapX,
+    itemMinWidth,
+    columnCount,
+  };
+}
+
+export const useAppStore = defineStore('appStore', () => {
+  const { width } = useWindowSize();
+  const listContailerPropMap = reactive(new Map<RegisteredList, ListContainerProperties>());
 
   const lwem = reactive(new Map<ListPage, ListWrapEnat>());
 
@@ -43,25 +55,6 @@ export const useAppStore = defineStore('appStore', () => {
     component: '',
   });
 
-  function setScrollBarStatus(enabled: boolean) {
-    disableScrollbar.value = !enabled;
-  }
-
-  function calcArtistListPageLoadingNumx(opt: ListWrapPageArgs, width: number) {
-    const { sideWidth, gapX, itemMinWidth } = opt;
-
-    const columnCount = Math.floor(
-      (width - sideWidth * 2 + gapX) / Math.max(1, itemMinWidth + gapX),
-    );
-
-    return {
-      sideWidth,
-      gapX,
-      itemMinWidth,
-      columnCount,
-    };
-  }
-
   onMounted(() => {
     watch(
       width,
@@ -69,6 +62,8 @@ export const useAppStore = defineStore('appStore', () => {
         Object.entries(ListWrapPage).forEach(([key, value]) => {
           lwem.set(key as ListPage, calcArtistListPageLoadingNumx(value, w - 70));
         });
+
+        Object.entries(registeredListContainers).forEach(() => {});
       },
       {
         immediate: true,
@@ -77,11 +72,8 @@ export const useAppStore = defineStore('appStore', () => {
   });
 
   return {
-    showNavbarLeftContent,
-    disableScrollbar,
-    searchActive,
     drawer,
-    setScrollBarStatus,
     lwem,
+    listContailerPropMap,
   };
 });

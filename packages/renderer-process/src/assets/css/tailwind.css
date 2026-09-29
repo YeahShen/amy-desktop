@@ -33,6 +33,10 @@
   -webkit-app-region: no-drag;
 }
 
+@utility pt-nav {
+  padding-top: var(--navbar-height);
+}
+
 @utility h-main-content {
   height: calc(100vh - var(--navbar-height));
 }

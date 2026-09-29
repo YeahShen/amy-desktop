@@ -17,7 +17,9 @@
       "Bash(./node_modules/.bin/electron .vp-probe 'http://localhost:5326/videoPlayer')",
       "Bash(node -e \"console.log\\(require\\('./node_modules/@types/ali-oss/package.json'\\).version\\)\")",
       "Bash(xargs -I{} sh -c 'echo \"--- {} ---\"; cat {}')",
-      "Bash(npx prettier *)"
+      "Bash(npx prettier *)",
+      "Bash(git tag *)",
+      "Bash(node repro-fade.mjs)"
     ],
     "additionalDirectories": [
       "D:\\AMY_PRO\\amy-desktop\\tooltip"

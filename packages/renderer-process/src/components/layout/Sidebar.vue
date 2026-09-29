@@ -71,7 +71,7 @@ function openUpload() {
     </div>
 
     <div class="menu-wrap flex flex-1 w-full flex-col justify-between items-center pt-4">
-      <div id="sidebar-top-menu" class="flex items-center flex-col gap-y-5">
+      <div id="sidebar-top-menu" class="flex items-center flex-col gap-y-6">
         <NuxtLink v-for="item in topMenu" :key="item.path" :to="item.path">
           <div
             class="w-fit h-fit flex items-center justify-center px-1 py-1 rounded text-muted cursor-pointer no-drag hover:text-toned transition-colors duration-200"
@@ -79,7 +79,7 @@ function openUpload() {
               'dark:bg-[#1a1a19] bg-white text-primary!': route.meta.workspace === item.workspace,
             }"
           >
-            <NuxtIcon :name="item.icon" size="24" />
+            <NuxtIcon :name="item.icon" size="26" />
           </div>
         </NuxtLink>
       </div>

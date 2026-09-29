@@ -3,6 +3,10 @@ import { onClickOutside } from '@vueuse/core';
 
 const searchWrapRef = useTemplateRef('searchWrapRef');
 
+const activeModel = defineModel<boolean>('active', {
+  default: false,
+});
+
 const has = ref(false);
 const focus = ref(false);
 
@@ -10,9 +14,7 @@ onClickOutside(searchWrapRef, () => (focus.value = false));
 
 const active = computed(() => has.value || focus.value);
 
-const appStore = useAppStore();
-
-watch(active, (v) => (appStore.searchActive = v));
+watch(active, (v) => (activeModel.value = v), { immediate: true });
 </script>
 
 <template>

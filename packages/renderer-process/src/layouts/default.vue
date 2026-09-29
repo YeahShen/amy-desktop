@@ -1,5 +1,9 @@
 <script setup lang="tsx">
 useAppStore();
+
+const searching = ref<boolean>(false);
+
+provide(SEARCHING_INJECTION_KEY, searching);
 </script>
 
 <template>
@@ -7,11 +11,7 @@ useAppStore();
     <LayoutSidebar />
 
     <div class="main h-full relative">
-      <LayoutNavbar />
-
-      <!-- <AmyScrollbar track-class="common-content_track" :disabled="appStore.disableScrollbar">
-        <NuxtPage />
-      </AmyScrollbar> -->
+      <LayoutNavbar v-model:searching="searching" />
 
       <NuxtPage />
     </div>
