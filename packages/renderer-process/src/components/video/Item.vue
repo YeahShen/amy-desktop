@@ -103,8 +103,8 @@ function play() {
           {{ item.title }}
         </p>
 
-        <div class="w-3 shrink-0">
-          <NuxtIcon class="more-icon" name="amy:more-outlined" size="22" />
+        <div class="w-3 shrink-0 pt-1/2">
+          <NuxtIcon class="more-icon" name="amy:more-outlined" size="18" />
         </div>
       </div>
 

@@ -116,7 +116,7 @@ function play(id: string) {
 
 <style lang="scss">
 .rs-wrap {
-  min-height: calc(100vh - 323px);
+  min-height: calc(100vh - 285px);
 }
 
 .profile-placeholder {
