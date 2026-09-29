@@ -13,8 +13,8 @@ const route = useRoute();
 const videoList = ref<VideoItem[]>([]);
 const mdaStore = useMdaStore();
 
-const loadProfile = ref(false);
-const loadList = ref(false);
+const loadProfile = ref(true);
+const loadList = ref(true);
 const { containerProp } = useListContainer('artistDetailPage');
 
 // watch(tab, (v) => {

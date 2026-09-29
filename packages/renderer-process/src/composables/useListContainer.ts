@@ -51,7 +51,7 @@ export const registeredListContainers: Record<RegisteredList, ListContainerArg> 
   artistDetailPage: {
     sideWidth: 32,
     gapX: 36,
-    itemMinWidth: 220,
+    itemMinWidth: 260,
   },
 };
 
