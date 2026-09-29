@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import type { CSSProperties } from 'vue';
+
 defineProps<{
   disabledScroll?: boolean;
   immersiveHeader?: boolean;
   hidNavbarContent?: boolean;
   classes?: {
     content?: string;
+    navbar?: string;
+  };
+  styles?: {
+    navbar?: CSSProperties;
   };
 }>();
 
@@ -15,7 +21,11 @@ const searching = inject(SEARCHING_INJECTION_KEY);
   <div class="w-full h-full">
     <div
       class="navbar-placeholder z-999"
-      :class="[{ 'bg-(--ui-bg)/20 glass-bg': immersiveHeader, 'bg-container': !immersiveHeader }]"
+      :class="[
+        { 'bg-(--ui-bg)/20 glass-bg': immersiveHeader, 'bg-container': !immersiveHeader },
+        classes?.navbar,
+      ]"
+      :style="styles?.navbar"
     >
       <div class="w-3/7 h-full pl-4 flex items-center overflow-hidden">
         <AmyFadeTransition>

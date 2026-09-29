@@ -1,18 +1,25 @@
+export type ListContainerOption = {
+  sideWidth: number;
+  gapX: number;
+  itemMinWidth: number;
+  columnCount: number;
+};
+
 export class ListContainerProperties {
   private _sideWidth: number;
   private _gapX: number;
   private _itemMinWidth: number;
   private _columnCount: number;
 
-  constructor(options: ListContainerProperties) {
-    this._columnCount = options._columnCount;
-    this._gapX = options._gapX;
-    this._itemMinWidth = options._itemMinWidth;
-    this._sideWidth = options._sideWidth;
+  constructor(options: ListContainerOption) {
+    this._columnCount = options.columnCount;
+    this._gapX = options.gapX;
+    this._itemMinWidth = options.itemMinWidth;
+    this._sideWidth = options.sideWidth;
   }
 
   get sideWidth(): number {
-    return this.sideWidth || 0;
+    return this._sideWidth || 0;
   }
 
   get gapX(): number {
@@ -37,8 +44,8 @@ export type ListContainerArg = {
 };
 export const registeredListContainers: Record<RegisteredList, ListContainerArg> = {
   artistlistPage: {
-    sideWidth: 16,
-    gapX: 24,
+    sideWidth: 1,
+    gapX: 36,
     itemMinWidth: 90,
   },
   artistDetailPage: {
@@ -50,4 +57,10 @@ export const registeredListContainers: Record<RegisteredList, ListContainerArg> 
 
 export function useListContainer(name: RegisteredList) {
   const appStore = useAppStore();
+
+  const containerProp = appStore.listContailerPropMap.get(name) as ListContainerProperties;
+
+  return {
+    containerProp,
+  };
 }

@@ -19,6 +19,7 @@ const wle = computed(() => appStore.lwem.get('artistDetailPage'));
 
 const loadProfile = ref(false);
 const loadList = ref(false);
+const { containerProp } = useListContainer('artistDetailPage');
 
 // watch(tab, (v) => {
 //   // jump(v);
@@ -84,8 +85,14 @@ function play(id: string) {
 </script>
 
 <template>
-  <LayoutPage class="">
-    <div class="profile-placeholder w-full sticky top-0 bg-(--ui-bg)/50 glass-bg z-1"></div>
+  <LayoutPage
+    immersive-header
+    :styles="{}"
+    :classes="{
+      navbar: 'profile-placeholder',
+    }"
+  >
+    <!-- <div class="profile-placeholder w-full sticky top-0 bg-(--ui-bg)/50 glass-bg z-1"></div> -->
 
     <ArtistProfile :artist="artist" :loading="loadingProfile" />
 
@@ -96,12 +103,11 @@ function play(id: string) {
     </div>
 
     <div class="w-full rs-wrap py-6 h-fit bg-[#f6f7f8] dark:bg-[#0d0d0e]">
-      <AmyListWrap
-        :item-min-width="wle?.itemMinWidth || 0"
-        :side-width="wle?.sideWidth || 0"
-        :gap-x="wle?.gapX || 0"
+      <AmyListContainer
+        :side-width="containerProp.sideWidth"
+        :gap-x="containerProp.gapX"
         :gap-y="40"
-        :column-count="wle?.columnCount || 0"
+        :column-count="containerProp.columnCount"
         :list="videoList"
         :loading-row-number="5"
         :loading="loadingList"
@@ -109,7 +115,7 @@ function play(id: string) {
         <template #item="{ item, loading: l }">
           <VideoItem :loading="l" :item :artist="artist" show-artist @play="play" />
         </template>
-      </AmyListWrap>
+      </AmyListContainer>
     </div>
   </LayoutPage>
 </template>
