@@ -13,10 +13,6 @@ const route = useRoute();
 const videoList = ref<VideoItem[]>([]);
 const mdaStore = useMdaStore();
 
-const appStore = useAppStore();
-
-const wle = computed(() => appStore.lwem.get('artistDetailPage'));
-
 const loadProfile = ref(false);
 const loadList = ref(false);
 const { containerProp } = useListContainer('artistDetailPage');
@@ -92,8 +88,6 @@ function play(id: string) {
       navbar: 'profile-placeholder',
     }"
   >
-    <!-- <div class="profile-placeholder w-full sticky top-0 bg-(--ui-bg)/50 glass-bg z-1"></div> -->
-
     <ArtistProfile :artist="artist" :loading="loadingProfile" />
 
     <div

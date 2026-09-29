@@ -58,7 +58,16 @@ export const registeredListContainers: Record<RegisteredList, ListContainerArg> 
 export function useListContainer(name: RegisteredList) {
   const appStore = useAppStore();
 
-  const containerProp = appStore.listContailerPropMap.get(name) as ListContainerProperties;
+  const containerProp = computed<ListContainerOption>(
+    () =>
+      appStore.listContailerPropMap.get(name) ??
+      new ListContainerProperties({
+        sideWidth: 0,
+        gapX: 0,
+        itemMinWidth: 0,
+        columnCount: 0,
+      }),
+  );
 
   return {
     containerProp,
