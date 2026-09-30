@@ -22,7 +22,7 @@ const searching = inject(SEARCHING_INJECTION_KEY);
     <div
       class="navbar-placeholder z-999"
       :class="[
-        { 'bg-(--ui-bg)/20 glass-bg': immersiveHeader, 'bg-container': !immersiveHeader },
+        { 'bg-(--ui-bg)/66 glass-bg': immersiveHeader, 'bg-container': !immersiveHeader },
         classes?.navbar,
       ]"
       :style="styles?.navbar"

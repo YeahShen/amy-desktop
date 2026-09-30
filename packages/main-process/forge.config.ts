@@ -74,12 +74,12 @@ const config: ForgeConfig = {
     new AliOssPublisher({
       notify: {
         baseUrl: 'https://release.ashen-station.top/',
-        username: process.env.AMY_PUBLISH_USERNAME + '',
-        password: process.env.AMY_PUBLISH_PASSWORD + '',
+        username: process.env.AMY_PUBLISH_USERNAME as string,
+        password: process.env.AMY_PUBLISH_PASSWORD as string,
       },
       appName: appName as string,
-      accessKeyId: process.env.ALI_ACCESS_KEY_ID || '',
-      accessKeySecret: process.env.ALI_ACCESS_KEY_SECRET || '',
+      accessKeyId: process.env.ALI_ACCESS_KEY_ID as string,
+      accessKeySecret: process.env.ALI_ACCESS_KEY_SECRET as string,
       region: 'oss-cn-shenzhen',
       bucket: 'amy-station',
       packageName: 'site.ashenstation.amy',
